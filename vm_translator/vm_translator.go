@@ -1,11 +1,60 @@
 package vmtrans
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
 	"strings"
+	"text/template"
 )
+
+func (cw CodeWriter) CloseFile() {
+	cw.f.Close()
+}
+
+type CodeWriter struct {
+	f         *os.File
+	templates map[string]*template.Template
+}
+
+func NewCodeWriter(fp string) *CodeWriter {
+	file, _ := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	cw := &CodeWriter{f: file, templates: make(map[string]*template.Template)}
+
+	tplPushLocalX, err := template.New("pushLocalX.asm").ParseFS(templateFiles, "asm_codes/pushLocalX.asm")
+	if err != nil {
+		panic(err)
+	}
+	tplPushConstantX, err := template.New("pushConstantX.asm").ParseFS(templateFiles, "asm_codes/pushConstantX.asm")
+	if err != nil {
+		panic(err)
+	}
+	tplAdd, err := template.New("add.asm").ParseFS(templateFiles, "asm_codes/add.asm")
+	if err != nil {
+		panic(err)
+	}
+	cw.templates[C_PUSH+" local"] = tplPushLocalX
+	cw.templates[C_PUSH+" constant"] = tplPushConstantX
+	cw.templates["add"] = tplAdd
+	return cw
+}
+
+func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
+	var buf bytes.Buffer
+	if cmdType == C_ARITHMETIC {
+		cw.templates[arg1].Execute(&buf, map[string]interface{}{})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+
+	err := cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{"x": strings.TrimSpace(arg2)})
+	cw.f.Write(buf.Bytes())
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
 
 type Parser struct {
 	cmds []string
