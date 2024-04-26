@@ -9,7 +9,6 @@ import (
 )
 
 func Test_CodeWriter(t *testing.T) {
-
 	t.Run("Write Arithmetic commands to output file 2", func(t *testing.T) {
 		type testCase struct {
 			name                string
@@ -20,7 +19,7 @@ func Test_CodeWriter(t *testing.T) {
 		testCases := []testCase{
 			{
 				name:    "test add",
-				cmdType: "add", arg1: "", arg2: "",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "add", arg2: "",
 				want: `//add
 //SP--; *R13=*SP
 @SP
@@ -28,11 +27,12 @@ AM=M-1
 D=M
 @SP
 A=M-1
-M=M+D`,
+M=M+D
+`,
 			},
 			{
 				name:    "test push local x",
-				cmdType: "push", arg1: "local", arg2: "2",
+				cmdType: vmtrans.C_PUSH, arg1: "local", arg2: "2",
 				want: `//push local 2
 //*R13=LCL + 2
 @2
@@ -50,11 +50,12 @@ D=M
 // *R13=*SP
 @R13
 A=M
-M=D`,
+M=D
+`,
 			},
 			{
 				name:    "test push constant x",
-				cmdType: "push", arg1: "constant", arg2: "4",
+				cmdType: vmtrans.C_PUSH, arg1: "constant", arg2: "4",
 				want: `//push constant 4
 //*SP=4
 @4
@@ -65,7 +66,8 @@ M=D
 
 //SP++
 @SP
-M=M+1`,
+M=M+1
+`,
 			},
 		}
 		for _, tc := range testCases {
