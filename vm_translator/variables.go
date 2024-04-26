@@ -7,24 +7,6 @@ var (
 )
 
 const (
-	pushLocalX = `//push local {{ .x }}
-//*R13=LCL + {{ .x }}
-@{{ .x }}
-D=A
-@R1
-D=M+D
-@R13
-M=D
-
-// SP--
-@SP
-M=M-1
-
-// *R13=*SP
-@R13`
-)
-
-const (
 	C_ARITHMETIC = "C_ARITHMETIC"
 	C_PUSH       = "C_PUSH"
 	C_POP        = "C_POP"
@@ -55,5 +37,31 @@ var (
 		"function": C_FUNCTION,
 		"return":   C_RETURN,
 		"call":     C_CALL,
+	}
+)
+
+var (
+	templateFileNames = map[string]string{
+		C_PUSH + " " + "local":     "pushGeneralX.asm",
+		C_PUSH + " " + "argument":  "pushGeneralX.asm",
+		C_PUSH + " " + "this":      "pushGeneralX.asm",
+		C_PUSH + " " + "that":      "pushGeneralX.asm",
+		C_PUSH + " " + "constant":  "pushConstantX.asm",
+		C_ARITHMETIC + " " + "add": "add.asm",
+	}
+)
+
+var (
+	segmentRegisters = map[string]string{
+		"local":    "R1",
+		"argument": "R2",
+		"this":     "R3",
+		"that":     "R4",
+	}
+	segmentRegisterName = map[string]string{
+		"local":    "LCL",
+		"argument": "ARG",
+		"this":     "THIS",
+		"that":     "THAT",
 	}
 )

@@ -9,14 +9,6 @@ import (
 	"text/template"
 )
 
-var (
-	templateFileNames = map[string]string{
-		C_PUSH + " " + "local":     "pushLocalX.asm",
-		C_PUSH + " " + "constant":  "pushConstantX.asm",
-		C_ARITHMETIC + " " + "add": "add.asm",
-	}
-)
-
 type CodeWriter struct {
 	f         *os.File
 	templates map[string]*template.Template
@@ -39,6 +31,17 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 
 	if cmdType == C_ARITHMETIC {
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+
+	if cmdType == C_PUSH && isGeneralSegment(arg1) {
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"segment":               arg1,
+			"segment_register_name": segmentRegisterName[arg1],
+			"segment_register":      segmentRegisters[arg1],
+			"x":                     strings.TrimSpace(arg2),
+		})
 		cw.f.Write(buf.Bytes())
 		return
 	}
@@ -112,16 +115,4 @@ func (p *Parser) CurrentCmd() (string, error) {
 		return "", fmt.Errorf("currentCmd: %w", ErrNotAdvanced)
 	}
 	return p.cmds[p.pos-1], nil
-}
-
-func loadTemplates(dir string) map[string]*template.Template {
-	templates := make(map[string]*template.Template)
-	for name, fn := range templateFileNames {
-		t, err := template.New(fn).ParseFS(templateFiles, dir+"/"+fn)
-		if err != nil {
-			panic(err)
-		}
-		templates[name] = t
-	}
-	return templates
 }

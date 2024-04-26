@@ -31,6 +31,75 @@ M=M+D
 `,
 			},
 			{
+				name:    "test push that x",
+				cmdType: vmtrans.C_PUSH, arg1: "that", arg2: "5",
+				want: `//push that 5
+//*R13=THAT + 5
+@5
+D=A
+@R4
+D=M+D
+@R13
+M=D
+
+// SP--
+@SP
+AM=M-1
+D=M
+
+// *R13=*SP
+@R13
+A=M
+M=D
+`,
+			},
+			{
+				name:    "test push this x",
+				cmdType: vmtrans.C_PUSH, arg1: "this", arg2: "5",
+				want: `//push this 5
+//*R13=THIS + 5
+@5
+D=A
+@R3
+D=M+D
+@R13
+M=D
+
+// SP--
+@SP
+AM=M-1
+D=M
+
+// *R13=*SP
+@R13
+A=M
+M=D
+`,
+			},
+			{
+				name:    "test push argument x",
+				cmdType: vmtrans.C_PUSH, arg1: "argument", arg2: "5",
+				want: `//push argument 5
+//*R13=ARG + 5
+@5
+D=A
+@R2
+D=M+D
+@R13
+M=D
+
+// SP--
+@SP
+AM=M-1
+D=M
+
+// *R13=*SP
+@R13
+A=M
+M=D
+`,
+			},
+			{
 				name:    "test push local x",
 				cmdType: vmtrans.C_PUSH, arg1: "local", arg2: "2",
 				want: `//push local 2
