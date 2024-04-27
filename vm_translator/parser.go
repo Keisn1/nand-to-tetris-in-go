@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -37,6 +38,7 @@ func (p *Parser) Arg2() (string, error) {
 }
 
 func (p *Parser) Arg1() (string, error) {
+
 	cmd, err := p.CurrentCmd()
 	if err != nil {
 		return "", fmt.Errorf("commandType: %w", err)
@@ -67,8 +69,9 @@ func (p *Parser) Advance() {
 	if p.pos >= len(p.cmds) {
 		return
 	}
-	p.curCmd = p.cmds[p.pos]
+	p.curCmd = trimSpace(removeRepeatedWhitespaces(cutComment(p.cmds[p.pos])))
 	p.pos++
+
 	if isEmptyLine(p.curCmd) {
 		p.Advance()
 	}
@@ -77,17 +80,23 @@ func (p *Parser) Advance() {
 	}
 }
 
-func isEmptyLine(l string) bool {
-	return len(strings.TrimSpace(l)) == 0
-}
-
-func isComment(l string) bool {
-	return strings.HasPrefix(l, "//")
-}
-
 func (p *Parser) CurrentCmd() (string, error) {
 	if p.pos == 0 {
 		return "", fmt.Errorf("currentCmd: %w", ErrNotAdvanced)
 	}
 	return p.curCmd, nil
+}
+
+func trimSpace(l string) string { return strings.TrimSpace(l) }
+
+func cutComment(l string) string { return strings.Split(l, "//")[0] }
+
+func isEmptyLine(l string) bool { return len(strings.TrimSpace(l)) == 0 }
+
+func isComment(l string) bool { return strings.HasPrefix(l, "//") }
+
+func removeRepeatedWhitespaces(input string) string {
+	re := regexp.MustCompile(`\s+`)
+	output := re.ReplaceAllString(input, " ")
+	return strings.TrimSpace(output)
 }

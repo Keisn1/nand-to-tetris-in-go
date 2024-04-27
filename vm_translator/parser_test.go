@@ -12,7 +12,7 @@ func Test_Parser(t *testing.T) {
 	t.Run("Parsing command types", func(t *testing.T) {
 		type testCase struct {
 			cmd           string
-			want_c_type   string
+			want_cmd_type string
 			want_arg1     string
 			want_arg2     string
 			want_err_arg2 bool
@@ -21,33 +21,45 @@ func Test_Parser(t *testing.T) {
 		testCases := []testCase{
 			{
 				cmd:           "add",
-				want_c_type:   "C_ARITHMETIC",
+				want_cmd_type: "C_ARITHMETIC",
+				want_arg1:     "add",
+				want_err_arg2: true,
+			},
+			{
+				cmd:           "add",
+				want_cmd_type: "C_ARITHMETIC",
 				want_arg1:     "add",
 				want_err_arg2: true,
 			},
 			{
 				cmd:           "sub",
-				want_c_type:   "C_ARITHMETIC",
+				want_cmd_type: "C_ARITHMETIC",
 				want_arg1:     "sub",
 				want_err_arg2: true,
 			},
 			{
-				cmd:         "push local 2",
-				want_c_type: "C_PUSH",
-				want_arg1:   "local",
-				want_arg2:   "2",
+				cmd:           "push local 2",
+				want_cmd_type: "C_PUSH",
+				want_arg1:     "local",
+				want_arg2:     "2",
 			},
 			{
-				cmd:         "push local 3",
-				want_c_type: "C_PUSH",
-				want_arg1:   "local",
-				want_arg2:   "3",
+				cmd:           "   push    local    2   ",
+				want_cmd_type: "C_PUSH",
+				want_arg1:     "local",
+				want_arg2:     "2",
 			},
 			{
-				cmd:         "pop temp 0",
-				want_c_type: "C_POP",
-				want_arg1:   "temp",
-				want_arg2:   "0",
+				cmd:           "push local 3",
+				want_cmd_type: "C_PUSH",
+				want_arg1:     "local",
+				want_arg2:     "3",
+			},
+			{
+				cmd:           "pop temp 0",
+				want_cmd_type: "C_POP",
+				want_arg1:     "temp",
+				want_arg2:     "0",
 			},
 		}
 		for _, tc := range testCases {
@@ -60,17 +72,17 @@ func Test_Parser(t *testing.T) {
 			}
 
 			p.Advance()
-			got, _ := p.CommandType()
-			assert.Equal(t, tc.want_c_type, got)
-			got, _ = p.Arg1()
-			assert.Equal(t, tc.want_arg1, got)
+			gotCmdType, _ := p.CommandType()
+			assert.Equal(t, tc.want_cmd_type, gotCmdType)
+			gotArg1, _ := p.Arg1()
+			assert.Equal(t, tc.want_arg1, gotArg1)
 
 			if tc.want_err_arg2 {
 				_, err = p.Arg2()
 				assert.Error(t, err)
 			} else {
-				got, _ = p.Arg2()
-				assert.Equal(t, tc.want_arg2, got)
+				gotCmdType, _ = p.Arg2()
+				assert.Equal(t, tc.want_arg2, gotCmdType)
 			}
 		}
 	})
@@ -123,6 +135,11 @@ second line`,
 			{
 				name:     "Cuts comment from end of line",
 				content:  `first line     // some comment`,
+				wantCmds: []string{"first line"},
+			},
+			{
+				name:     "Ignores whitespace in front",
+				content:  `    first     line     // comment`,
 				wantCmds: []string{"first line"},
 			},
 		}
@@ -186,15 +203,6 @@ second line`,
 		assert.Equal(t, "first line", cmd)
 	})
 
-	t.Run("avoid spaces around arguments or commandtypes", func(t *testing.T) {
-		// TODO: make sure that there are no spaces around the return values
-	})
-	t.Run("jump comment lines", func(t *testing.T) {
-		// TODO: make sure that there are no spaces around the return values
-	})
-	t.Run("trim commentary", func(t *testing.T) {
-		// TODO: make sure that there are no spaces around the return values
-	})
 }
 
 func createTestFile(t *testing.T, content string) *os.File {
