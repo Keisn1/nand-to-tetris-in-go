@@ -17,22 +17,105 @@ func Test_CodeWriter(t *testing.T) {
 		}
 
 		testCases := []testCase{
-			// 			{
-			// 				name:    "test eq",
-			// 				cmdType: vmtrans.C_ARITHMETIC, arg1: "eq", arg2: "",
-			// 				want: `//eq
-			// //SP--; D=M
-			// @SP
-			// AM=M-1
-			// D=M
+			{
+				name:    "test gt",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "gt", arg2: "",
+				want: `//gt
+//D=*(SP--)
+@SP
+AM=M-1
+D=M
 
-			// @SP
-			// A=M-1
-			// D=M-D
+// D=*SP-*(SP-1)
+@SP
+A=M-1
+D=M-D
 
-			// M-D;JEQ
-			// `,
-			// 			},
+@IS_GREATER_THAN_COUNTER_0
+D;JGT
+
+// *(SP-1)=0
+@SP
+A=M-1
+M=0
+@AFTER_IS_GREATER_THAN_COUNTER_0
+0;JMP
+
+( IS_GREATER_THAN_COUNTER_0 )
+// *(SP-1)=-1
+@SP
+A=M-1
+M=-1
+
+( AFTER_IS_GREATER_THAN_COUNTER_0 )
+`,
+			},
+			{
+				name:    "test lt",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "lt", arg2: "",
+				want: `//lt
+//D=*(SP--)
+@SP
+AM=M-1
+D=M
+
+// D=*SP-*(SP-1)
+@SP
+A=M-1
+D=M-D
+
+@IS_LOWER_THAN_COUNTER_0
+D;JLT
+
+// *(SP-1)=0
+@SP
+A=M-1
+M=0
+@AFTER_IS_LOWER_THAN_COUNTER_0
+0;JMP
+
+( IS_LOWER_THAN_COUNTER_0 )
+// *(SP-1)=-1
+@SP
+A=M-1
+M=-1
+
+( AFTER_IS_LOWER_THAN_COUNTER_0 )
+`,
+			},
+			{
+				name:    "test eq",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "eq", arg2: "",
+				want: `//eq
+//D=*(SP--)
+@SP
+AM=M-1
+D=M
+
+// D=*SP-*(SP-1)
+@SP
+A=M-1
+D=M-D
+
+@IS_EQUAL_COUNTER_0
+D;JEQ
+
+// *(SP-1)=0
+@SP
+A=M-1
+M=0
+@AFTER_IS_EQUAL_COUNTER_0
+0;JMP
+
+( IS_EQUAL_COUNTER_0 )
+// *(SP-1)=-1
+@SP
+A=M-1
+M=-1
+
+( AFTER_IS_EQUAL_COUNTER_0 )
+`,
+			},
 			{
 				name:    "test or",
 				cmdType: vmtrans.C_ARITHMETIC, arg1: "or", arg2: "",

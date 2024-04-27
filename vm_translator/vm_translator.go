@@ -9,9 +9,10 @@ import (
 )
 
 type CodeWriter struct {
-	filename  string
-	f         *os.File
-	templates map[string]*template.Template
+	filename     string
+	f            *os.File
+	templates    map[string]*template.Template
+	equalCounter int
 }
 
 func getFileName(fp string) string {
@@ -36,12 +37,27 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
 
 	if cmdType == C_ARITHMETIC {
-		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
-			"calculation":        arg1,
-			"calculation_symbol": calculationSymbols[arg1],
-		})
-		cw.f.Write(buf.Bytes())
-		return
+		if arg1 == "eq" || arg1 == "lt" || arg1 == "gt" {
+			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+				"comp":          arg1,
+				"comp_operator": comparisonOperators[arg1],
+				"comp_verbose":  comparisonVerbose[arg1],
+				"counter":       cw.equalCounter,
+			})
+			cw.equalCounter++
+			cw.f.Write(buf.Bytes())
+			return
+
+		} else {
+
+			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+				"calculation":        arg1,
+				"calculation_symbol": calculationSymbols[arg1],
+			})
+			cw.f.Write(buf.Bytes())
+			return
+
+		}
 	}
 
 	if (cmdType == C_PUSH || cmdType == C_POP) && isGeneralSegment(arg1) {

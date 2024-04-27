@@ -69,6 +69,10 @@ var (
 		C_ARITHMETIC + " " + "sub": "calculation.asm",
 		C_ARITHMETIC + " " + "and": "calculation.asm",
 		C_ARITHMETIC + " " + "or":  "calculation.asm",
+
+		C_ARITHMETIC + " " + "eq": "comparison.asm",
+		C_ARITHMETIC + " " + "lt": "comparison.asm",
+		C_ARITHMETIC + " " + "gt": "comparison.asm",
 	}
 )
 
@@ -95,5 +99,15 @@ var (
 		"sub": "-",
 		"and": "&",
 		"or":  "|",
+	}
+	comparisonOperators = map[string]string{
+		"eq": "JEQ",
+		"lt": "JLT",
+		"gt": "JGT",
+	}
+	comparisonVerbose = map[string]string{
+		"eq": "IS_EQUAL",
+		"lt": "IS_LOWER_THAN",
+		"gt": "IS_GREATER_THAN",
 	}
 )
