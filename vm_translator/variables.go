@@ -57,6 +57,9 @@ var (
 		C_PUSH + " " + "temp": "pushTempX.asm",
 		C_POP + " " + "temp":  "popTempX.asm",
 
+		C_PUSH + " " + "static": "pushStaticX.asm",
+		C_POP + " " + "static":  "popStaticX.asm",
+
 		C_PUSH + " " + "constant": "pushConstantX.asm",
 
 		C_ARITHMETIC + " " + "add": "add.asm",

@@ -3,17 +3,31 @@ package vmtrans
 import (
 	"bytes"
 	"os"
+	"path/filepath"
+	"strings"
 	"text/template"
 )
 
 type CodeWriter struct {
+	filename  string
 	f         *os.File
 	templates map[string]*template.Template
 }
 
+func getFileName(fp string) string {
+	filename := filepath.Base(fp)
+	extension := filepath.Ext(filename)
+	return filename[:len(filename)-len(extension)]
+}
+
 func NewCodeWriter(fp string) *CodeWriter {
+	filename := getFileName(fp)
 	file, _ := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	cw := &CodeWriter{f: file, templates: make(map[string]*template.Template)}
+	cw := &CodeWriter{
+		filename:  filename,
+		f:         file,
+		templates: make(map[string]*template.Template),
+	}
 	cw.templates = loadTemplates("asm_codes")
 	return cw
 }
@@ -33,6 +47,15 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 			"segment_register_name": segmentRegisterName[arg1],
 			"segment_register":      segmentRegisters[arg1],
 			"x":                     arg2,
+		})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+
+	if (cmdType == C_PUSH || cmdType == C_POP) && arg1 == "static" {
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"filename": strings.ToUpper(cw.filename),
+			"x":        arg2,
 		})
 		cw.f.Write(buf.Bytes())
 		return

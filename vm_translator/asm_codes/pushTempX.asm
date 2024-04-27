@@ -1,18 +1,16 @@
-//push temp 2
-//*R13=5 + 2
-@2 								// offset
+//push temp {{.x}}
+//D=*(5 + {{.x}})
+@{{.x}}
 D=A
 @5 								// temp base
-D=D+A
-@R13
-M=D
-
-// SP--
-@SP
-AM=M-1
+A=D+A
 D=M
 
-// *R13=*SP
-@R13
+// *SP=D
+@SP
 A=M
 M=D
+
+// *SP++
+@SP
+M=M+1

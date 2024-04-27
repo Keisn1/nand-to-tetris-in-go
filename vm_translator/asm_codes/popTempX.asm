@@ -1,6 +1,6 @@
-//pop temp 2
-//*R13=5 + 2
-@2 								// offset
+//pop temp {{.x}}
+//*R13=5 + {{.x}}
+@{{.x}} 								// offset
 D=A
 @5 								// temp base
 D=D+A

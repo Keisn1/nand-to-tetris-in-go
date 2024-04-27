@@ -9,7 +9,7 @@ import (
 )
 
 func Test_CodeWriter(t *testing.T) {
-	t.Run("Write Arithmetic commands to output file 2", func(t *testing.T) {
+	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
 		type testCase struct {
 			name                string
 			cmdType, arg1, arg2 string
@@ -17,6 +17,37 @@ func Test_CodeWriter(t *testing.T) {
 		}
 
 		testCases := []testCase{
+			{
+				name:    "test push static x",
+				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
+				want: `//push static 2
+// D=TEST.2
+@TEST.2
+D=M
+
+// *SP=D
+@SP
+A=M
+M=D
+
+// *SP++
+@SP
+M=M+1
+`,
+			},
+			{
+				name:    "test pop static x",
+				cmdType: vmtrans.C_POP, arg1: "static", arg2: "2",
+				want: `//pop static 2
+// D=*SP--
+@SP
+AM=M-1
+D=M
+
+@TEST.2
+M=D
+`,
+			},
 			{
 				name:    "test sub",
 				cmdType: vmtrans.C_ARITHMETIC, arg1: "sub", arg2: "",
@@ -42,16 +73,6 @@ D=M
 A=M-1
 M=M+D
 `,
-			},
-			// {
-			// 	name:    "test pop static x",
-			// 	cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
-			// 	want: `//push static 2`,
-			// },
-			{
-				name:    "test push static x",
-				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
-				want: `//push static 2`,
 			},
 			{
 				name:    "test push that x",
@@ -228,6 +249,27 @@ D=M
 @R13
 A=M
 M=D
+`,
+			},
+			{
+				name:    "test push temp x",
+				cmdType: vmtrans.C_PUSH, arg1: "temp", arg2: "2",
+				want: `//push temp 2
+//D=*(5 + 2)
+@2
+D=A
+@5 								// temp base
+A=D+A
+D=M
+
+// *SP=D
+@SP
+A=M
+M=D
+
+// *SP++
+@SP
+M=M+1
 `,
 			},
 			{
