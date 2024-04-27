@@ -37,6 +37,14 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
 
 	if cmdType == C_ARITHMETIC {
+		if arg1 == "neg" || arg1 == "not" {
+			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+				"negation":          arg1,
+				"negation_operator": negationOperators[arg1],
+			})
+			cw.f.Write(buf.Bytes())
+			return
+		}
 		if arg1 == "eq" || arg1 == "lt" || arg1 == "gt" {
 			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 				"comp":          arg1,

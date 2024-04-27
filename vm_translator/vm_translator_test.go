@@ -18,6 +18,24 @@ func Test_CodeWriter(t *testing.T) {
 
 		testCases := []testCase{
 			{
+				name:    "test not",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "not", arg2: "",
+				want: `//not
+@SP
+A=M-1
+M=!M
+`,
+			},
+			{
+				name:    "test neg",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "neg", arg2: "",
+				want: `//neg
+@SP
+A=M-1
+M=-M
+`,
+			},
+			{
 				name:    "test gt",
 				cmdType: vmtrans.C_ARITHMETIC, arg1: "gt", arg2: "",
 				want: `//gt

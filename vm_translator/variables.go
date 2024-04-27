@@ -26,6 +26,7 @@ var (
 		"eq":       C_ARITHMETIC,
 		"get":      C_ARITHMETIC,
 		"lt":       C_ARITHMETIC,
+		"gt":       C_ARITHMETIC,
 		"and":      C_ARITHMETIC,
 		"or":       C_ARITHMETIC,
 		"not":      C_ARITHMETIC,
@@ -73,6 +74,9 @@ var (
 		C_ARITHMETIC + " " + "eq": "comparison.asm",
 		C_ARITHMETIC + " " + "lt": "comparison.asm",
 		C_ARITHMETIC + " " + "gt": "comparison.asm",
+
+		C_ARITHMETIC + " " + "neg": "negation.asm",
+		C_ARITHMETIC + " " + "not": "negation.asm",
 	}
 )
 
@@ -109,5 +113,9 @@ var (
 		"eq": "IS_EQUAL",
 		"lt": "IS_LOWER_THAN",
 		"gt": "IS_GREATER_THAN",
+	}
+	negationOperators = map[string]string{
+		"neg": "-",
+		"not": "!",
 	}
 )

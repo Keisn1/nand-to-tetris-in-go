@@ -20,9 +20,9 @@ func Test_Parser(t *testing.T) {
 
 		testCases := []testCase{
 			{
-				cmd:           "add",
+				cmd:           "gt",
 				want_cmd_type: "C_ARITHMETIC",
-				want_arg1:     "add",
+				want_arg1:     "gt",
 				want_err_arg2: true,
 			},
 			{
