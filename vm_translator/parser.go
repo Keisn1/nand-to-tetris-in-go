@@ -38,7 +38,6 @@ func (p *Parser) Arg2() (string, error) {
 }
 
 func (p *Parser) Arg1() (string, error) {
-
 	cmd, err := p.CurrentCmd()
 	if err != nil {
 		return "", fmt.Errorf("commandType: %w", err)
@@ -62,29 +61,46 @@ func (p *Parser) CommandType() (string, error) {
 }
 
 func (p *Parser) HasMoreCommands() bool {
-	return p.pos < len(p.cmds) && len(p.cmds) != 0
+	if len(p.cmds) == 0 {
+		return false
+	}
+	if p.pos >= len(p.cmds) {
+		return false
+	}
+
+	if isEmptyLine(p.cmds[p.pos]) {
+		p.pos++
+		return p.HasMoreCommands()
+	}
+
+	return true
 }
 
 func (p *Parser) Advance() {
 	if p.pos >= len(p.cmds) {
 		return
 	}
-	p.curCmd = trimSpace(removeRepeatedWhitespaces(cutComment(p.cmds[p.pos])))
+
+	cmd := p.cmds[p.pos]
 	p.pos++
 
-	if isEmptyLine(p.curCmd) {
+	if isEmptyLine(cmd) {
 		p.Advance()
+		return
 	}
-	if isComment(p.curCmd) {
+	if isComment(cmd) {
 		p.Advance()
+		return
 	}
+
+	p.curCmd = cmd
 }
 
 func (p *Parser) CurrentCmd() (string, error) {
 	if p.pos == 0 {
 		return "", fmt.Errorf("currentCmd: %w", ErrNotAdvanced)
 	}
-	return p.curCmd, nil
+	return trimSpace(removeRepeatedWhitespaces(cutComment(p.curCmd))), nil
 }
 
 func trimSpace(l string) string { return strings.TrimSpace(l) }

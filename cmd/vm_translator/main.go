@@ -1,12 +1,20 @@
 package main
 
 import (
+	"flag"
 	vmtrans "hack/vm_translator"
 )
 
 func main() {
-	p, err := vmtrans.NewParser("./vm_translator/test_programs/StackArithmetic/SimpleAdd/SimpleAdd.vm")
-	c := vmtrans.NewCodeWriter("out.asm")
+	var fp string
+	var out string
+
+	flag.StringVar(&fp, "file", "SimpleAdd.vm", "Specify a file")
+	flag.StringVar(&out, "out", "Alice", "Specify an output file")
+	flag.Parse()
+
+	p, err := vmtrans.NewParser(fp)
+	c := vmtrans.NewCodeWriter(out)
 	if err != nil {
 		panic(err)
 	}

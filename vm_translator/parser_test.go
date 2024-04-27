@@ -142,6 +142,13 @@ second line`,
 				content:  `    first     line     // comment`,
 				wantCmds: []string{"first line"},
 			},
+			{
+				name: "Ignore newlines at the end",
+				content: `first line
+
+`,
+				wantCmds: []string{"first line"},
+			},
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
