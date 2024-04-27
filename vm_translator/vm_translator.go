@@ -27,7 +27,7 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 		return
 	}
 
-	if cmdType == C_PUSH && isGeneralSegment(arg1) {
+	if (cmdType == C_PUSH || cmdType == C_POP) && isGeneralSegment(arg1) {
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 			"segment":               arg1,
 			"segment_register_name": segmentRegisterName[arg1],

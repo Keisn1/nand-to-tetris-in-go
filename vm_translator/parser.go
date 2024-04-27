@@ -3,6 +3,7 @@ package vmtrans
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -15,7 +16,10 @@ type Parser struct {
 }
 
 func NewParser(fp string) (*Parser, error) {
-	file, _ := os.ReadFile(fp)
+	file, err := os.ReadFile(fp)
+	if err != nil {
+		log.Fatal(err)
+	}
 	cmds := strings.Split(string(file), "\n")
 	if len(cmds) == 1 && cmds[0] == "" {
 		return &Parser{}, nil

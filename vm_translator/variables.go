@@ -42,12 +42,25 @@ var (
 
 var (
 	templateFileNames = map[string]string{
-		C_PUSH + " " + "local":     "pushGeneralX.asm",
-		C_PUSH + " " + "argument":  "pushGeneralX.asm",
-		C_PUSH + " " + "this":      "pushGeneralX.asm",
-		C_PUSH + " " + "that":      "pushGeneralX.asm",
-		C_PUSH + " " + "constant":  "pushConstantX.asm",
+		C_PUSH + " " + "local": "pushGeneralX.asm",
+		C_POP + " " + "local":  "popGeneralX.asm",
+
+		C_PUSH + " " + "argument": "pushGeneralX.asm",
+		C_POP + " " + "argument":  "popGeneralX.asm",
+
+		C_PUSH + " " + "this": "pushGeneralX.asm",
+		C_POP + " " + "this":  "popGeneralX.asm",
+
+		C_PUSH + " " + "that": "pushGeneralX.asm",
+		C_POP + " " + "that":  "popGeneralX.asm",
+
+		C_PUSH + " " + "temp": "pushTempX.asm",
+		C_POP + " " + "temp":  "popTempX.asm",
+
+		C_PUSH + " " + "constant": "pushConstantX.asm",
+
 		C_ARITHMETIC + " " + "add": "add.asm",
+		C_ARITHMETIC + " " + "sub": "sub.asm",
 	}
 )
 

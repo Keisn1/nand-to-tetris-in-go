@@ -11,6 +11,7 @@ func main() {
 
 	flag.StringVar(&fp, "file", "SimpleAdd.vm", "Specify a file")
 	flag.StringVar(&out, "out", "Alice", "Specify an output file")
+
 	flag.Parse()
 
 	p, err := vmtrans.NewParser(fp)
@@ -18,6 +19,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	for p.HasMoreCommands() {
 		p.Advance()
 		cmdType, _ := p.CommandType()

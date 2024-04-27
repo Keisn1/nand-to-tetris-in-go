@@ -1,4 +1,3 @@
-
 //push constant 7
 //*SP=7
 @7
@@ -31,3 +30,4 @@ D=M
 @SP
 A=M-1
 M=M+D
+

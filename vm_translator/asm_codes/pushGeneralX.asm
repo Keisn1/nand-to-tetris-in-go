@@ -1,18 +1,16 @@
 //push {{.segment}} {{.x}}
-//*R13={{.segment_register_name}} + {{.x}}
+//D=*({{.segment_register_name}} + {{.x}})
 @{{.x}}
 D=A
-@{{.segment_register}}
-D=M+D
-@R13
-M=D
-
-// SP--
-@SP
-AM=M-1
+@{{.segment_register}}								// *{{.segment_register}}={{.segment_register_name}}
+A=M+D
 D=M
 
-// *R13=*SP
-@R13
+// *SP=*({{.segment_register_name}} + {{.x}})
+@SP
 A=M
 M=D
+
+// *SP++
+@SP
+M=M+1
