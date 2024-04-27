@@ -17,6 +17,78 @@ func Test_CodeWriter(t *testing.T) {
 		}
 
 		testCases := []testCase{
+			// 			{
+			// 				name:    "test eq",
+			// 				cmdType: vmtrans.C_ARITHMETIC, arg1: "eq", arg2: "",
+			// 				want: `//eq
+			// //SP--; D=M
+			// @SP
+			// AM=M-1
+			// D=M
+
+			// @SP
+			// A=M-1
+			// D=M-D
+
+			// M-D;JEQ
+			// `,
+			// 			},
+			{
+				name:    "test or",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "or", arg2: "",
+				want: `//or
+//SP--; D=M
+@SP
+AM=M-1
+D=M
+
+@SP
+A=M-1
+M=M|D
+`,
+			},
+			{
+				name:    "test and",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "and", arg2: "",
+				want: `//and
+//SP--; D=M
+@SP
+AM=M-1
+D=M
+
+@SP
+A=M-1
+M=M&D
+`,
+			},
+			{
+				name:    "test sub",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "sub", arg2: "",
+				want: `//sub
+//SP--; D=M
+@SP
+AM=M-1
+D=M
+
+@SP
+A=M-1
+M=M-D
+`,
+			},
+			{
+				name:    "test add",
+				cmdType: vmtrans.C_ARITHMETIC, arg1: "add", arg2: "",
+				want: `//add
+//SP--; D=M
+@SP
+AM=M-1
+D=M
+
+@SP
+A=M-1
+M=M+D
+`,
+			},
 			{
 				name:    "test pop pointer 1",
 				cmdType: vmtrans.C_POP, arg1: "pointer", arg2: "1",
@@ -108,32 +180,6 @@ D=M
 
 @TEST.2
 M=D
-`,
-			},
-			{
-				name:    "test sub",
-				cmdType: vmtrans.C_ARITHMETIC, arg1: "sub", arg2: "",
-				want: `//sub
-//SP--; *R13=*SP
-@SP
-AM=M-1
-D=M
-@SP
-A=M-1
-M=M-D
-`,
-			},
-			{
-				name:    "test add",
-				cmdType: vmtrans.C_ARITHMETIC, arg1: "add", arg2: "",
-				want: `//add
-//SP--; *R13=*SP
-@SP
-AM=M-1
-D=M
-@SP
-A=M-1
-M=M+D
 `,
 			},
 			{

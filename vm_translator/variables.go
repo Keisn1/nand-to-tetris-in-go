@@ -65,8 +65,10 @@ var (
 
 		C_PUSH + " " + "constant": "pushConstantX.asm",
 
-		C_ARITHMETIC + " " + "add": "add.asm",
-		C_ARITHMETIC + " " + "sub": "sub.asm",
+		C_ARITHMETIC + " " + "add": "calculation.asm",
+		C_ARITHMETIC + " " + "sub": "calculation.asm",
+		C_ARITHMETIC + " " + "and": "calculation.asm",
+		C_ARITHMETIC + " " + "or":  "calculation.asm",
 	}
 )
 
@@ -87,5 +89,11 @@ var (
 	pointerToSegmentName = map[string]string{
 		"0": "this",
 		"1": "that",
+	}
+	calculationSymbols = map[string]string{
+		"add": "+",
+		"sub": "-",
+		"and": "&",
+		"or":  "|",
 	}
 )

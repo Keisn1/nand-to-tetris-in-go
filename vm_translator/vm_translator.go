@@ -36,7 +36,10 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
 
 	if cmdType == C_ARITHMETIC {
-		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{})
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"calculation":        arg1,
+			"calculation_symbol": calculationSymbols[arg1],
+		})
 		cw.f.Write(buf.Bytes())
 		return
 	}
