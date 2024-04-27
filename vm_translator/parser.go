@@ -8,8 +8,9 @@ import (
 )
 
 type Parser struct {
-	cmds []string
-	pos  int
+	cmds   []string
+	pos    int
+	curCmd string
 }
 
 func NewParser(fp string) (*Parser, error) {
@@ -63,14 +64,30 @@ func (p *Parser) HasMoreCommands() bool {
 }
 
 func (p *Parser) Advance() {
-	if p.pos < len(p.cmds) {
-		p.pos++
+	if p.pos >= len(p.cmds) {
+		return
+	}
+	p.curCmd = p.cmds[p.pos]
+	p.pos++
+	if isEmptyLine(p.curCmd) {
+		p.Advance()
+	}
+	if isComment(p.curCmd) {
+		p.Advance()
 	}
 }
 
+func isEmptyLine(l string) bool {
+	return len(strings.TrimSpace(l)) == 0
+}
+
+func isComment(l string) bool {
+	return strings.HasPrefix(l, "//")
+}
+
 func (p *Parser) CurrentCmd() (string, error) {
-	if p.pos < 1 {
+	if p.pos == 0 {
 		return "", fmt.Errorf("currentCmd: %w", ErrNotAdvanced)
 	}
-	return p.cmds[p.pos-1], nil
+	return p.curCmd, nil
 }

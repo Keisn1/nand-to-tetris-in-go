@@ -87,24 +87,43 @@ func Test_Parser(t *testing.T) {
 		assert.ErrorAs(t, err, &vmtrans.ErrNotAdvanced)
 	})
 
-	t.Run("Happy path, reading files", func(t *testing.T) {
+	t.Run("Reading lines and put them into commands slice", func(t *testing.T) {
 		type testCase struct {
-			name    string
-			content string
-			cmds    []string
+			name     string
+			content  string
+			wantCmds []string
 		}
 
 		testCases := []testCase{
 			{
-				name:    "one line",
-				content: "first line",
-				cmds:    []string{"first line"},
+				name:     "one line",
+				content:  "first line",
+				wantCmds: []string{"first line"},
 			},
 			{
 				name: "two lines",
 				content: `first line
 second line`,
-				cmds: []string{"first line", "second line"},
+				wantCmds: []string{"first line", "second line"},
+			},
+			{
+				name: "skipping empty line",
+				content: `first line
+
+second line`,
+				wantCmds: []string{"first line", "second line"},
+			},
+			{
+				name: "skipping comment line",
+				content: `first line
+// comment
+second line`,
+				wantCmds: []string{"first line", "second line"},
+			},
+			{
+				name:     "Cuts comment from end of line",
+				content:  `first line     // some comment`,
+				wantCmds: []string{"first line"},
 			},
 		}
 		for _, tc := range testCases {
@@ -123,7 +142,7 @@ second line`,
 					got = append(got, curCmd)
 				}
 
-				assert.Equal(t, tc.cmds, got)
+				assert.Equal(t, tc.wantCmds, got)
 			})
 		}
 	})

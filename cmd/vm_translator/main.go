@@ -17,6 +17,7 @@ func main() {
 		arg2, _ := p.Arg2()
 
 		c.WriteArithmetic(cmdType, arg1, arg2)
+		c.WriteNewline()
 	}
 	c.CloseFile()
 }
