@@ -43,6 +43,16 @@ A=M-1
 M=M+D
 `,
 			},
+			// {
+			// 	name:    "test pop static x",
+			// 	cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
+			// 	want: `//push static 2`,
+			// },
+			{
+				name:    "test push static x",
+				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
+				want: `//push static 2`,
+			},
 			{
 				name:    "test push that x",
 				cmdType: vmtrans.C_PUSH, arg1: "that", arg2: "2",
