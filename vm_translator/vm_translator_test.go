@@ -18,6 +18,68 @@ func Test_CodeWriter(t *testing.T) {
 
 		testCases := []testCase{
 			{
+				name:    "test pop pointer 1",
+				cmdType: vmtrans.C_POP, arg1: "pointer", arg2: "1",
+				want: `//pop pointer 1
+//pop pointer that
+// *SP=THAT
+@SP
+AM=M-1
+D=M
+
+@R4
+M=D
+`,
+			},
+			{
+				name:    "test pop pointer 0",
+				cmdType: vmtrans.C_POP, arg1: "pointer", arg2: "0",
+				want: `//pop pointer 0
+//pop pointer this
+// *SP=THIS
+@SP
+AM=M-1
+D=M
+
+@R3
+M=D
+`,
+			},
+			{
+				name:    "test push pointer 1",
+				cmdType: vmtrans.C_PUSH, arg1: "pointer", arg2: "1",
+				want: `//push pointer 1
+//push pointer that
+// *SP=THAT
+@R4
+D=M
+@SP
+A=M
+M=D
+
+// *SP++
+@SP
+M=M+1
+`,
+			},
+			{
+				name:    "test push pointer 0",
+				cmdType: vmtrans.C_PUSH, arg1: "pointer", arg2: "0",
+				want: `//push pointer 0
+//push pointer this
+// *SP=THIS
+@R3
+D=M
+@SP
+A=M
+M=D
+
+// *SP++
+@SP
+M=M+1
+`,
+			},
+			{
 				name:    "test push static x",
 				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
 				want: `//push static 2

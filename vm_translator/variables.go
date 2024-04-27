@@ -60,6 +60,9 @@ var (
 		C_PUSH + " " + "static": "pushStaticX.asm",
 		C_POP + " " + "static":  "popStaticX.asm",
 
+		C_PUSH + " " + "pointer": "pushPointer.asm",
+		C_POP + " " + "pointer":  "popPointer.asm",
+
 		C_PUSH + " " + "constant": "pushConstantX.asm",
 
 		C_ARITHMETIC + " " + "add": "add.asm",
@@ -79,5 +82,10 @@ var (
 		"argument": "ARG",
 		"this":     "THIS",
 		"that":     "THAT",
+	}
+
+	pointerToSegmentName = map[string]string{
+		"0": "this",
+		"1": "that",
 	}
 )

@@ -61,6 +61,18 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 		return
 	}
 
+	if (cmdType == C_PUSH || cmdType == C_POP) && arg1 == "pointer" {
+		segment := pointerToSegmentName[arg2]
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"arg":                   arg2,
+			"segment":               segment,
+			"segment_register":      segmentRegisters[segment],
+			"segment_register_name": segmentRegisterName[segment],
+		})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+
 	cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{"x": arg2})
 	cw.f.Write(buf.Bytes())
 }
