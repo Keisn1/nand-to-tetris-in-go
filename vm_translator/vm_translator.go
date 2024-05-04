@@ -33,9 +33,44 @@ func NewCodeWriter(fp string) *CodeWriter {
 	return cw
 }
 
+func (cw *CodeWriter) handleArithmetic(cmdType, arg1 string) {
+	var buf bytes.Buffer
+	if arg1 == "neg" || arg1 == "not" {
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"negation":          arg1,
+			"negation_operator": negationOperators[arg1],
+		})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+	if arg1 == "eq" || arg1 == "lt" || arg1 == "gt" {
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"comp":          arg1,
+			"comp_operator": comparisonOperators[arg1],
+			"comp_verbose":  comparisonVerbose[arg1],
+			"counter":       cw.equalCounter,
+		})
+		cw.equalCounter++
+		cw.f.Write(buf.Bytes())
+		return
+	} else {
+		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
+			"calculation":        arg1,
+			"calculation_symbol": calculationSymbols[arg1],
+		})
+		cw.f.Write(buf.Bytes())
+		return
+	}
+}
+
 func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
+	// TODO: refactor to switch, extract functions
 
+	// switch cmdType {
+	// case C_ARITHMETIC:
+	// 	cw.handleArithmetic(cmdType, arg1)
+	// }
 	if cmdType == C_ARITHMETIC {
 		if arg1 == "neg" || arg1 == "not" {
 			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
@@ -55,9 +90,7 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 			cw.equalCounter++
 			cw.f.Write(buf.Bytes())
 			return
-
 		} else {
-
 			cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 				"calculation":        arg1,
 				"calculation_symbol": calculationSymbols[arg1],
@@ -100,6 +133,7 @@ func (cw *CodeWriter) WriteArithmetic(cmdType, arg1, arg2 string) {
 		return
 	}
 
+	// temp is what is left
 	cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{"x": arg2})
 	cw.f.Write(buf.Bytes())
 }

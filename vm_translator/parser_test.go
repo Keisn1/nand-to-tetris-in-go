@@ -20,6 +20,12 @@ func Test_Parser(t *testing.T) {
 
 		testCases := []testCase{
 			{
+				cmd:           "label LOOP_START",
+				want_cmd_type: "C_LABEL",
+				want_arg1:     "LOOP_START",
+				want_err_arg2: true,
+			},
+			{
 				cmd:           "gt",
 				want_cmd_type: "C_ARITHMETIC",
 				want_arg1:     "gt",

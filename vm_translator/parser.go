@@ -29,7 +29,11 @@ func NewParser(fp string) (*Parser, error) {
 
 func (p *Parser) Arg2() (string, error) {
 	if cmdType, _ := p.CommandType(); cmdType == C_ARITHMETIC {
-		return "", errors.New("should not be called with that command type")
+		return "", errors.New("arithmetic cmd does not have arg2")
+	}
+
+	if cmdType, _ := p.CommandType(); cmdType == C_LABEL {
+		return "", errors.New("label cmd does not have arg2")
 	}
 
 	cmd, err := p.CurrentCmd()
@@ -47,7 +51,8 @@ func (p *Parser) Arg1() (string, error) {
 		return "", fmt.Errorf("commandType: %w", err)
 	}
 
-	if cmdType, _ := p.CommandType(); cmdType == C_ARITHMETIC {
+	cmdType, _ := p.CommandType()
+	if cmdType == C_ARITHMETIC {
 		return cmd, nil
 	}
 

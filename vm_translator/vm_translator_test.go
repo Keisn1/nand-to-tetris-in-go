@@ -8,7 +8,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CodeWriter(t *testing.T) {
+// func Test_CodeWriter_Branching(t *testing.T) {
+// 	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
+// 		type testCase struct {
+// 			name                string
+// 			cmdType, arg1, arg2 string
+// 			want                string
+// 		}
+
+// 		filename := "./test.asm"
+// 		testCases := []testCase{
+// 			// {
+// 			// 	name:    "test label command",
+// 			// 	cmdType: vmtrans.C_LABEL, arg1: "LOOP_2", arg2: "",
+// 			// 	want: `( test.LOOP_2 )`,
+// 			// },
+// 			// {
+// 			// 	name:    "test label command",
+// 			// 	cmdType: vmtrans.C_LABEL, arg1: "LOOP_START", arg2: "",
+// 			// 	want: `( test.LOOP_START )`,
+// 			// },
+// 		}
+// 		for _, tc := range testCases {
+// 			t.Run(tc.name, func(t *testing.T) {
+// 				cw := vmtrans.NewCodeWriter(filename)
+// 				cw.WriteArithmetic(tc.cmdType, tc.arg1, tc.arg2)
+
+// 				got := MustReadFile(t, filename)
+// 				assert.Equal(t, tc.want, got)
+// 				os.Remove(filename)
+// 			})
+// 		}
+// 	})
+// }
+
+func Test_CodeWriter_Arithtmetic(t *testing.T) {
 	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
 		type testCase struct {
 			name                string
@@ -190,6 +224,31 @@ A=M-1
 M=M+D
 `,
 			},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				filename := "./test.asm"
+				cw := vmtrans.NewCodeWriter(filename)
+				cw.WriteArithmetic(tc.cmdType, tc.arg1, tc.arg2)
+
+				got := MustReadFile(t, filename)
+				assert.Equal(t, tc.want, got)
+				os.Remove(filename)
+			})
+		}
+	})
+}
+
+func Test_CodeWriter_Segments(t *testing.T) {
+	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
+		type testCase struct {
+			name                string
+			cmdType, arg1, arg2 string
+			want                string
+		}
+
+		testCases := []testCase{
 			{
 				name:    "test pop pointer 1",
 				cmdType: vmtrans.C_POP, arg1: "pointer", arg2: "1",
@@ -532,7 +591,6 @@ M=M+1
 				os.Remove(filename)
 			})
 		}
-
 	})
 }
 
