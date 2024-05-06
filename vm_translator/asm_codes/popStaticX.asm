@@ -4,5 +4,5 @@
 AM=M-1
 D=M
 
-@{{.filename}}.{{.x}}
+@{{.x}}
 M=D

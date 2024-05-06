@@ -13,10 +13,3 @@ func loadTemplates(dir string) map[string]*template.Template {
 	}
 	return templates
 }
-
-func isGeneralSegment(arg1 string) bool {
-	if arg1 == "local" || arg1 == "argument" || arg1 == "this" || arg1 == "that" {
-		return true
-	}
-	return false
-}

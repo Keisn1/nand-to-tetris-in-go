@@ -1,7 +1,6 @@
 package vmtrans
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,9 +9,10 @@ import (
 )
 
 type Parser struct {
-	cmds   []string
-	pos    int
-	curCmd string
+	filename string
+	cmds     []string
+	pos      int
+	curCmd   string
 }
 
 func NewParser(fp string) (*Parser, error) {
@@ -20,20 +20,30 @@ func NewParser(fp string) (*Parser, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	cmds := strings.Split(string(file), "\n")
 	if len(cmds) == 1 && cmds[0] == "" {
 		return &Parser{}, nil
 	}
-	return &Parser{cmds: cmds}, nil
+	return &Parser{filename: getFileName(fp), cmds: cmds}, nil
+}
+
+func (p *Parser) validArg2(cmdType string) bool {
+	return cmdType != C_ARITHMETIC && cmdType != C_LABEL && cmdType != C_IF && cmdType != C_GOTO && cmdType != C_RETURN
+}
+
+func (p *Parser) validArg1(cmdType string) bool {
+	return cmdType != C_RETURN
 }
 
 func (p *Parser) Arg2() (string, error) {
-	if cmdType, _ := p.CommandType(); cmdType == C_ARITHMETIC {
-		return "", errors.New("arithmetic cmd does not have arg2")
+	cmdType, err := p.CommandType()
+	if err != nil {
+		panic(err)
 	}
 
-	if cmdType, _ := p.CommandType(); cmdType == C_LABEL {
-		return "", errors.New("label cmd does not have arg2")
+	if !p.validArg2(cmdType) {
+		return "", fmt.Errorf("cmd %s does doesn't have valid second argument", cmdType)
 	}
 
 	cmd, err := p.CurrentCmd()
@@ -42,6 +52,15 @@ func (p *Parser) Arg2() (string, error) {
 	}
 
 	args := strings.Split(cmd, " ")
+	if cmdType == C_POP || cmdType == C_PUSH {
+		segment, err := p.Arg1()
+		if err != nil {
+			panic(err)
+		}
+		if segment == "static" {
+			return p.filename + "." + args[2], nil
+		}
+	}
 	return args[2], nil
 }
 
@@ -51,12 +70,25 @@ func (p *Parser) Arg1() (string, error) {
 		return "", fmt.Errorf("commandType: %w", err)
 	}
 
-	cmdType, _ := p.CommandType()
+	cmdType, err := p.CommandType()
+	if err != nil {
+		panic(err)
+	}
+
+	if !p.validArg1(cmdType) {
+		return "", fmt.Errorf("cmd %s does doesn't have valid second argument", cmdType)
+	}
+
 	if cmdType == C_ARITHMETIC {
 		return cmd, nil
 	}
 
 	args := strings.Split(cmd, " ")
+
+	if cmdType == C_CALL || cmdType == C_FUNCTION || cmdType == C_GOTO || cmdType == C_IF || cmdType == C_LABEL {
+		return p.filename + "." + args[1], nil
+	}
+
 	return args[1], nil
 }
 

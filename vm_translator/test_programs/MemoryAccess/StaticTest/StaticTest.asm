@@ -34,36 +34,36 @@ M=D
 @SP
 M=M+1
 
-//pop static 8
+//pop static StaticTest.8
 // D=*SP--
 @SP
 AM=M-1
 D=M
 
-@STATICTEST.8
+@StaticTest.8
 M=D
 
-//pop static 3
+//pop static StaticTest.3
 // D=*SP--
 @SP
 AM=M-1
 D=M
 
-@STATICTEST.3
+@StaticTest.3
 M=D
 
-//pop static 1
+//pop static StaticTest.1
 // D=*SP--
 @SP
 AM=M-1
 D=M
 
-@STATICTEST.1
+@StaticTest.1
 M=D
 
-//push static 3
-// D=STATICTEST.3
-@STATICTEST.3
+//push static StaticTest.3
+// D=StaticTest.3
+@StaticTest.3
 D=M
 
 // *SP=D
@@ -75,9 +75,9 @@ M=D
 @SP
 M=M+1
 
-//push static 1
-// D=STATICTEST.1
-@STATICTEST.1
+//push static StaticTest.1
+// D=StaticTest.1
+@StaticTest.1
 D=M
 
 // *SP=D
@@ -90,17 +90,18 @@ M=D
 M=M+1
 
 //sub
-//SP--; *R13=*SP
+//SP--; D=M
 @SP
 AM=M-1
 D=M
+
 @SP
 A=M-1
 M=M-D
 
-//push static 8
-// D=STATICTEST.8
-@STATICTEST.8
+//push static StaticTest.8
+// D=StaticTest.8
+@StaticTest.8
 D=M
 
 // *SP=D
@@ -113,10 +114,11 @@ M=D
 M=M+1
 
 //add
-//SP--; *R13=*SP
+//SP--; D=M
 @SP
 AM=M-1
 D=M
+
 @SP
 A=M-1
 M=M+D

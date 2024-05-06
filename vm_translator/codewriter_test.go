@@ -8,39 +8,242 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// func Test_CodeWriter_Branching(t *testing.T) {
-// 	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
-// 		type testCase struct {
-// 			name                string
-// 			cmdType, arg1, arg2 string
-// 			want                string
-// 		}
+func Test_CodeWriter_Function(t *testing.T) {
+	t.Run("Write function/return/call commands to output file", func(t *testing.T) {
+		type testCase struct {
+			name                string
+			cmdType, arg1, arg2 string
+			filename            string
+			want                string
+		}
 
-// 		filename := "./test.asm"
-// 		testCases := []testCase{
-// 			// {
-// 			// 	name:    "test label command",
-// 			// 	cmdType: vmtrans.C_LABEL, arg1: "LOOP_2", arg2: "",
-// 			// 	want: `( test.LOOP_2 )`,
-// 			// },
-// 			// {
-// 			// 	name:    "test label command",
-// 			// 	cmdType: vmtrans.C_LABEL, arg1: "LOOP_START", arg2: "",
-// 			// 	want: `( test.LOOP_START )`,
-// 			// },
-// 		}
-// 		for _, tc := range testCases {
-// 			t.Run(tc.name, func(t *testing.T) {
-// 				cw := vmtrans.NewCodeWriter(filename)
-// 				cw.WriteArithmetic(tc.cmdType, tc.arg1, tc.arg2)
+		testCases := []testCase{
+			// 			{
+			// 				name:    "call",
+			// 				cmdType: vmtrans.C_CALL, arg1: "Main.fibonacci", arg2: "1",
+			// 				filename: "./test.asm",
+			// 				want: `// call Main.fibonacci 1
 
-// 				got := MustReadFile(t, filename)
-// 				assert.Equal(t, tc.want, got)
-// 				os.Remove(filename)
-// 			})
-// 		}
-// 	})
-// }
+			// // goto Main.fibonacci
+			// @Filename0.fibonacci
+			// 0;JEQ
+			// 			`,
+			// 			},
+			{
+				name:    "return",
+				cmdType: vmtrans.C_RETURN, arg1: "", arg2: "2",
+				want: `// return
+// endframe = LCL
+@1
+D=M
+@endframe
+M=D
+
+// retAddr = *(endframe-5)
+// D=*(endframe-5)
+@5
+A=D-A
+D=M
+
+// retAddr = D
+@retAddr
+M=D
+
+// *ARG=pop()
+// D=*(SP--)
+@SP
+AM=M-1
+D=M
+
+// *ARG=D
+@2
+A=M
+M=D
+
+// SP=ARG+1
+@2
+D=M
+@SP
+M=D+1
+
+// THAT=*(endframe-1)
+@endframe
+AM=M-1
+D=M
+@4
+M=D
+
+// THIS=*(endframe-2)
+@endframe
+AM=M-1
+D=M
+@3
+M=D
+
+// ARG=*(endframe-3)
+@endframe
+AM=M-1
+D=M
+@2
+M=D
+
+// LCL=*(endframe-4)
+@endframe
+AM=M-1
+D=M
+@1
+M=D
+
+// goto retAddr
+@retAddr
+A=M
+0;JEQ
+`,
+			},
+			{
+				name:    "function SimpleFunction.test 0",
+				cmdType: vmtrans.C_FUNCTION, arg1: "SimpleFunction.test", arg2: "0",
+				want: `// function SimpleFunction.test 0
+( SimpleFunction.test )
+`,
+			},
+			{
+				name:    "function AnotherFunction.test 3",
+				cmdType: vmtrans.C_FUNCTION, arg1: "AnotherFunction.test", arg2: "3",
+				want: `// function AnotherFunction.test 3
+( AnotherFunction.test )
+
+// Iteration #0
+// D=0 and *SP=D
+@0
+D=A
+@SP
+A=M
+M=D
+
+//SP++
+@SP
+M=M+1
+
+// Iteration #1
+// D=0 and *SP=D
+@0
+D=A
+@SP
+A=M
+M=D
+
+//SP++
+@SP
+M=M+1
+
+// Iteration #2
+// D=0 and *SP=D
+@0
+D=A
+@SP
+A=M
+M=D
+
+//SP++
+@SP
+M=M+1
+`,
+			},
+			{
+				name:    "function SimpleFunction.test 2",
+				cmdType: vmtrans.C_FUNCTION, arg1: "SimpleFunction.test", arg2: "2",
+				want: `// function SimpleFunction.test 2
+( SimpleFunction.test )
+
+// Iteration #0
+// D=0 and *SP=D
+@0
+D=A
+@SP
+A=M
+M=D
+
+//SP++
+@SP
+M=M+1
+
+// Iteration #1
+// D=0 and *SP=D
+@0
+D=A
+@SP
+A=M
+M=D
+
+//SP++
+@SP
+M=M+1
+`,
+			},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				filename := "./test.asm"
+				cw := vmtrans.NewCodeWriter(filename)
+				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
+
+				got := MustReadFile(t, filename)
+				assert.Equal(t, tc.want, got)
+				os.Remove(filename)
+			})
+		}
+	})
+}
+
+func Test_CodeWriter_Branching(t *testing.T) {
+	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
+		type testCase struct {
+			name                string
+			cmdType, arg1, arg2 string
+			want                string
+		}
+
+		testCases := []testCase{
+			{
+				name:    "goto MAIN_LOOP_START",
+				cmdType: vmtrans.C_GOTO, arg1: "MAIN_LOOP_START", arg2: "",
+				want: `// goto MAIN_LOOP_START
+@MAIN_LOOP_START
+0;JEQ
+`,
+			},
+			{
+				name:    "test if-goto command",
+				cmdType: vmtrans.C_IF, arg1: "LOOP_START", arg2: "",
+				want: `// if-goto LOOP_START
+@SP
+AM=M-1
+D=M
+@LOOP_START
+D;JNE
+`,
+			},
+			{
+				name:    "test label command",
+				cmdType: vmtrans.C_LABEL, arg1: "LOOP_START", arg2: "",
+				want: `( LOOP_START )
+`,
+			},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				filename := "./test.asm"
+				cw := vmtrans.NewCodeWriter(filename)
+				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
+
+				got := MustReadFile(t, filename)
+				assert.Equal(t, tc.want, got)
+				os.Remove(filename)
+			})
+		}
+	})
+}
 
 func Test_CodeWriter_Arithtmetic(t *testing.T) {
 	t.Run("Write Arithmetic commands to output file", func(t *testing.T) {
@@ -230,7 +433,7 @@ M=M+D
 			t.Run(tc.name, func(t *testing.T) {
 				filename := "./test.asm"
 				cw := vmtrans.NewCodeWriter(filename)
-				cw.WriteArithmetic(tc.cmdType, tc.arg1, tc.arg2)
+				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)
 				assert.Equal(t, tc.want, got)
@@ -312,11 +515,11 @@ M=M+1
 `,
 			},
 			{
-				name:    "test push static x",
-				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "2",
-				want: `//push static 2
-// D=TEST.2
-@TEST.2
+				name:    "test push static Test.x",
+				cmdType: vmtrans.C_PUSH, arg1: "static", arg2: "Test.2",
+				want: `//push static Test.2
+// D=Test.2
+@Test.2
 D=M
 
 // *SP=D
@@ -330,15 +533,15 @@ M=M+1
 `,
 			},
 			{
-				name:    "test pop static x",
-				cmdType: vmtrans.C_POP, arg1: "static", arg2: "2",
-				want: `//pop static 2
+				name:    "test pop static Test.x",
+				cmdType: vmtrans.C_POP, arg1: "static", arg2: "Test.2",
+				want: `//pop static Test.2
 // D=*SP--
 @SP
 AM=M-1
 D=M
 
-@TEST.2
+@Test.2
 M=D
 `,
 			},
@@ -584,7 +787,7 @@ M=M+1
 			t.Run(tc.name, func(t *testing.T) {
 				filename := "./test.asm"
 				cw := vmtrans.NewCodeWriter(filename)
-				cw.WriteArithmetic(tc.cmdType, tc.arg1, tc.arg2)
+				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)
 				assert.Equal(t, tc.want, got)

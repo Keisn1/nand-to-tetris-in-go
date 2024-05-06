@@ -1,6 +1,6 @@
 //push static {{.x}}
-// D={{.filename}}.{{.x}}
-@{{.filename}}.{{.x}}
+// D={{.x}}
+@{{.x}}
 D=M
 
 // *SP=D

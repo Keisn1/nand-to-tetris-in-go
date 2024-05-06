@@ -34,7 +34,7 @@ var (
 		"pop":      C_POP,
 		"label":    C_LABEL,
 		"goto":     C_GOTO,
-		"if":       C_IF,
+		"if-goto":  C_IF,
 		"function": C_FUNCTION,
 		"return":   C_RETURN,
 		"call":     C_CALL,
@@ -77,6 +77,12 @@ var (
 
 		C_ARITHMETIC + " " + "neg": "negation.asm",
 		C_ARITHMETIC + " " + "not": "negation.asm",
+
+		C_LABEL:    "label.asm",
+		C_IF:       "ifGoto.asm",
+		C_GOTO:     "goto.asm",
+		C_FUNCTION: "function.asm",
+		C_RETURN:   "return.asm",
 	}
 )
 
@@ -117,5 +123,17 @@ var (
 	negationOperators = map[string]string{
 		"neg": "-",
 		"not": "!",
+	}
+
+	arithmeticType = map[string]string{
+		"eq":  "Comparison",
+		"lt":  "Comparison",
+		"gt":  "Comparison",
+		"neg": "Negation",
+		"not": "Negation",
+		"add": "Calculation",
+		"sub": "Calculation",
+		"and": "Calculation",
+		"or":  "Calculation",
 	}
 )

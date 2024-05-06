@@ -131,10 +131,11 @@ M=D
 M=M+1
 
 //add
-//SP--; *R13=*SP
+//SP--; D=M
 @SP
 AM=M-1
 D=M
+
 @SP
 A=M-1
 M=M+D
@@ -157,10 +158,11 @@ M=D
 M=M+1
 
 //sub
-//SP--; *R13=*SP
+//SP--; D=M
 @SP
 AM=M-1
 D=M
+
 @SP
 A=M-1
 M=M-D
@@ -183,10 +185,11 @@ M=D
 M=M+1
 
 //add
-//SP--; *R13=*SP
+//SP--; D=M
 @SP
 AM=M-1
 D=M
+
 @SP
 A=M-1
 M=M+D
