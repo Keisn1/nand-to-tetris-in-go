@@ -4,7 +4,6 @@
 * Nand to Tetris
 https://www.nand2tetris.org/
 
-
 "Nand to Tetris" is a project-based course that teaches computer science students how to build a modern computer system from first principles.
 
 Participants start by creating basic logic gates using the Nand gate and gradually progress to designing and implementing a fully functional computer system, including a CPU and an operating system.
@@ -27,6 +26,11 @@ In Week 7 and 8 of the "Nand to Tetris" course, students typically focus on impl
 During these weeks, participants learn how to design and build a virtual machine that executes a stack-based language and develop a high-level language compiler that translates a high-level language into the VM's low-level language.
 
 This part of the course delves into the principles of programming languages and compiler construction, providing a comprehensive understanding of software development processes.
+** To come
+
+*** Game written in Hack
+*** Compiler for the Hack Language (in GO)
+*** OS written in Hack
 
 * Implementation
 ** Test driven
