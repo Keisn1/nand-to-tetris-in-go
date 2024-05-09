@@ -85,7 +85,7 @@ func (p *Parser) Arg1() (string, error) {
 
 	args := strings.Split(cmd, " ")
 
-	if cmdType == C_CALL || cmdType == C_FUNCTION || cmdType == C_GOTO || cmdType == C_IF || cmdType == C_LABEL {
+	if cmdType == C_GOTO || cmdType == C_IF || cmdType == C_LABEL {
 		return p.filename + "." + args[1], nil
 	}
 

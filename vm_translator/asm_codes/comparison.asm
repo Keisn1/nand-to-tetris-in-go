@@ -9,20 +9,20 @@ D=M
 A=M-1
 D=M-D
 
-@{{.comp_verbose}}_COUNTER_{{.counter}}
+@{{.comp_verbose}}_COUNTER_{{.comp_counter}}
 D;{{.comp_operator}}
 
 // *(SP-1)=0
 @SP
 A=M-1
 M=0
-@AFTER_{{.comp_verbose}}_COUNTER_{{.counter}}
+@AFTER_{{.comp_verbose}}_COUNTER_{{.comp_counter}}
 0;JMP
 
-( {{.comp_verbose}}_COUNTER_{{.counter}} )
+( {{.comp_verbose}}_COUNTER_{{.comp_counter}} )
 // *(SP-1)=-1
 @SP
 A=M-1
 M=-1
 
-( AFTER_{{.comp_verbose}}_COUNTER_{{.counter}} )
+( AFTER_{{.comp_verbose}}_COUNTER_{{.comp_counter}} )

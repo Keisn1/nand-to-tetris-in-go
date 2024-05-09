@@ -9,32 +9,293 @@ import (
 )
 
 func Test_CodeWriter_Function(t *testing.T) {
+	t.Run("Test boot code", func(t *testing.T) {
+		want := `// SP=256
+@256
+D=A
+@R0
+M=D
+
+// call Sys.init 0
+// push return address
+@Boot$ret.0
+D=A
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push LCL
+@R1
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push ARG
+@R2
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THIS
+@R3
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THAT
+@R4
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// ARG = SP - 5 - 0 (=nArgs)
+@SP
+D=M
+
+@5
+D=D-A
+
+@0 // (= nArgs)
+D=D-A
+
+@R2
+M=D
+
+// LCL = SP
+@SP
+D=M
+@R1
+M=D
+
+// goto Sys.init
+@Sys.init
+0;JEQ
+
+// (returnAddress)
+( Boot$ret.0 )
+`
+		caller := "test.asm"
+		filename := "./out.asm"
+		cw := vmtrans.NewCodeWriter(filename, caller)
+		cw.WriteBootStrap()
+		got := MustReadFile(t, filename)
+		assert.Equal(t, want, got)
+		os.Remove(filename)
+	})
+
 	t.Run("Write function/return/call commands to output file", func(t *testing.T) {
 		type testCase struct {
 			name                string
 			cmdType, arg1, arg2 string
-			filename            string
+			caller              string
 			want                string
 		}
 
 		testCases := []testCase{
-			// 			{
-			// 				name:    "call",
-			// 				cmdType: vmtrans.C_CALL, arg1: "Main.fibonacci", arg2: "1",
-			// 				filename: "./test.asm",
-			// 				want: `// call Main.fibonacci 1
+			{
+				name:    "call",
+				cmdType: vmtrans.C_CALL, arg1: "Foo.recursion", arg2: "4",
+				caller: "test.vm",
+				want: `// call Foo.recursion 4
+// push return address
+@Test$ret.0
+D=A
 
-			// // goto Main.fibonacci
-			// @Filename0.fibonacci
-			// 0;JEQ
-			// 			`,
-			// 			},
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push LCL
+@R1
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push ARG
+@R2
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THIS
+@R3
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THAT
+@R4
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// ARG = SP - 5 - 4 (=nArgs)
+@SP
+D=M
+
+@5
+D=D-A
+
+@4 // (= nArgs)
+D=D-A
+
+@R2
+M=D
+
+// LCL = SP
+@SP
+D=M
+@R1
+M=D
+
+// goto Foo.recursion
+@Foo.recursion
+0;JEQ
+
+// (returnAddress)
+( Test$ret.0 )
+`,
+			},
+			{
+				name:    "call",
+				cmdType: vmtrans.C_CALL, arg1: "Main.fibonacci", arg2: "1",
+				caller: "test.vm",
+				want: `// call Main.fibonacci 1
+// push return address
+@Test$ret.0
+D=A
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push LCL
+@R1
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push ARG
+@R2
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THIS
+@R3
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// push THAT
+@R4
+D=M
+
+@SP
+A=M
+M=D
+
+@SP
+M=M+1
+
+// ARG = SP - 5 - 1 (=nArgs)
+@SP
+D=M
+
+@5
+D=D-A
+
+@1 // (= nArgs)
+D=D-A
+
+@R2
+M=D
+
+// LCL = SP
+@SP
+D=M
+@R1
+M=D
+
+// goto Main.fibonacci
+@Main.fibonacci
+0;JEQ
+
+// (returnAddress)
+( Test$ret.0 )
+`,
+			},
 			{
 				name:    "return",
-				cmdType: vmtrans.C_RETURN, arg1: "", arg2: "2",
+				cmdType: vmtrans.C_RETURN, arg1: "", arg2: "",
 				want: `// return
 // endframe = LCL
-@1
+@R1
 D=M
 @endframe
 M=D
@@ -91,7 +352,7 @@ M=D
 @endframe
 AM=M-1
 D=M
-@1
+@R1
 M=D
 
 // goto retAddr
@@ -184,8 +445,9 @@ M=M+1
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename)
+				caller := tc.caller
+				filename := "./out.asm"
+				cw := vmtrans.NewCodeWriter(filename, caller)
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)
@@ -234,7 +496,7 @@ D;JNE
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename)
+				cw := vmtrans.NewCodeWriter(filename, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)
@@ -432,7 +694,7 @@ M=M+D
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename)
+				cw := vmtrans.NewCodeWriter(filename, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)
@@ -786,7 +1048,7 @@ M=M+1
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename)
+				cw := vmtrans.NewCodeWriter(filename, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
 				got := MustReadFile(t, filename)

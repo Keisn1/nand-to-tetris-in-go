@@ -1,6 +1,6 @@
 // return
 // endframe = LCL
-@1
+@R1
 D=M
 @endframe
 M=D
@@ -57,7 +57,7 @@ M=D
 @endframe
 AM=M-1
 D=M
-@1
+@R1
 M=D
 
 // goto retAddr

@@ -2,8 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	vmtrans "hack/vm_translator"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -16,8 +19,21 @@ func main() {
 
 	os.Remove(out)
 
+	fileInfo, err := os.Stat(fp)
+	if err != nil {
+		log.Fatal("Error getting file info:", err)
+	}
+
+	if fileInfo.IsDir() {
+		translateDir(fp, out)
+	} else {
+		translateFile(fp, out)
+	}
+}
+
+func translateFile(fp, out string) {
 	p, err := vmtrans.NewParser(fp)
-	c := vmtrans.NewCodeWriter(out)
+	c := vmtrans.NewCodeWriter(out, fp)
 	if err != nil {
 		panic(err)
 	}
@@ -32,4 +48,21 @@ func main() {
 		c.WriteNewline()
 	}
 	c.CloseFile()
+
+}
+
+func translateDir(fp, out string) {
+	files, err := filepath.Glob(fp + "/*.vm")
+	if err != nil {
+		fmt.Println("Error matching files:", err)
+		return
+	}
+
+	c := vmtrans.NewCodeWriter(out, fp)
+	c.WriteBootStrap()
+	c.CloseFile()
+
+	for _, file := range files {
+		translateFile(file, out)
+	}
 }

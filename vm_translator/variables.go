@@ -83,6 +83,8 @@ var (
 		C_GOTO:     "goto.asm",
 		C_FUNCTION: "function.asm",
 		C_RETURN:   "return.asm",
+		C_CALL:     "call.asm",
+		"boot":     "boot.asm",
 	}
 )
 

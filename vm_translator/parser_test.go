@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TODO: Cleanup tests with testing.cleanup (Look calhoun email)
+
 func Test_Parser_CmdParsing(t *testing.T) {
 	t.Run("Parsing command types", func(t *testing.T) {
 		type testCase struct {
@@ -24,7 +26,7 @@ func Test_Parser_CmdParsing(t *testing.T) {
 			{
 				cmd:           "call fibonacci 1",
 				want_cmd_type: "C_CALL",
-				want_arg1:     "Main.fibonacci",
+				want_arg1:     "fibonacci",
 				want_arg2:     "1",
 				filename:      "main.asm",
 			},
@@ -38,7 +40,7 @@ func Test_Parser_CmdParsing(t *testing.T) {
 			{
 				cmd:           "function SimpleFunction.test 2",
 				want_cmd_type: "C_FUNCTION",
-				want_arg1:     "Test.SimpleFunction.test",
+				want_arg1:     "SimpleFunction.test",
 				want_arg2:     "2",
 				filename:      "test.asm",
 			},

@@ -11,24 +11,28 @@ import (
 )
 
 type CodeWriter struct {
-	filename     string
-	f            *os.File
-	templates    map[string]*template.Template
-	equalCounter int
+	caller      string //TODO : this needs to be done better
+	f           *os.File
+	templates   map[string]*template.Template
+	compCounter int
+	funcCounter int
 }
 
 func getFileName(fp string) string {
+	if len(fp) == 0 {
+		return fp
+	}
 	filename := filepath.Base(fp)
 	extension := filepath.Ext(filename)
 	filename = filename[:len(filename)-len(extension)]
 	return strings.ToUpper(string(filename[0])) + filename[1:]
 }
 
-func NewCodeWriter(fp string) *CodeWriter {
-	filename := getFileName(fp)
+func NewCodeWriter(fp, caller string) *CodeWriter {
+	caller = getFileName(caller)
 	file, _ := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	cw := &CodeWriter{
-		filename:  filename,
+		caller:    caller,
 		f:         file,
 		templates: make(map[string]*template.Template),
 	}
@@ -36,6 +40,11 @@ func NewCodeWriter(fp string) *CodeWriter {
 	return cw
 }
 
+func (cw *CodeWriter) WriteBootStrap() {
+	var buf bytes.Buffer
+	cw.templates["boot"].Execute(&buf, map[string]interface{}{})
+	cw.f.Write(buf.Bytes())
+}
 func (cw *CodeWriter) Write(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
 
@@ -56,6 +65,8 @@ func (cw *CodeWriter) Write(cmdType, arg1, arg2 string) {
 		cw.handleFunctionCmd(cmdType, arg1, arg2, buf)
 	case C_RETURN:
 		cw.handleReturn(cmdType, buf)
+	case C_CALL:
+		cw.handleCall(cmdType, arg1, arg2, buf)
 	}
 }
 
@@ -89,6 +100,17 @@ func (cw *CodeWriter) handleLabelCmd(cmdType, arg1 string, buf bytes.Buffer) {
 	cw.templates[cmdType].Execute(&buf, map[string]interface{}{
 		"label": arg1,
 	})
+	cw.f.Write(buf.Bytes())
+}
+
+func (cw *CodeWriter) handleCall(cmdType, arg1, arg2 string, buf bytes.Buffer) {
+	cw.templates[cmdType].Execute(&buf, map[string]interface{}{
+		"caller":           cw.caller,
+		"function_name":    arg1,
+		"n_args":           arg2,
+		"function_counter": cw.funcCounter,
+	})
+	cw.funcCounter++
 	cw.f.Write(buf.Bytes())
 }
 
@@ -145,9 +167,9 @@ func (cw *CodeWriter) handleArithmeticCmd(cmdType, arg1 string, buf bytes.Buffer
 			"comp":          arg1,
 			"comp_operator": comparisonOperators[arg1],
 			"comp_verbose":  comparisonVerbose[arg1],
-			"counter":       cw.equalCounter,
+			"comp_counter":  cw.compCounter,
 		})
-		cw.equalCounter++
+		cw.compCounter++
 		cw.f.Write(buf.Bytes())
 		return
 	case "Calculation":
