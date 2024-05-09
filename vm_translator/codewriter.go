@@ -11,8 +11,8 @@ import (
 )
 
 type CodeWriter struct {
-	caller      string //TODO : this needs to be done better
-	f           *os.File
+	src         string
+	out         *os.File
 	templates   map[string]*template.Template
 	compCounter int
 	funcCounter int
@@ -28,15 +28,15 @@ func getFileName(fp string) string {
 	return strings.ToUpper(string(filename[0])) + filename[1:]
 }
 
-func NewCodeWriter(fp, caller string) *CodeWriter {
-	caller = getFileName(caller)
-	file, err := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+func NewCodeWriter(outPath, srcPath string) *CodeWriter {
+	src := getFileName(srcPath)
+	file, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		panic(err)
 	}
 	cw := &CodeWriter{
-		caller:    caller,
-		f:         file,
+		src:       src,
+		out:       file,
 		templates: make(map[string]*template.Template),
 	}
 	cw.templates = loadTemplates("asm_codes")
@@ -71,12 +71,12 @@ func (cw *CodeWriter) Write(cmdType, arg1, arg2 string) {
 func (cw *CodeWriter) WriteBootStrap() {
 	var buf bytes.Buffer
 	cw.templates["boot"].Execute(&buf, map[string]interface{}{})
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleReturn(cmdType string, buf bytes.Buffer) {
 	cw.templates[cmdType].Execute(&buf, map[string]interface{}{})
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleFunctionCmd(cmdType, arg1, arg2 string, buf bytes.Buffer) {
@@ -90,32 +90,32 @@ func (cw *CodeWriter) handleFunctionCmd(cmdType, arg1, arg2 string, buf bytes.Bu
 		"nbrIterations": arg2,
 		"Numbers":       make([]struct{}, n),
 	})
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleGotoCmd(cmdType, arg1 string, buf bytes.Buffer) {
 	cw.templates[cmdType].Execute(&buf, map[string]interface{}{
 		"loopName": arg1,
 	})
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleLabelCmd(cmdType, arg1 string, buf bytes.Buffer) {
 	cw.templates[cmdType].Execute(&buf, map[string]interface{}{
 		"label": arg1,
 	})
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleCall(cmdType, arg1, arg2 string, buf bytes.Buffer) {
 	cw.templates[cmdType].Execute(&buf, map[string]interface{}{
-		"caller":           cw.caller,
+		"caller":           cw.src,
 		"function_name":    arg1,
 		"n_args":           arg2,
 		"function_counter": cw.funcCounter,
 	})
 	cw.funcCounter++
-	cw.f.Write(buf.Bytes())
+	cw.out.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleSegmentCmd(cmdType, arg1, arg2 string, buf bytes.Buffer) {
@@ -124,7 +124,7 @@ func (cw *CodeWriter) handleSegmentCmd(cmdType, arg1, arg2 string, buf bytes.Buf
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 			"x": arg2,
 		})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 	case "pointer":
 		segment := pointerToSegmentName[arg2]
@@ -134,11 +134,11 @@ func (cw *CodeWriter) handleSegmentCmd(cmdType, arg1, arg2 string, buf bytes.Buf
 			"segment_register":      segmentRegisters[segment],
 			"segment_register_name": segmentRegisterName[segment],
 		})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 	case "temp":
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{"x": arg2})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 	default: // "local" "argument" "this" "that"
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 			"segment":               arg1,
@@ -146,7 +146,7 @@ func (cw *CodeWriter) handleSegmentCmd(cmdType, arg1, arg2 string, buf bytes.Buf
 			"segment_register":      segmentRegisters[arg1],
 			"x":                     arg2,
 		})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 	}
 }
@@ -163,7 +163,7 @@ func (cw *CodeWriter) handleArithmeticCmd(cmdType, arg1 string, buf bytes.Buffer
 			"negation":          arg1,
 			"negation_operator": negationOperators[arg1],
 		})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 
 	case "Comparison":
@@ -174,24 +174,24 @@ func (cw *CodeWriter) handleArithmeticCmd(cmdType, arg1 string, buf bytes.Buffer
 			"comp_counter":  cw.compCounter,
 		})
 		cw.compCounter++
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 	case "Calculation":
 		cw.templates[cmdType+" "+arg1].Execute(&buf, map[string]interface{}{
 			"calculation":        arg1,
 			"calculation_symbol": calculationSymbols[arg1],
 		})
-		cw.f.Write(buf.Bytes())
+		cw.out.Write(buf.Bytes())
 		return
 	}
 }
 
 func (cw CodeWriter) WriteNewline() {
-	cw.f.Write([]byte{'\n'})
+	cw.out.Write([]byte{'\n'})
 }
 
 func (cw CodeWriter) CloseFile() {
-	cw.f.Close()
+	cw.out.Close()
 }
 
 func isNegation(cmdType, arg1 string) bool {

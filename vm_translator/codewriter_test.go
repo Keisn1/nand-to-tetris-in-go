@@ -98,20 +98,20 @@ M=D
 // (returnAddress)
 ( Boot$ret.0 )
 `
-		caller := "test.asm"
-		filename := "./out.asm"
-		cw := vmtrans.NewCodeWriter(filename, caller)
+		src := "test.asm"
+		out := "./out.asm"
+		cw := vmtrans.NewCodeWriter(out, src)
 		cw.WriteBootStrap()
-		got := MustReadFile(t, filename)
+		got := MustReadFile(t, out)
 		assert.Equal(t, want, got)
-		os.Remove(filename)
+		os.Remove(out)
 	})
 
 	t.Run("Write function/return/call commands to output file", func(t *testing.T) {
 		type testCase struct {
 			name                string
 			cmdType, arg1, arg2 string
-			caller              string
+			srcPath             string
 			want                string
 		}
 
@@ -119,7 +119,7 @@ M=D
 			{
 				name:    "call",
 				cmdType: vmtrans.C_CALL, arg1: "Foo.recursion", arg2: "4",
-				caller: "test.vm",
+				srcPath: "test.vm",
 				want: `// call Foo.recursion 4
 // push return address
 @Test$ret.0
@@ -206,7 +206,7 @@ M=D
 			{
 				name:    "call",
 				cmdType: vmtrans.C_CALL, arg1: "Main.fibonacci", arg2: "1",
-				caller: "test.vm",
+				srcPath: "test.vm",
 				want: `// call Main.fibonacci 1
 // push return address
 @Test$ret.0
@@ -445,14 +445,14 @@ M=M+1
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				caller := tc.caller
-				filename := "./out.asm"
-				cw := vmtrans.NewCodeWriter(filename, caller)
+				srcPath := tc.srcPath
+				out := "./out.asm"
+				cw := vmtrans.NewCodeWriter(out, srcPath)
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
-				got := MustReadFile(t, filename)
+				got := MustReadFile(t, out)
 				assert.Equal(t, tc.want, got)
-				os.Remove(filename)
+				os.Remove(out)
 			})
 		}
 	})
@@ -495,13 +495,13 @@ D;JNE
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename, "")
+				out := "./out.asm"
+				cw := vmtrans.NewCodeWriter(out, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
-				got := MustReadFile(t, filename)
+				got := MustReadFile(t, out)
 				assert.Equal(t, tc.want, got)
-				os.Remove(filename)
+				os.Remove(out)
 			})
 		}
 	})
@@ -693,13 +693,13 @@ M=M+D
 
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename, "")
+				out := "./out.asm"
+				cw := vmtrans.NewCodeWriter(out, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
-				got := MustReadFile(t, filename)
+				got := MustReadFile(t, out)
 				assert.Equal(t, tc.want, got)
-				os.Remove(filename)
+				os.Remove(out)
 			})
 		}
 	})
@@ -1047,13 +1047,13 @@ M=M+1
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				filename := "./test.asm"
-				cw := vmtrans.NewCodeWriter(filename, "")
+				out := "./out.asm"
+				cw := vmtrans.NewCodeWriter(out, "")
 				cw.Write(tc.cmdType, tc.arg1, tc.arg2)
 
-				got := MustReadFile(t, filename)
+				got := MustReadFile(t, out)
 				assert.Equal(t, tc.want, got)
-				os.Remove(filename)
+				os.Remove(out)
 			})
 		}
 	})
