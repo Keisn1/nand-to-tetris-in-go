@@ -9,11 +9,6 @@ import (
 
 const varOffset = 16
 
-func main() {
-	target := os.Args[1]
-	Assemble(target)
-}
-
 func Assemble(target string) {
 	parser, _ := NewAssembler(target)
 	code := parser.Assemble()
@@ -162,52 +157,3 @@ func removeComments(line string) string {
 	line = strings.Split(line, "//")[0]
 	return line
 }
-
-// func (ci CInstruction) jumpCode(cmd string) string {
-// 	if strings.Contains(cmd, ";") {
-// 		jumpPart := strings.Split(cmd, ";")[1]
-// 		return jumpTable[jumpPart]
-// 	}
-// 	return "000"
-// }
-
-// func (ci CInstruction) destCode(cmd string) string {
-// 	if strings.Contains(cmd, "=") {
-// 		destPart := strings.Split(cmd, "=")[0]
-// 		return destTable[destPart]
-// 	}
-// 	return "000"
-// }
-
-// func (ci CInstruction) compCode(cmd string) string {
-// 	if strings.Contains(cmd, "=") {
-// 		compString := strings.Split(cmd, "=")[1]
-// 		if strings.Contains(compString, "M") {
-// 			a := "1"
-// 			return a + compTableWithM[compString]
-// 		} else {
-// 			a := "0"
-// 			return a + compTableWithOutM[compString]
-// 		}
-// 	}
-// 	compString := strings.Split(cmd, ";")[0]
-// 	if strings.Contains(compString, "M") {
-// 		a := "1"
-// 		return a + compTableWithM[compString]
-// 	} else {
-// 		a := "0"
-// 		return a + compTableWithOutM[compString]
-// 	}
-// }
-
-// type AInstruction struct {
-// 	instruction string
-// 	address     string
-// }
-
-// type CInstruction struct {
-// 	instruction string
-// 	comp        string
-// 	dest        string
-// 	jump        string
-// }

@@ -40,9 +40,18 @@ func translateFile(fp, out string) {
 
 	for p.HasMoreCommands() {
 		p.Advance()
-		cmdType, _ := p.CommandType()
-		arg1, _ := p.Arg1()
-		arg2, _ := p.Arg2()
+		cmdType, err := p.CommandType()
+		if err != nil {
+			panic(err)
+		}
+		arg1, err := p.Arg1()
+		if err != nil {
+			panic(err)
+		}
+		arg2, err := p.Arg2()
+		if err != nil {
+			panic(err)
+		}
 
 		c.Write(cmdType, arg1, arg2)
 		c.WriteNewline()

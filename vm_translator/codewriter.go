@@ -30,7 +30,10 @@ func getFileName(fp string) string {
 
 func NewCodeWriter(fp, caller string) *CodeWriter {
 	caller = getFileName(caller)
-	file, _ := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	file, err := os.OpenFile(fp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
 	cw := &CodeWriter{
 		caller:    caller,
 		f:         file,
@@ -40,11 +43,6 @@ func NewCodeWriter(fp, caller string) *CodeWriter {
 	return cw
 }
 
-func (cw *CodeWriter) WriteBootStrap() {
-	var buf bytes.Buffer
-	cw.templates["boot"].Execute(&buf, map[string]interface{}{})
-	cw.f.Write(buf.Bytes())
-}
 func (cw *CodeWriter) Write(cmdType, arg1, arg2 string) {
 	var buf bytes.Buffer
 
@@ -68,6 +66,12 @@ func (cw *CodeWriter) Write(cmdType, arg1, arg2 string) {
 	case C_CALL:
 		cw.handleCall(cmdType, arg1, arg2, buf)
 	}
+}
+
+func (cw *CodeWriter) WriteBootStrap() {
+	var buf bytes.Buffer
+	cw.templates["boot"].Execute(&buf, map[string]interface{}{})
+	cw.f.Write(buf.Bytes())
 }
 
 func (cw *CodeWriter) handleReturn(cmdType string, buf bytes.Buffer) {
