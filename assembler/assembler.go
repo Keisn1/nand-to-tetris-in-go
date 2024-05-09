@@ -65,6 +65,8 @@ func (asm *Assembler) FirstPass() {
 }
 
 func (asm *Assembler) Assemble() string {
+	asm.FirstPass()
+
 	var hackCmds []string
 	for _, cmd := range asm.cmds {
 		hackCmds = append(hackCmds, asm.TranslateCmd(cmd))

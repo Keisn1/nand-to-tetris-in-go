@@ -19,7 +19,6 @@ func main() {
 		panic(err)
 	}
 
-	asm.FirstPass()
 	got := asm.Assemble()
 
 	os.Remove(out)
