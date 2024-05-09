@@ -10,3 +10,34 @@ https://www.nand2tetris.org/
 Participants start by creating basic logic gates using the Nand gate and gradually progress to designing and implementing a fully functional computer system, including a CPU and an operating system.
 
 The course covers various topics in computer architecture, software development, and digital design, providing a hands-on understanding of how computers work from the ground up.
+
+** Assembler
+
+In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language into binary machine code.
+
+This assembler plays a significant role in the overall process of creating a functioning computer system from scratch.
+
+I have been diligently working on implementing the assembler in Go (Golang), a versatile programming language known for its efficiency and simplicity.
+This task has allowed me to deepen my understanding of low-level programming concepts and strengthen my skills in software development.
+
+** Virtual Machine Translator
+
+In Week 7 and 8 of the "Nand to Tetris" course, students typically focus on implementing a virtual machine (VM) and a compiler.
+
+During these weeks, participants learn how to design and build a virtual machine that executes a stack-based language and develop a high-level language compiler that translates a high-level language into the VM's low-level language.
+
+This part of the course delves into the principles of programming languages and compiler construction, providing a comprehensive understanding of software development processes.
+
+* Implementation
+** Test driven
+I adopted a Test-Driven Development (TDD) approach to refine my implementation.
+
+Given the nature of the course and the supplied material it was easy defining comprehensive test cases to validate desired behavior first (translation into MachineCode/assembly; correctly parsing command lines ).
+Before moving on to the next case, I ensured that each unit of code functioned correctly
+This iterative testing methodology helped me identify and address potential issues early in the development cycle and allowed me to apply refactoring at each step.
+** Assembler
+
+
+** VM Translator
+For the VM translator, I employed Go's text/template package to streamline the generation of code templates, making the translation process smoother and more structured.
+In implementing the VM translator in Go, I leveraged the power of the language by making use of the "embed" feature, which allowed me to efficiently include the necessary VM translation files directly into the executable binary.
