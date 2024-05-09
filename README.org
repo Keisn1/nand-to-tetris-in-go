@@ -33,11 +33,14 @@ This part of the course delves into the principles of programming languages and 
 I adopted a Test-Driven Development (TDD) approach to refine my implementation.
 
 Given the nature of the course and the supplied material it was easy defining comprehensive test cases to validate desired behavior first (translation into MachineCode/assembly; correctly parsing command lines ).
+
 Before moving on to the next case, I ensured that each unit of code functioned correctly
 This iterative testing methodology helped me identify and address potential issues early in the development cycle and allowed me to apply refactoring at each step.
 ** Assembler
 
 
 ** VM Translator
+
 For the VM translator, I employed Go's text/template package to streamline the generation of code templates, making the translation process smoother and more structured.
+
 In implementing the VM translator in Go, I leveraged the power of the language by making use of the "embed" feature, which allowed me to efficiently include the necessary VM translation files directly into the executable binary.
