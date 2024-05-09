@@ -8,8 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO: Cleanup tests with testing.cleanup (Look calhoun email)
-
 func Test_Parser_CmdParsing(t *testing.T) {
 	t.Run("Parsing command types", func(t *testing.T) {
 		type testCase struct {

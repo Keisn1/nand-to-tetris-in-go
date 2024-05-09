@@ -202,19 +202,3 @@ func TestAssembler(t *testing.T) {
 		}
 	})
 }
-
-// func TestSaveResult(t *testing.T) {
-// 	targetFP := "add/Add.asm"
-// 	p := main.NewParser(targetFP)
-// 	text := "text"
-// 	want := "add/Add.hack"
-// 	main.FileSave(text, targetFP)
-
-// 	assert.FileExists(t, want)
-// 	got, err := os.ReadFile(want)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, text, string(got))
-
-// 	os.Remove(want)
-// 	assert.NoFileExists(t, want)
-// }
