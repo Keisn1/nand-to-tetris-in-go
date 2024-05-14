@@ -4,6 +4,9 @@ call Memory.alloc 1
 pop pointer 0
 call Grid.new 0
 pop this 0
+push this 0
+call Grid.init 1
+pop temp 0
 push pointer 0
 return
 function GameOfLife.dispose 0
@@ -36,13 +39,13 @@ if-goto WHILE_END1
 call Keyboard.keyPressed 0
 pop local 0
 push this 0
-call Grid.update 1
-pop temp 0
-push constant 1000
-call Sys.wait 1
+call Grid.draw 1
 pop temp 0
 push this 0
-call Grid.draw 1
+call Grid.update 1
+pop temp 0
+push constant 150
+call Sys.wait 1
 pop temp 0
 goto WHILE_EXP1
 label WHILE_END1

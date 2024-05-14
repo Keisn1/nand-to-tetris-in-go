@@ -11,9 +11,9 @@ class Grid {
         var int i, j;
         var Array line;
 
-        let nbrRows = 16;
-        let nbrCols = 32;
-        let sizeSquare = 16;
+        let nbrRows = 32;
+        let nbrCols = 64;
+        let sizeSquare = 8;
 
         let grid = Array.new(nbrRows);
         let suc1 = Array.new(nbrCols);
@@ -31,20 +31,54 @@ class Grid {
             let i = i+1;
         }
 
-        do set(1, 1);
-        do set(2, 1);
-        do set(3, 1);
-        do set(2, 2);
 
-        do set(1, 7);
-        do set(2, 7);
-        do set(3, 7);
-        do set(3, 8);
-        do set(3, 9);
+        // // spaceship
+        // do set(4, 4);
+        // do set(4, 5);
+        // do set(4, 6);
+        // do set(3, 6);
+        // do set(2, 5);
 
-        do draw();
+        // toad
+        // do set(2, 2);
+        // do set(2, 3);
+        // do set(2, 4);
+        // do set(3, 1);
+        // do set(3, 2);
+        // do set(3, 3);
+
+        // blinker
+        // do set(2, 5);
+        // do set(3, 5);
+        // do set(4, 5);
+
+        // top left
+        // do set(0, (nbrCols-1));
+        // do set(0, 0);
+        // do set(0, 1);
+
+        // topRight
+        // do set(0, (nbrCols-1));
+        // do set(1, (nbrCols-1));
+        // do set((nbrRows-1), (nbrCols-1));
+
+        // bottom right
+        // do set(0, (nbrCols-1));
+        // do set((nbrRows-2), (nbrCols-1));
+        // do set((nbrRows-1), (nbrCols-1));
+
+        // bottom left
+        // do set((nbrRows-1), (nbrCols-1));
+        // do set((nbrRows-1), 0);
+        // do set((nbrRows-1), 1);
+
+        // do set((nbrRows-1), (nbrCols-1));
+        // do set((nbrRows-1), 0);
+        // do set((nbrRows-1), 1);
+
         return this;
     }
+
 
     method void set(int i, int j) {
         var Array line;
@@ -52,6 +86,26 @@ class Grid {
         let line[j] = 1;
         return;
     }
+
+
+    // method void drawWithList() {
+    //     var List current;
+    //     var int i, j;
+
+    //     do Screen.clearScreen();
+
+    //     while (~(current = null)) {
+    //         let i = current.getData();
+    //         let current = current.getNext();
+    //         let j = current.getData();
+    //         let current = current.getNext();
+    //         do drawRectangle(i, j);
+    //     }
+
+    //     do points.dispose();
+    //     let points = null;
+    //     return;
+    // }
 
     method void draw() {
         var int i, j;
@@ -74,17 +128,17 @@ class Grid {
         return;
     }
 
-
     method int sumColOfThree(int i, int j) {
+        // adds together 3 vertical values from grid[i-1] to grid[i+1] in a given column j
         var Array line;
         var int sum;
         let sum = 0;
 
-        if ( j = nbrRows) {
+        if ( j = nbrCols) {
             let j = 0;
         }
-        if ( j = -1) {          // not being hit by other code in this project, but makes it coherent
-            let j = nbrRows-1;
+        if ( j = (-1)) {          // not being hit by other code in this project, but makes it coherent
+            let j = nbrCols-1;
         }
 
         if ( i = 0 ) {
@@ -94,17 +148,17 @@ class Grid {
         }
         let sum = sum + line[j];
 
+        // add element of the middle
         let line = grid[i];
         let sum = sum + line[j];
 
-        if ( i = nbrCols-1 ) {
+        if ( i = (nbrRows-1) ) {
             let line = grid[0];
         } else {
             let line = grid[i+1];
         }
         let sum = sum + line[j];
 
-        do line.dispose();
         return sum;
     }
 
@@ -116,9 +170,8 @@ class Grid {
         var int sumRight;
         var int j;
 
-
         let j = 0;
-        let sumLeft = sumColOfThree(i, nbrRows-1);
+        let sumLeft = sumColOfThree(i, nbrCols-1);
         let sumMiddle = sumColOfThree(i, 0);
         let sum = sumLeft + sumMiddle;
         while ( j < nbrCols ) {
@@ -136,9 +189,9 @@ class Grid {
                 }
             }
 
+            let sum = sum - sumLeft;
             let sumLeft = sumMiddle;
             let sumMiddle = sumRight;
-            let sum = sum - sumLeft;
             let j = j+1;
         }
 
@@ -149,7 +202,7 @@ class Grid {
         var int j;
         let j = 0;
         while (j < nbrCols) {
-            let dest[j] = src[j]
+            let dest[j] = src[j];
             let j = j+1;
         }
         return;
@@ -157,9 +210,11 @@ class Grid {
 
     method void update() {
         var int i;
-        var Array line;
+        var Array first;
+        let first = Array.new(nbrCols);
 
         do computeSuccessor(0); // saving to set first row in grid after while loop
+        do copy(suc2, first);
 
         let i = 1;
         while ( i < nbrRows ) {
@@ -168,11 +223,13 @@ class Grid {
             if (i > 1) {
                 do copy(suc1, grid[i-1]);
             }
-            let suc1 = suc2;
+            do copy(suc2, suc1);
             let i = i+1;
-            do printRow(grid[1]);
         }
-        let grid[nbrRows-1]=suc1;
+        do copy(suc1, grid[nbrRows-1]);
+        do copy(first, grid[0]);
+
+        do first.dispose();
         return;
     }
 
@@ -234,11 +291,323 @@ class Grid {
         return;
     }
 
-
-
     /** Disposes this square. */
     method void dispose() {
         do Memory.deAlloc(this);
+        return;
+    }
+
+    // method void addPointToList(int i, int j) {
+    //     let points = List.new(j,points);
+    //     let points = List.new(i,points);
+    //     return;
+    // }
+
+    method void init() {
+        do set(0, 7);
+        do set(0, 8);
+        do set(0, 12);
+        do set(0, 14);
+        do set(0, 15);
+        do set(0, 20);
+        do set(0, 22);
+        do set(0, 29);
+        do set(0, 37);
+        do set(0, 38);
+        do set(0, 50);
+        do set(0, 52);
+        do set(0, 54);
+        do set(0, 57);
+        do set(0, 63);
+        do set(1, 1);
+        do set(1, 20);
+        do set(1, 21);
+        do set(1, 33);
+        do set(1, 35);
+        do set(1, 38);
+        do set(1, 39);
+        do set(1, 45);
+        do set(1, 50);
+        do set(1, 60);
+        do set(2, 15);
+        do set(2, 28);
+        do set(2, 30);
+        do set(2, 31);
+        do set(2, 34);
+        do set(2, 35);
+        do set(2, 43);
+        do set(2, 47);
+        do set(2, 62);
+        do set(3, 6);
+        do set(3, 7);
+        do set(3, 12);
+        do set(3, 20);
+        do set(3, 26);
+        do set(3, 41);
+        do set(3, 47);
+        do set(4, 25);
+        do set(4, 28);
+        do set(4, 38);
+        do set(4, 50);
+        do set(4, 60);
+        do set(4, 63);
+        do set(5, 6);
+        do set(5, 10);
+        do set(5, 13);
+        do set(5, 19);
+        do set(5, 21);
+        do set(5, 25);
+        do set(5, 27);
+        do set(5, 31);
+        do set(5, 32);
+        do set(5, 35);
+        do set(5, 43);
+        do set(5, 47);
+        do set(6, 2);
+        do set(6, 3);
+        do set(6, 5);
+        do set(6, 13);
+        do set(6, 24);
+        do set(6, 29);
+        do set(6, 47);
+        do set(7, 0);
+        do set(7, 7);
+        do set(7, 27);
+        do set(7, 36);
+        do set(7, 47);
+        do set(7, 53);
+        do set(7, 61);
+        do set(8, 2);
+        do set(8, 9);
+        do set(8, 19);
+        do set(8, 30);
+        do set(8, 36);
+        do set(8, 39);
+        do set(8, 41);
+        do set(8, 42);
+        do set(8, 46);
+        do set(8, 50);
+        do set(8, 51);
+        do set(8, 58);
+        do set(8, 61);
+        do set(9, 2);
+        do set(9, 5);
+        do set(9, 7);
+        do set(9, 11);
+        do set(9, 21);
+        do set(9, 24);
+        do set(9, 42);
+        do set(9, 45);
+        do set(9, 46);
+        do set(9, 47);
+        do set(9, 48);
+        do set(10, 2);
+        do set(10, 8);
+        do set(10, 16);
+        do set(10, 17);
+        do set(10, 21);
+        do set(10, 29);
+        do set(10, 31);
+        do set(10, 41);
+        do set(10, 53);
+        do set(10, 54);
+        do set(10, 56);
+        do set(11, 24);
+        do set(11, 27);
+        do set(11, 35);
+        do set(12, 1);
+        do set(12, 8);
+        do set(12, 12);
+        do set(12, 30);
+        do set(12, 33);
+        do set(12, 34);
+        do set(12, 45);
+        do set(12, 48);
+        do set(12, 49);
+        do set(12, 58);
+        do set(12, 60);
+        do set(12, 62);
+        do set(12, 63);
+        do set(13, 18);
+        do set(13, 22);
+        do set(13, 31);
+        do set(13, 32);
+        do set(13, 38);
+        do set(13, 42);
+        do set(13, 46);
+        do set(13, 49);
+        do set(13, 51);
+        do set(13, 58);
+        do set(14, 0);
+        do set(14, 1);
+        do set(14, 9);
+        do set(14, 14);
+        do set(14, 18);
+        do set(14, 25);
+        do set(14, 38);
+        do set(14, 41);
+        do set(14, 48);
+        do set(14, 51);
+        do set(14, 53);
+        do set(14, 55);
+        do set(14, 57);
+        do set(14, 58);
+        do set(15, 1);
+        do set(15, 7);
+        do set(15, 22);
+        do set(15, 27);
+        do set(15, 32);
+        do set(15, 47);
+        do set(15, 49);
+        do set(16, 1);
+        do set(16, 7);
+        do set(16, 27);
+        do set(16, 42);
+        do set(16, 49);
+        do set(16, 50);
+        do set(16, 52);
+        do set(16, 58);
+        do set(17, 13);
+        do set(17, 16);
+        do set(17, 18);
+        do set(17, 22);
+        do set(17, 53);
+        do set(17, 60);
+        do set(17, 61);
+        do set(18, 4);
+        do set(18, 17);
+        do set(18, 21);
+        do set(18, 37);
+        do set(18, 42);
+        do set(18, 55);
+        do set(18, 58);
+        do set(18, 62);
+        do set(19, 13);
+        do set(19, 22);
+        do set(19, 43);
+        do set(19, 53);
+        do set(19, 56);
+        do set(19, 57);
+        do set(19, 59);
+        do set(19, 62);
+        do set(20, 1);
+        do set(20, 3);
+        do set(20, 11);
+        do set(20, 14);
+        do set(20, 16);
+        do set(20, 33);
+        do set(20, 58);
+        do set(20, 61);
+        do set(21, 17);
+        do set(21, 19);
+        do set(21, 24);
+        do set(21, 35);
+        do set(21, 38);
+        do set(21, 41);
+        do set(21, 43);
+        do set(21, 63);
+        do set(22, 10);
+        do set(22, 19);
+        do set(22, 23);
+        do set(22, 26);
+        do set(22, 38);
+        do set(22, 42);
+        do set(22, 43);
+        do set(22, 44);
+        do set(22, 45);
+        do set(22, 60);
+        do set(22, 63);
+        do set(23, 8);
+        do set(23, 16);
+        do set(23, 25);
+        do set(23, 31);
+        do set(23, 43);
+        do set(23, 44);
+        do set(23, 51);
+        do set(23, 54);
+        do set(23, 58);
+        do set(23, 62);
+        do set(24, 10);
+        do set(24, 15);
+        do set(24, 20);
+        do set(24, 21);
+        do set(24, 32);
+        do set(24, 33);
+        do set(24, 41);
+        do set(24, 42);
+        do set(24, 52);
+        do set(24, 55);
+        do set(24, 56);
+        do set(24, 58);
+        do set(25, 9);
+        do set(25, 11);
+        do set(25, 12);
+        do set(25, 14);
+        do set(25, 22);
+        do set(25, 27);
+        do set(25, 28);
+        do set(25, 30);
+        do set(25, 33);
+        do set(25, 36);
+        do set(25, 38);
+        do set(25, 47);
+        do set(25, 51);
+        do set(26, 11);
+        do set(26, 19);
+        do set(26, 36);
+        do set(26, 40);
+        do set(26, 42);
+        do set(26, 53);
+        do set(26, 55);
+        do set(26, 59);
+        do set(27, 3);
+        do set(27, 10);
+        do set(27, 15);
+        do set(27, 16);
+        do set(27, 19);
+        do set(27, 31);
+        do set(27, 52);
+        do set(28, 0);
+        do set(28, 4);
+        do set(28, 5);
+        do set(28, 23);
+        do set(28, 38);
+        do set(28, 50);
+        do set(28, 52);
+        do set(28, 57);
+        do set(28, 58);
+        do set(29, 2);
+        do set(29, 5);
+        do set(29, 6);
+        do set(29, 9);
+        do set(29, 14);
+        do set(29, 18);
+        do set(29, 29);
+        do set(29, 36);
+        do set(29, 38);
+        do set(29, 44);
+        do set(29, 52);
+        do set(30, 5);
+        do set(30, 10);
+        do set(30, 11);
+        do set(30, 14);
+        do set(30, 17);
+        do set(30, 18);
+        do set(30, 27);
+        do set(30, 30);
+        do set(30, 38);
+        do set(30, 39);
+        do set(30, 46);
+        do set(30, 52);
+        do set(31, 20);
+        do set(31, 22);
+        do set(31, 32);
+        do set(31, 38);
+        do set(31, 40);
+        do set(31, 43);
+        do set(31, 44);
+        do set(31, 52);
+        do set(31, 61);
         return;
     }
 }

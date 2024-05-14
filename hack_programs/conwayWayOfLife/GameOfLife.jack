@@ -9,13 +9,12 @@
  * the square's size. The 'q' key is used to quit the game.
  */
 
-
-
 class GameOfLife {
     field Grid grid;
 
     constructor GameOfLife new() {
         let grid = Grid.new();
+        do grid.init();
         return this;
     }
 
@@ -35,9 +34,10 @@ class GameOfLife {
         while (~exit) {
             while (key=0) {
                 let key = Keyboard.keyPressed();
-                do grid.update();
-                do Sys.wait(1000);
                 do grid.draw();
+                do grid.update();
+                do Sys.wait(150);
+
             }
 
             if (key = 81)  {
