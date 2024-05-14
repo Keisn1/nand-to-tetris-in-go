@@ -4,6 +4,8 @@ class Grid {
     field Array grid;
     field int nbrRows, nbrCols; // screen location of the square's top-left corner
     field int sizeSquare;
+    field Array suc1;
+    field Array suc2;
 
     constructor Grid new() {
         var int i, j;
@@ -14,6 +16,8 @@ class Grid {
         let sizeSquare = 16;
 
         let grid = Array.new(nbrRows);
+        let suc1 = Array.new(nbrCols);
+        let suc2 = Array.new(nbrCols);
 
         let i = 0;
         while (i < nbrRows) {
@@ -27,9 +31,21 @@ class Grid {
             let i = i+1;
         }
 
-        do line.dispose();
+        do set(1, 1);
+        do set(2, 1);
+        do set(3, 1);
+        do set(2, 2);
+
         return this;
     }
+
+    method void set(int i, int j) {
+        var Array line;
+        let line = grid[i];
+        let line[j] = 1;
+        return;
+    }
+
 
     method int sumColOfThree(int i, int j) {
         var Array line;
@@ -64,7 +80,7 @@ class Grid {
         return sum;
     }
 
-    method void computeSuccessor(int i, Array suc) {
+    method void computeSuccessor(int i) {
         var Array tmp;
         var int sum;
         var int sumLeft;
@@ -82,14 +98,13 @@ class Grid {
             let sum = sum + sumRight;
 
             if ( sum = 3 ) {
-                let suc[j] = 1;
+                let suc2[j] = 1;
             } else {
                 if ( sum = 4 ) {
                     let tmp = grid[i];
-                    let suc[j] = tmp[j];
-                    let suc[j] = 0;
+                    let suc2[j] = tmp[j];
                 } else {
-                    let suc[j] = 0;
+                    let suc2[j] = 0;
                 }
             }
             let sumLeft = sumMiddle;
@@ -103,23 +118,15 @@ class Grid {
 
     method void update() {
         var int i;
+
         var Array first;
-        var Array suc1;
-        var Array suc2;
-        do Output.printString("here");
-
         let first = Array.new(nbrCols);
-        let suc1 = Array.new(nbrCols);
-        let suc2 = Array.new(nbrCols);
 
-        // do computeSuccessor(0); // saving to set first row in grid after while loop
-        do computeSuccessor(0, first); // saving to set first row in grid after while loop
-
-        // let first = suc2;
+        do computeSuccessor(0); // saving to set first row in grid after while loop
 
         let i = 1;
         while ( i < nbrRows ) {
-            do computeSuccessor(i, suc2);
+            do computeSuccessor(i);
             if (i > 1) {
                 let grid[i-1] = suc1;
             }
@@ -131,9 +138,6 @@ class Grid {
         let grid[nbrRows-1]=suc1;
         let grid[0]=first;
 
-        do first.dispose();
-        do suc1.dispose();
-        do suc2.dispose();
         return;
     }
 
