@@ -1,0 +1,55 @@
+/**
+ * Implements the Conways Game of Life.
+ * This simple game allows the user to move a black square around
+ * the screen, and change the square's size during the movement.
+ * When the game starts, a square of 30 by 30 pixels is shown at the
+ * top-left corner of the screen. The user controls the square as follows.
+ * The 4 arrow keys are used to move the square up, down, left, and right.
+ * The 'z' and 'x' keys are used, respectively, to decrement and increment
+ * the square's size. The 'q' key is used to quit the game.
+ */
+
+
+
+class GameOfLife {
+    field Grid grid;
+
+    constructor GameOfLife new() {
+        let grid = Grid.new();
+        return this;
+    }
+
+    /** Disposes this game. */
+    method void dispose() {
+        do grid.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void run() {
+        var char key;  // the key currently pressed by the user
+
+        var boolean exit;
+        let exit = false;
+
+        while (~exit) {
+            while (key=0) {
+                let key = Keyboard.keyPressed();
+                do grid.update();
+                // do grid.draw();
+            }
+
+            if (key = 81)  {
+                let exit = true;     // q key
+                do Screen.clearScreen();
+                do Output.printString("Goodbye");
+                do Output.println();
+            }
+
+            while (~(key = 0)) {
+                let key = Keyboard.keyPressed();
+            }
+        }
+        return;
+    }
+}

@@ -1,0 +1,11 @@
+/** Conways Game of life in Hack. */
+class Main {
+    function void main() {
+        /* Prints some text using the standard library. */
+        var GameOfLife game;
+        let game = GameOfLife.new();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}
