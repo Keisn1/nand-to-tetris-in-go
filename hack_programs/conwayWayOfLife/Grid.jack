@@ -27,6 +27,7 @@ class Grid {
             let i = i+1;
         }
 
+        do line.dispose();
         return this;
     }
 
@@ -35,44 +36,42 @@ class Grid {
         var int sum;
         let sum = 0;
 
-        // if ( j = nbrRows) {
-        //     let j = 0;
-        // }
-        // if ( j = -1) {          // not being hit by other code in this project, but makes it coherent
-        //     let j = nbrRows-1;
-        // }
+        if ( j = nbrRows) {
+            let j = 0;
+        }
+        if ( j = -1) {          // not being hit by other code in this project, but makes it coherent
+            let j = nbrRows-1;
+        }
 
-        // if ( i = 0 ) {
-        //     let line = grid[nbrRows-1];
-        // } else {
-        //     let line = grid[i-1];
-        // }
-        // let sum = sum + line[j];
+        if ( i = 0 ) {
+            let line = grid[nbrRows-1];
+        } else {
+            let line = grid[i-1];
+        }
+        let sum = sum + line[j];
 
-        // let line = grid[i];
-        // let sum = sum + line[j];
+        let line = grid[i];
+        let sum = sum + line[j];
 
-        // if ( i = nbrCols-1 ) {
-        //     let line = grid[0];
-        // } else {
-        //     let line = grid[i+1];
-        // }
-        // let sum = sum + line[j];
+        if ( i = nbrCols-1 ) {
+            let line = grid[0];
+        } else {
+            let line = grid[i+1];
+        }
+        let sum = sum + line[j];
 
-        // do line.dispose();
+        do line.dispose();
         return sum;
     }
 
-    method Array computeSuccessor(int i) {
-        var Array suc;
-        // var Array tmp;
+    method void computeSuccessor(int i, Array suc) {
+        var Array tmp;
         var int sum;
         var int sumLeft;
         var int sumMiddle;
         var int sumRight;
         var int j;
 
-        let suc = Array.new(nbrCols);
 
         let j = 0;
         let sumLeft = sumColOfThree(i, nbrRows-1);
@@ -82,13 +81,12 @@ class Grid {
             let sumRight = sumColOfThree(i, j+1);
             let sum = sum + sumRight;
 
-            // check if it's three or whatever
             if ( sum = 3 ) {
                 let suc[j] = 1;
             } else {
                 if ( sum = 4 ) {
-                    // let tmp = grid[i];
-                    // let suc[j] = tmp[j];
+                    let tmp = grid[i];
+                    let suc[j] = tmp[j];
                     let suc[j] = 0;
                 } else {
                     let suc[j] = 0;
@@ -100,8 +98,7 @@ class Grid {
             let j = j+1;
         }
 
-        // do tmp.dispose();
-        return suc;
+        return;
     }
 
     method void update() {
@@ -109,27 +106,34 @@ class Grid {
         var Array first;
         var Array suc1;
         var Array suc2;
+        do Output.printString("here");
+
+        let first = Array.new(nbrCols);
+        let suc1 = Array.new(nbrCols);
+        let suc2 = Array.new(nbrCols);
 
         // do computeSuccessor(0); // saving to set first row in grid after while loop
-        let first = computeSuccessor(0); // saving to set first row in grid after while loop
-        do first.dispose();
+        do computeSuccessor(0, first); // saving to set first row in grid after while loop
+
         // let first = suc2;
 
-        // let i = 1;
-        // while ( i < nbrRows ) {
-        //     let suc2 = computeSuccessor(i);
-        //     if (i > 1) {
-        //         let grid[i-1] = suc1;
-        //     }
-        //     let suc1 = suc2;
-        //     let i = i+1;
-        // }
-        // let grid[nbrRows-1]=suc1;
-        // let grid[0]=first;
+        let i = 1;
+        while ( i < nbrRows ) {
+            do computeSuccessor(i, suc2);
+            if (i > 1) {
+                let grid[i-1] = suc1;
+            }
+            let suc1 = suc2;
+            do suc2.dispose();
+            let i = i+1;
+        }
 
-        // do first.dispose();
-        // do suc1.dispose();
-        // do suc2.dispose();
+        let grid[nbrRows-1]=suc1;
+        let grid[0]=first;
+
+        do first.dispose();
+        do suc1.dispose();
+        do suc2.dispose();
         return;
     }
 
