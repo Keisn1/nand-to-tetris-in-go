@@ -36,7 +36,8 @@ class GameOfLife {
             while (key=0) {
                 let key = Keyboard.keyPressed();
                 do grid.update();
-                // do grid.draw();
+                do Sys.wait(1000);
+                do grid.draw();
             }
 
             if (key = 81)  {

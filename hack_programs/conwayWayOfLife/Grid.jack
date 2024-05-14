@@ -36,6 +36,13 @@ class Grid {
         do set(3, 1);
         do set(2, 2);
 
+        do set(1, 7);
+        do set(2, 7);
+        do set(3, 7);
+        do set(3, 8);
+        do set(3, 9);
+
+        do draw();
         return this;
     }
 
@@ -43,6 +50,27 @@ class Grid {
         var Array line;
         let line = grid[i];
         let line[j] = 1;
+        return;
+    }
+
+    method void draw() {
+        var int i, j;
+        var Array line;
+
+        do Screen.clearScreen();
+
+        let i =0;
+        while ( i < nbrRows ) {
+            let line = grid[i];
+            let j =0;
+            while ( j < nbrCols ) {
+                if ( line[j] = 1 ) {
+                    do drawRectangle(i, j);
+                }
+                let j = j+1;
+            }
+            let i = i+1;
+        }
         return;
     }
 
@@ -107,6 +135,7 @@ class Grid {
                     let suc2[j] = 0;
                 }
             }
+
             let sumLeft = sumMiddle;
             let sumMiddle = sumRight;
             let sum = sum - sumLeft;
@@ -116,28 +145,77 @@ class Grid {
         return;
     }
 
+    method void copy(Array src, Array dest) {
+        var int j;
+        let j = 0;
+        while (j < nbrCols) {
+            let dest[j] = src[j]
+            let j = j+1;
+        }
+        return;
+    }
+
     method void update() {
         var int i;
-
-        var Array first;
-        let first = Array.new(nbrCols);
+        var Array line;
 
         do computeSuccessor(0); // saving to set first row in grid after while loop
 
         let i = 1;
         while ( i < nbrRows ) {
             do computeSuccessor(i);
+
             if (i > 1) {
-                let grid[i-1] = suc1;
+                do copy(suc1, grid[i-1]);
             }
             let suc1 = suc2;
-            do suc2.dispose();
             let i = i+1;
+            do printRow(grid[1]);
+        }
+        let grid[nbrRows-1]=suc1;
+        return;
+    }
+
+    method void printRow(Array row) {
+        var int j;
+        let j = 0;
+        while (j < nbrCols) {
+            do Output.printInt(row[j]);
+            let j = j+1;
         }
 
-        let grid[nbrRows-1]=suc1;
-        let grid[0]=first;
+        do Output.println();
+        return;
+    }
 
+    method void printSuc2() {
+        var int j;
+        let j = 0;
+        while (j < nbrCols) {
+            do Output.printInt(suc2[j]);
+            let j = j+1;
+        }
+
+        do Output.println();
+        return;
+    }
+
+    method void printGrid() {
+        var int i, j;
+        var Array line;
+
+        let i =0;
+        while ( i < nbrRows ) {
+            let line = grid[i];
+            let j =0;
+            while ( j < nbrCols ) {
+                do Output.printInt(line[j]);
+                let j = j+1;
+            }
+            do Output.println();
+            let i = i+1;
+        }
+        do Output.println();
         return;
     }
 
@@ -155,6 +233,8 @@ class Grid {
 
         return;
     }
+
+
 
     /** Disposes this square. */
     method void dispose() {
