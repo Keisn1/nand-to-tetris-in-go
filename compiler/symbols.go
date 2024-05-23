@@ -1,15 +1,47 @@
 package compiler
 
-type Symbol string
-
 const (
-	LBRACE Symbol = "{"
-	RBRACE Symbol = "}"
+	LBRACE    = '{'
+	RBRACE    = '}'
+	LPAREN    = '('
+	RPAREN    = ')'
+	LBRAC     = '['
+	RBRAC     = ']'
+	POINT     = '.'
+	KOMMA     = ','
+	SEMICOLON = ';'
+	PLUS      = '+'
+	MINUS     = '-'
+	STAR      = '*'
+	SLASH     = '/'
+	AND       = '&'
+	PIPE      = '|'
+	LT        = '<'
+	GT        = '>'
+	EQUAL     = '='
+	TILDE     = '~'
 )
 
 var (
-	symbols = map[Symbol]struct{}{
-		LBRACE: {},
-		RBRACE: {},
+	allSymbols = map[byte]struct{}{
+		LBRACE:    {},
+		RBRACE:    {},
+		LPAREN:    {},
+		RPAREN:    {},
+		LBRAC:     {},
+		RBRAC:     {},
+		POINT:     {},
+		KOMMA:     {},
+		SEMICOLON: {},
+		PLUS:      {},
+		MINUS:     {},
+		STAR:      {},
+		SLASH:     {},
+		AND:       {},
+		PIPE:      {},
+		LT:        {},
+		GT:        {},
+		EQUAL:     {},
+		TILDE:     {},
 	}
 )
