@@ -5,8 +5,8 @@ const (
 	RBRACE    = '}'
 	LPAREN    = '('
 	RPAREN    = ')'
-	LBRAC     = '['
-	RBRAC     = ']'
+	LSQUARE   = '['
+	RSQUARE   = ']'
 	POINT     = '.'
 	KOMMA     = ','
 	SEMICOLON = ';'
@@ -28,8 +28,8 @@ var (
 		RBRACE:    {},
 		LPAREN:    {},
 		RPAREN:    {},
-		LBRAC:     {},
-		RBRAC:     {},
+		LSQUARE:   {},
+		RSQUARE:   {},
 		POINT:     {},
 		KOMMA:     {},
 		SEMICOLON: {},

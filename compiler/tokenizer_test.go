@@ -1,6 +1,8 @@
 package compiler_test
 
 import (
+	"os"
+	"regexp"
 	"testing"
 
 	"hack/compiler"
@@ -25,6 +27,7 @@ func Test_tokenizer(t *testing.T) {
 	})
 
 	t.Run("Identifying symbols", func(t *testing.T) {
+		// TODO: Check for error, not finding symbols
 		t.Run("single symbols", func(t *testing.T) {
 			type testCase struct {
 				input         string
@@ -32,8 +35,8 @@ func Test_tokenizer(t *testing.T) {
 				wantTokenType compiler.TokenType
 			}
 			testCases := []testCase{
-				{input: "{", wantSymbol: '{', wantTokenType: compiler.SYMBOL},
-				{input: "}", wantSymbol: '}', wantTokenType: compiler.SYMBOL},
+				{input: "{", wantSymbol: compiler.LBRACE, wantTokenType: compiler.SYMBOL},
+				{input: "}", wantSymbol: compiler.RBRACE, wantTokenType: compiler.SYMBOL},
 			}
 			for _, tc := range testCases {
 				tknzr := compiler.NewTokenizer(tc.input)
@@ -57,7 +60,8 @@ func Test_tokenizer(t *testing.T) {
 		t.Run("multiple symbols", func(t *testing.T) {
 			input := `   {}
   [] (
-	)-  +~`
+	)-  +~ }
+}`
 			tknzr := compiler.NewTokenizer(input)
 
 			type testCase struct {
@@ -74,6 +78,8 @@ func Test_tokenizer(t *testing.T) {
 				{wantSymbol: '-', wantTokenType: compiler.SYMBOL},
 				{wantSymbol: '+', wantTokenType: compiler.SYMBOL},
 				{wantSymbol: '~', wantTokenType: compiler.SYMBOL},
+				{wantSymbol: '}', wantTokenType: compiler.SYMBOL},
+				{wantSymbol: '}', wantTokenType: compiler.SYMBOL},
 			}
 			for _, tc := range testCases {
 				err := tknzr.Advance()
@@ -148,25 +154,58 @@ func Test_tokenizer(t *testing.T) {
 	})
 
 	t.Run("Identifying Keywords", func(t *testing.T) {
-		type testCase struct {
-			name          string
-			input         string
-			wantKeyword   compiler.Keyword
-			wantTokenType compiler.TokenType
-		}
-		testCases := []testCase{
-			{name: "check class is keyword", input: "class", wantKeyword: compiler.CLASS, wantTokenType: compiler.KEYWORD},
-			{name: "check method is keyword", input: "method", wantKeyword: compiler.METHOD, wantTokenType: compiler.KEYWORD},
-			{name: "check function is keyword", input: "function", wantKeyword: compiler.FUNCTION, wantTokenType: compiler.KEYWORD},
-			{name: "check static is keyword", input: "static", wantKeyword: compiler.STATIC, wantTokenType: compiler.KEYWORD},
-		}
-		for _, tc := range testCases {
-			tknzr := compiler.NewTokenizer(tc.input)
+		t.Run("Single keywords", func(t *testing.T) {
 
-			tt := tknzr.TokenType()
-			assert.Equal(t, compiler.TokenType(""), tt)
+			type testCase struct {
+				name          string
+				input         string
+				wantKeyword   compiler.Keyword
+				wantTokenType compiler.TokenType
+			}
+			testCases := []testCase{
+				{name: "check class is keyword", input: "class", wantKeyword: compiler.CLASS, wantTokenType: compiler.KEYWORD},
+				{name: "check method is keyword", input: "method", wantKeyword: compiler.METHOD, wantTokenType: compiler.KEYWORD},
+				{name: "check function is keyword", input: "function", wantKeyword: compiler.FUNCTION, wantTokenType: compiler.KEYWORD},
+				{name: "check static is keyword", input: "static", wantKeyword: compiler.STATIC, wantTokenType: compiler.KEYWORD},
+			}
+			for _, tc := range testCases {
+				tknzr := compiler.NewTokenizer(tc.input)
 
-			for tknzr.HasMoreTokens() {
+				tt := tknzr.TokenType()
+				assert.Equal(t, compiler.TokenType(""), tt)
+
+				for tknzr.HasMoreTokens() {
+					err := tknzr.Advance()
+					assert.NoError(t, err)
+
+					gotTokenType := tknzr.TokenType()
+					assert.Equal(t, tc.wantTokenType, gotTokenType)
+
+					gotToken := tknzr.Keyword()
+					assert.Equal(t, tc.wantKeyword, gotToken)
+				}
+			}
+		})
+
+		t.Run("Multiple keywords", func(t *testing.T) {
+			input := `  class
+	method
+function 		static
+`
+			tknzr := compiler.NewTokenizer(input)
+
+			type testCase struct {
+				wantKeyword   compiler.Keyword
+				wantTokenType compiler.TokenType
+			}
+			testCases := []testCase{
+				{wantKeyword: compiler.CLASS, wantTokenType: compiler.KEYWORD},
+				{wantKeyword: compiler.METHOD, wantTokenType: compiler.KEYWORD},
+				{wantKeyword: compiler.FUNCTION, wantTokenType: compiler.KEYWORD},
+				{wantKeyword: compiler.STATIC, wantTokenType: compiler.KEYWORD},
+			}
+
+			for _, tc := range testCases {
 				err := tknzr.Advance()
 				assert.NoError(t, err)
 
@@ -176,7 +215,8 @@ func Test_tokenizer(t *testing.T) {
 				gotToken := tknzr.Keyword()
 				assert.Equal(t, tc.wantKeyword, gotToken)
 			}
-		}
+
+		})
 	})
 
 	t.Run("Identifying Identifiers", func(t *testing.T) {
@@ -188,6 +228,7 @@ func Test_tokenizer(t *testing.T) {
 				wantTokenType  compiler.TokenType
 			}
 			testCases := []testCase{
+				{name: "check Main is identifier", input: "Main", wantIdentifier: "Main", wantTokenType: compiler.IDENTIFIER},
 				{name: "check foo is identifier", input: "foo", wantIdentifier: "foo", wantTokenType: compiler.IDENTIFIER},
 				{name: "check bar is identifier", input: "bar", wantIdentifier: "bar", wantTokenType: compiler.IDENTIFIER},
 			}
@@ -222,9 +263,9 @@ constant
 				wantTokenType  compiler.TokenType
 			}
 			testCases := []testCase{
-				{wantIdentifier: "first string constant", wantTokenType: compiler.IDENTIFIER},
-				{wantIdentifier: "second string constant", wantTokenType: compiler.IDENTIFIER},
-				{wantIdentifier: "third string constant", wantTokenType: compiler.IDENTIFIER},
+				{wantIdentifier: "first", wantTokenType: compiler.IDENTIFIER},
+				{wantIdentifier: "string", wantTokenType: compiler.IDENTIFIER},
+				{wantIdentifier: "constant", wantTokenType: compiler.IDENTIFIER},
 			}
 
 			for _, tc := range testCases {
@@ -302,5 +343,197 @@ constant`, wantTokenType: compiler.STRING_CONST},
 				assert.Equal(t, tc.wantStringVal, gotToken)
 			}
 		})
+
+		t.Run("Multiple string constants", func(t *testing.T) {
+			input := `  "first string constant"
+	"second string constant"
+		"third string constant"
+		"fourth string
+constant"
+  `
+			tknzr := compiler.NewTokenizer(input)
+
+			type testCase struct {
+				wantStringVal string
+				wantTokenType compiler.TokenType
+			}
+			testCases := []testCase{
+				{wantStringVal: "first string constant", wantTokenType: compiler.STRING_CONST},
+				{wantStringVal: "second string constant", wantTokenType: compiler.STRING_CONST},
+				{wantStringVal: "third string constant", wantTokenType: compiler.STRING_CONST},
+				{wantStringVal: `fourth string
+constant`, wantTokenType: compiler.STRING_CONST},
+			}
+
+			for _, tc := range testCases {
+				err := tknzr.Advance()
+				assert.NoError(t, err)
+
+				gotTokenType := tknzr.TokenType()
+				assert.Equal(t, tc.wantTokenType, gotTokenType)
+
+				gotToken := tknzr.StringVal()
+				assert.Equal(t, tc.wantStringVal, gotToken)
+			}
+		})
+	})
+}
+
+func Test_tokenizerFullPrograms(t *testing.T) {
+	t.Run("Test 1", func(t *testing.T) {
+		input := `
+class Main {
+    function void main() {
+        var Array a;
+        var int length;
+        var int i, sum;
+
+
+		let sum = 1;
+
+		let length = Keyboard.readInt("HOW MANY NUMBERS? ");
+
+		return;
+    }
+}
+`
+		tknzr := compiler.NewTokenizer(input)
+		type testCase struct {
+			wantTokenType  compiler.TokenType
+			wantKeyword    compiler.Keyword
+			wantSymbol     rune
+			wantIdentifier string
+			wantStringVal  string
+			wantIntVal     int
+		}
+		testCases := []testCase{
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.CLASS},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "Main"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.LBRACE},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.FUNCTION},
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.VOID},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "main"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.LPAREN},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.RPAREN},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.LBRACE},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.VAR},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "Array"},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "a"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.VAR},
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.INT},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "length"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.VAR},
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.INT},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "i"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.KOMMA},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "sum"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.LET},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "sum"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.EQUAL},
+			{wantTokenType: compiler.INT_CONST, wantIntVal: 1},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.LET},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "length"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.EQUAL},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "Keyboard"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.POINT},
+			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "readInt"},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.LPAREN},
+			{wantTokenType: compiler.STRING_CONST, wantStringVal: "HOW MANY NUMBERS? "},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.RPAREN},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.KEYWORD, wantKeyword: compiler.RETURN},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.SEMICOLON},
+
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.RBRACE},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.RBRACE},
+		}
+
+		for _, tc := range testCases {
+			err := tknzr.Advance()
+			assert.NoError(t, err)
+
+			gotTokenType := tknzr.TokenType()
+			assert.Equal(t, tc.wantTokenType, gotTokenType)
+
+			switch gotTokenType {
+			case compiler.KEYWORD:
+				gotKeyword := tknzr.Keyword()
+				assert.Equal(t, tc.wantKeyword, gotKeyword)
+			case compiler.SYMBOL:
+				gotSymbol := tknzr.Symbol()
+				assert.Equal(t, tc.wantSymbol, gotSymbol)
+			case compiler.IDENTIFIER:
+				gotIdent := tknzr.Identifier()
+				assert.Equal(t, tc.wantIdentifier, gotIdent)
+			case compiler.INT_CONST:
+				gotIntVal := tknzr.IntVal()
+				assert.Equal(t, tc.wantIntVal, gotIntVal)
+			case compiler.STRING_CONST:
+				gotStrVal := tknzr.StringVal()
+				assert.Equal(t, tc.wantStringVal, gotStrVal)
+			default:
+				t.Fatalf("default case, no tokenType hit")
+			}
+		}
+	})
+}
+func Test_tokenizerFullPrograms1(t *testing.T) {
+	t.Run("Test output to xml (file without comments)", func(t *testing.T) {
+		fp := "test_programs/ArrayTest/Main_wo_comments.jack"
+		input, err := os.ReadFile(fp)
+		assert.NoError(t, err, "error reading file")
+
+		tknzr := compiler.NewTokenizer(string(input))
+
+		out := "MainT_test.xml"
+		tknzr.OutputXML(out)
+
+		gotByte, err := os.ReadFile(out)
+		assert.NoError(t, err, "error reading file")
+
+		wantFP := "test_programs/ArrayTest/MainT.xml"
+		wantByte, err := os.ReadFile(wantFP)
+		assert.NoError(t, err, "error reading file")
+
+		regex := regexp.MustCompile(`\s+`)
+		got := regex.ReplaceAllString(string(gotByte), "")
+		want := regex.ReplaceAllString(string(wantByte), "")
+		assert.Equal(t, want, got)
+		os.Remove(out)
+	})
+
+	t.Run("Test output to xml (file with comments)", func(t *testing.T) {
+		fp := "test_programs/ArrayTest/Main.jack"
+		input, err := os.ReadFile(fp)
+		assert.NoError(t, err, "error reading file")
+
+		tknzr := compiler.NewTokenizer(string(input))
+
+		out := "MainT_test.xml"
+		tknzr.OutputXML(out)
+
+		gotByte, err := os.ReadFile(out)
+		assert.NoError(t, err, "error reading file")
+
+		wantFP := "test_programs/ArrayTest/MainT.xml"
+		wantByte, err := os.ReadFile(wantFP)
+		assert.NoError(t, err, "error reading file")
+
+		regex := regexp.MustCompile(`\s+`)
+		got := regex.ReplaceAllString(string(gotByte), "")
+		want := regex.ReplaceAllString(string(wantByte), "")
+		assert.Equal(t, want, got)
+		os.Remove(out)
 	})
 }

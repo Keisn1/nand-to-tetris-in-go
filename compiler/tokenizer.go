@@ -3,6 +3,8 @@ package compiler
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -56,15 +58,24 @@ func (t *Tokenizer) Advance() error {
 			t.readChar()
 		}
 
+		if !t.eof() {
+			t.readBack()
+		}
+
 		tokenS := t.input[t.currentPos:t.readPos]
 		t.curToken = NewToken(removeWhiteSpaces(tokenS), INT_CONST)
 
 	case t.isLetterOrUnderScore():
-		for t.isWordCharacter() && !t.eof() {
+		for t.isWordCharacter() && !t.isWhiteSpace() && !t.eof() {
 			t.readChar()
 		}
 
-		tokenS := strings.ToLower(t.input[t.currentPos:t.readPos])
+		if !t.eof() {
+			t.readBack()
+		}
+
+		tokenS := t.input[t.currentPos:t.readPos]
+		tokenS = removeWhiteSpaces(tokenS)
 		if _, ok := keywords[tokenS]; ok {
 			t.curToken = NewToken(tokenS, KEYWORD)
 		} else {
@@ -85,13 +96,75 @@ func (t *Tokenizer) Advance() error {
 	return nil
 }
 
+func (t *Tokenizer) OutputXML(out string) {
+	file, err := os.Create(out)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	file.Write([]byte("<tokens>\n"))
+	for t.HasMoreTokens() {
+		t.Advance()
+
+		gotTokenType := t.TokenType()
+
+		switch gotTokenType {
+		case KEYWORD:
+			gotKeyword := t.Keyword()
+			file.Write([]byte("<keyword>"))
+			file.Write([]byte(gotKeyword))
+			file.Write([]byte("</keyword>\n"))
+		case SYMBOL:
+			gotSymbol := t.Symbol()
+			file.Write([]byte("<symbol>"))
+			switch gotSymbol {
+			case GT:
+				file.Write([]byte("&gt;"))
+			case LT:
+				file.Write([]byte("&lt;"))
+			case AND:
+				file.Write([]byte("&amp;"))
+			default:
+				file.Write([]byte(string(gotSymbol)))
+			}
+			file.Write([]byte("</symbol>\n"))
+
+		case IDENTIFIER:
+			gotIdent := t.Identifier()
+			file.Write([]byte("<identifier>"))
+			file.Write([]byte(gotIdent))
+			file.Write([]byte("</identifier>\n"))
+		case INT_CONST:
+			gotIntVal := t.IntVal()
+			file.Write([]byte("<integerConstant>"))
+			fmt.Fprint(file, gotIntVal)
+			file.Write([]byte("</integerConstant>\n"))
+		case STRING_CONST:
+			gotStrVal := t.StringVal()
+			file.Write([]byte("<stringConstant>"))
+			file.Write([]byte(gotStrVal))
+			file.Write([]byte("</stringConstant>\n"))
+		}
+	}
+	file.Write([]byte("</tokens>"))
+}
+
+func (t *Tokenizer) readBack() {
+	t.readPos--
+	t.ch = t.input[t.readPos-1]
+}
+
 func (t Tokenizer) isWhiteSpace() bool {
 	validRegex := regexp.MustCompile(`\s`)
 	return validRegex.MatchString(string(t.ch))
 }
 
 func (t Tokenizer) HasMoreTokens() bool {
-	return t.readPos < len(t.input)
+	if t.readPos >= len(t.input) {
+		return false
+	}
+	return len(strings.TrimSpace(t.input[t.readPos:])) > 0
 }
 
 func (t Tokenizer) TokenType() TokenType {
@@ -99,12 +172,28 @@ func (t Tokenizer) TokenType() TokenType {
 }
 
 func (t *Tokenizer) readCharNonWhiteSpace() {
-	t.readChar()
+	if !t.eof() {
+		t.readChar()
+	}
 	t.jumpWhiteSpace()
+	if t.ch == '/' {
+		if t.readPos < len(t.input) {
+			if t.input[t.readPos] == '/' || t.input[t.readPos] == '*' {
+				t.jumpComment()
+			}
+		}
+	}
+}
+
+func (t *Tokenizer) jumpComment() {
+	for t.ch != '\n' && !t.eof() {
+		t.currentPos = t.readPos
+		t.readChar()
+	}
 }
 
 func (t *Tokenizer) jumpWhiteSpace() {
-	for t.isWhiteSpace() {
+	for t.isWhiteSpace() && !t.eof() {
 		t.currentPos = t.readPos
 		t.readChar()
 	}
@@ -125,7 +214,9 @@ func (t Tokenizer) Symbol() rune {
 
 func (t Tokenizer) IntVal() int {
 	nbr, err := strconv.Atoi(t.curToken.token)
-	fmt.Println(err)
+	if err != nil {
+		log.Fatalf("intVal: %v", err)
+	}
 	return nbr
 }
 
