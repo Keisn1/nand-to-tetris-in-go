@@ -13,18 +13,77 @@ func NewEngine(tknzr *Tokenizer) Engine {
 	return Engine{tknzr: tknzr}
 }
 
-func xmlSymbol(symbol rune) string {
-	return fmt.Sprintf("<symbol> %s </symbol>\n", string(symbol))
+func (e Engine) CompileClass() (string, error) {
+	var ret string
+	if err := e.startClass(&ret); err != nil {
+		return "", err
+	}
+
+	if err := e.eatIdentifier(&ret); err != nil {
+		return "", err
+	}
+
+	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+		return "", err
+	}
+
+	for e.tknzr.TokenType() != SYMBOL || e.tknzr.Symbol() != RBRACE {
+		e.tknzr.Advance()
+		switch e.tknzr.TokenType() {
+		case KEYWORD:
+			switch e.tknzr.Keyword() {
+			case STATIC:
+				x, _ := e.CompileClassVarDec()
+				ret += x
+			}
+		}
+	}
+
+	ret += xmlSymbol(RBRACE)
+	ret += xmlEndClass()
+	return ret, nil
 }
 
-func xmlIdentifier(identifier string) string {
-	return fmt.Sprintf("<identifier> %s </identifier>\n", identifier)
+func (e Engine) CompileClassVarDec() (string, error) {
+	var ret string
+
+	if err := e.startClassVarDec(&ret); err != nil {
+		return "", fmt.Errorf("compileClassVarDec: %w", err)
+	}
+
+	if err := e.eatType(&ret); err != nil {
+		return "", err
+	}
+
+	if err := e.eatIdentifier(&ret); err != nil {
+		return "", err
+	}
+
+	// e.tknzr.Advance()
+	// fmt.Println(e.tknzr.curToken)
+	// e.tknzr.Advance()
+	// fmt.Println(e.tknzr.curToken)
+	// e.tknzr.Advance()
+	// fmt.Println(e.tknzr.curToken)
+	// for (e.tknzr.TokenType() != SYMBOL) || (e.tknzr.Symbol() != SEMICOLON) {
+	// 	ret += xmlSymbol(KOMMA)
+	// 	if err := e.eatIdentifier(&ret); err != nil {
+	// 		return "", err
+	// 	}
+
+	// 	e.tknzr.Advance()
+	// }
+
+	e.eatSymbol(SEMICOLON, &ret)
+
+	ret += xmlEndClassVarDec()
+	return ret, nil
 }
 
-func xmlStartClass() string {
-	return `<class>
-	<keyword>class</keyword>
-`
+func (e Engine) eatType(ret *string) error {
+	e.tknzr.Advance()
+	*ret += xmlKeyword(e.tknzr.Keyword())
+	return nil
 }
 
 func (e Engine) eatIdentifier(ret *string) error {
@@ -54,58 +113,42 @@ func (e Engine) startClass(ret *string) error {
 	return nil
 }
 
-func (e Engine) CompileClass() (string, error) {
-	var ret string
-	if err := e.startClass(&ret); err != nil {
-		return "", err
+func (e Engine) startClassVarDec(ret *string) error {
+	if e.tknzr.TokenType() != KEYWORD || e.tknzr.Keyword() != STATIC {
+		return errors.New("expected keyword STATIC or FIELD")
 	}
-
-	if err := e.eatIdentifier(&ret); err != nil {
-		return "", err
-	}
-
-	if err := e.eatSymbol(LBRACE, &ret); err != nil {
-		return "", err
-	}
-
-	for e.tknzr.HasMoreTokens() {
-		e.tknzr.Advance()
-		switch e.tknzr.TokenType() {
-		case KEYWORD:
-			switch e.tknzr.Keyword() {
-			case STATIC:
-				ret += e.compileClassVarDec()
-			}
-		}
-	}
-
-	end := `
-<symbol>}</symbol>
-</class>`
-	return ret + end, nil
+	*ret = xmlStartClassVarDec()
+	return nil
 }
 
-func (e Engine) compileClassVarDec() string {
-	ret := `<classVarDec>
-<keyword> static </keyword>
+func xmlSymbol(symbol rune) string {
+	return fmt.Sprintf("<symbol> %s </symbol>\n", string(symbol))
+}
+
+func xmlKeyword(kw Keyword) string {
+	return fmt.Sprintf("<keyword> %s </keyword>\n", kw)
+}
+
+func xmlIdentifier(identifier string) string {
+	return fmt.Sprintf("<identifier> %s </identifier>\n", identifier)
+}
+
+func xmlStartClass() string {
+	return `<class>
+	<keyword>class</keyword>
 `
+}
 
-	for e.tknzr.TokenType() != SYMBOL && e.tknzr.Symbol() != SEMICOLON {
-		e.tknzr.Advance()
-		if e.tknzr.TokenType() == KEYWORD {
-			switch e.tknzr.Keyword() {
-			case BOOLEAN:
-				ret += "<keyword> boolean </keyword>"
-			case INT:
-				ret += "<keyword> int </keyword>"
-			}
-		}
-		if e.tknzr.TokenType() == IDENTIFIER {
-			staticVar := `<identifier> %s </identifier>`
-			ret += fmt.Sprintf(staticVar, e.tknzr.Identifier())
-		}
-	}
+func xmlEndClass() string {
+	return "</class>\n"
+}
 
-	end := `<symbol> ; </symbol></classVarDec>`
-	return ret + end
+func xmlStartClassVarDec() string {
+	return `<classVarDec>
+	<keyword>static</keyword>
+`
+}
+
+func xmlEndClassVarDec() string {
+	return "</classVarDec>\n"
 }

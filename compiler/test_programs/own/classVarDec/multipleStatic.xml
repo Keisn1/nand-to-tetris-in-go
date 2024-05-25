@@ -1,0 +1,8 @@
+<classVarDec>
+  <keyword> static </keyword>
+  <keyword> char </keyword>
+  <identifier> c1 </identifier>
+  <symbol> , </symbol>
+  <identifier> c2 </identifier>
+  <symbol> ; </symbol>
+</classVarDec>

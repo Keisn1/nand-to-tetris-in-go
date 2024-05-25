@@ -231,6 +231,7 @@ function 		static
 				{name: "check Main is identifier", input: "Main", wantIdentifier: "Main", wantTokenType: compiler.IDENTIFIER},
 				{name: "check foo is identifier", input: "foo", wantIdentifier: "foo", wantTokenType: compiler.IDENTIFIER},
 				{name: "check bar is identifier", input: "bar", wantIdentifier: "bar", wantTokenType: compiler.IDENTIFIER},
+				{name: "check c2 is identifier", input: "c2;", wantIdentifier: "c2", wantTokenType: compiler.IDENTIFIER},
 			}
 			for _, tc := range testCases {
 				tknzr := compiler.NewTokenizer(tc.input)

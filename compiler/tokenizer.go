@@ -186,9 +186,10 @@ func (t *Tokenizer) readWord() string {
 		t.readChar()
 	}
 
-	if !t.isEOF() {
-		t.readBack()
+	if t.isEOF() {
+		return removeWhiteSpaces(t.input[t.currentPos:t.readPos])
 	}
+	t.readBack()
 
 	tokenS := t.input[t.currentPos:t.readPos]
 	return removeWhiteSpaces(tokenS)
