@@ -45,3 +45,27 @@ var (
 		TILDE:     {},
 	}
 )
+
+var (
+	xmlSymbols = map[rune]string{
+		LBRACE:    "{",
+		RBRACE:    "}",
+		LPAREN:    "(",
+		RPAREN:    ")",
+		LSQUARE:   "[",
+		RSQUARE:   "]",
+		POINT:     ".",
+		KOMMA:     ",",
+		SEMICOLON: ";",
+		PLUS:      "+",
+		MINUS:     "-",
+		STAR:      "*",
+		SLASH:     "/",
+		AND:       "&amp;",
+		PIPE:      "|",
+		LT:        "&lt;",
+		GT:        "&gt;",
+		EQUAL:     "=",
+		TILDE:     "~",
+	}
+)

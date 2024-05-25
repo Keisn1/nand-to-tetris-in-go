@@ -514,26 +514,60 @@ func Test_tokenizerFullPrograms1(t *testing.T) {
 	})
 
 	t.Run("Test output to xml (file with comments)", func(t *testing.T) {
-		fp := "test_programs/ArrayTest/Main.jack"
-		input, err := os.ReadFile(fp)
-		assert.NoError(t, err, "error reading file")
+		testCases := []struct {
+			inputFile   string
+			compareFile string
+		}{
+			{
+				inputFile:   "test_programs/ArrayTest/Main.jack",
+				compareFile: "test_programs/ArrayTest/MainT.xml",
+			},
+			{
+				inputFile:   "test_programs/ExpressionLessSquare/Main.jack",
+				compareFile: "test_programs/ExpressionLessSquare/MainT.xml",
+			},
+			{
+				inputFile:   "test_programs/ExpressionLessSquare/Square.jack",
+				compareFile: "test_programs/ExpressionLessSquare/SquareT.xml",
+			},
+			{
+				inputFile:   "test_programs/ExpressionLessSquare/SquareGame.jack",
+				compareFile: "test_programs/ExpressionLessSquare/SquareGameT.xml",
+			},
+			{
+				inputFile:   "test_programs/Square/Main.jack",
+				compareFile: "test_programs/Square/MainT.xml",
+			},
+			{
+				inputFile:   "test_programs/Square/Square.jack",
+				compareFile: "test_programs/Square/SquareT.xml",
+			},
+			{
+				inputFile:   "test_programs/Square/SquareGame.jack",
+				compareFile: "test_programs/Square/SquareGameT.xml",
+			},
+		}
+		for _, tc := range testCases {
 
-		tknzr := compiler.NewTokenizer(string(input))
+			input, err := os.ReadFile(tc.inputFile)
+			assert.NoError(t, err, "error reading file")
 
-		out := "MainT_test.xml"
-		tknzr.OutputXML(out)
+			tknzr := compiler.NewTokenizer(string(input))
 
-		gotByte, err := os.ReadFile(out)
-		assert.NoError(t, err, "error reading file")
+			out := "MainT_test.xml"
+			tknzr.OutputXML(out)
 
-		wantFP := "test_programs/ArrayTest/MainT.xml"
-		wantByte, err := os.ReadFile(wantFP)
-		assert.NoError(t, err, "error reading file")
+			gotByte, err := os.ReadFile(out)
+			assert.NoError(t, err, "error reading file")
 
-		regex := regexp.MustCompile(`\s+`)
-		got := regex.ReplaceAllString(string(gotByte), "")
-		want := regex.ReplaceAllString(string(wantByte), "")
-		assert.Equal(t, want, got)
-		os.Remove(out)
+			wantByte, err := os.ReadFile(tc.compareFile)
+			assert.NoError(t, err, "error reading file")
+
+			regex := regexp.MustCompile(`\s+`)
+			got := regex.ReplaceAllString(string(gotByte), "")
+			want := regex.ReplaceAllString(string(wantByte), "")
+			assert.Equal(t, want, got)
+			os.Remove(out)
+		}
 	})
 }
