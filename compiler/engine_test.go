@@ -11,36 +11,71 @@ import (
 )
 
 func Test_compileClass(t *testing.T) {
-	type testCase struct {
-		name        string
-		inputFile   string
-		compareFile string
-	}
 
-	testCases := []testCase{
-		{name: "empty main", inputFile: "test_programs/own/emptyMain.jack", compareFile: "test_programs/own/emptyMain.xml"},
-	}
+	t.Run("Testing happy classes", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
 
-	for _, tc := range testCases {
-		input, err := os.ReadFile(tc.inputFile)
-		assert.NoError(t, err, "error reading file")
+		dir := "test_programs/own/"
+		testCases := []testCase{
+			{name: "empty main", fp: "emptyMain"},
+			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
+			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
+			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
+		}
 
-		tknzr := compiler.NewTokenizer(string(input))
-		engine := compiler.NewEngine(tknzr)
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-		tknzr.Advance()
-		assert.Equal(t, compiler.KEYWORD, tknzr.TokenType())
-		assert.Equal(t, compiler.CLASS, tknzr.Keyword())
+				tknzr := compiler.NewTokenizer(string(input))
+				engine := compiler.NewEngine(&tknzr)
 
-		got := engine.CompileClass()
-		wantByte, err := os.ReadFile(tc.compareFile)
-		assert.NoError(t, err, "error reading file")
+				for tknzr.HasMoreTokens() {
+					tknzr.Advance()
+					switch tknzr.TokenType() {
+					case compiler.KEYWORD:
+						switch tknzr.Keyword() {
+						case compiler.CLASS:
+							got, _ := engine.CompileClass()
+							assert.Equal(t, want, removeWhiteSpaces(got))
+						}
+					}
+				}
+			})
+		}
+	})
 
-		regex := regexp.MustCompile(`\s+`)
-		want := regex.ReplaceAllString(string(wantByte), "")
-		got = regex.ReplaceAllString(got, "")
-		assert.Equal(t, want, got)
-	}
+	t.Run("Testing falsy class statements", func(t *testing.T) {
+		type testCase struct {
+			inputs []string
+			error  string
+		}
+		testCases := []testCase{
+			{inputs: []string{"", "var", "   "}, error: "expected keyword CLASS"},
+			{inputs: []string{"class var"}, error: "expected tokenType IDENTIFIER"},
+			{inputs: []string{"class name name", "class name ."}, error: "expected symbol {"},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(string(input))
+				engine := compiler.NewEngine(&tknzr)
+				tknzr.Advance()
+				_, err := engine.CompileClass()
+				assert.ErrorContains(t, err, tc.error)
+			}
+		}
+	})
+}
+
+func readFile(t *testing.T, fp string) string {
+	t.Helper()
+	input, err := os.ReadFile(fp)
+	assert.NoError(t, err, "error reading file")
+	return string(input)
 }
 
 func removeWhiteSpaces(input string) string {
