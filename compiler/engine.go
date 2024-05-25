@@ -14,8 +14,9 @@ func NewEngine(tknzr *Tokenizer) Engine {
 }
 
 func (e Engine) CompileClass() (string, error) {
-	var ret string
-	if err := e.startClass(&ret); err != nil {
+	ret := xmlStartClass()
+
+	if err := e.eatKeyword(CLASS, &ret); err != nil {
 		return "", err
 	}
 
@@ -27,28 +28,22 @@ func (e Engine) CompileClass() (string, error) {
 		return "", err
 	}
 
-	for e.tknzr.TokenType() != SYMBOL || e.tknzr.Symbol() != RBRACE {
-		e.tknzr.Advance()
-		switch e.tknzr.TokenType() {
-		case KEYWORD:
-			switch e.tknzr.Keyword() {
-			case STATIC:
-				x, _ := e.CompileClassVarDec()
-				ret += x
-			}
-		}
+	nextToken := e.tknzr.ReadAheadNextToken()
+	for nextToken.TokenType == KEYWORD && nextToken.Token == "static" {
+		x, _ := e.CompileClassVarDec()
+		ret += x
+		nextToken = e.tknzr.ReadAheadNextToken()
 	}
 
-	ret += xmlSymbol(RBRACE)
-	ret += xmlEndClass()
-	return ret, nil
+	e.eatSymbol(RBRACE, &ret)
+	return ret + xmlEndClass(), nil
 }
 
 func (e Engine) CompileClassVarDec() (string, error) {
-	var ret string
+	ret := xmlStartClassVarDec()
 
-	if err := e.startClassVarDec(&ret); err != nil {
-		return "", fmt.Errorf("compileClassVarDec: %w", err)
+	if err := e.eatStaticOrField(&ret); err != nil {
+		return "", fmt.Errorf("expected KEYWORD static or field: %w", err)
 	}
 
 	if err := e.eatType(&ret); err != nil {
@@ -59,25 +54,17 @@ func (e Engine) CompileClassVarDec() (string, error) {
 		return "", err
 	}
 
-	// e.tknzr.Advance()
-	// fmt.Println(e.tknzr.curToken)
-	// e.tknzr.Advance()
-	// fmt.Println(e.tknzr.curToken)
-	// e.tknzr.Advance()
-	// fmt.Println(e.tknzr.curToken)
-	// for (e.tknzr.TokenType() != SYMBOL) || (e.tknzr.Symbol() != SEMICOLON) {
-	// 	ret += xmlSymbol(KOMMA)
-	// 	if err := e.eatIdentifier(&ret); err != nil {
-	// 		return "", err
-	// 	}
-
-	// 	e.tknzr.Advance()
-	// }
+	nextToken := e.tknzr.ReadAheadNextToken()
+	for (nextToken.TokenType == SYMBOL) && (nextToken.Token == ",") {
+		e.eatSymbol(KOMMA, &ret)
+		if err := e.eatIdentifier(&ret); err != nil {
+			return "", err
+		}
+		nextToken = e.tknzr.ReadAheadNextToken()
+	}
 
 	e.eatSymbol(SEMICOLON, &ret)
-
-	ret += xmlEndClassVarDec()
-	return ret, nil
+	return ret + xmlEndClassVarDec(), nil
 }
 
 func (e Engine) eatType(ret *string) error {
@@ -92,6 +79,25 @@ func (e Engine) eatIdentifier(ret *string) error {
 		return errors.New("expected tokenType IDENTIFIER")
 	}
 	*ret += xmlIdentifier(e.tknzr.Identifier())
+	return nil
+}
+
+func (e Engine) eatStaticOrField(ret *string) error {
+	e.tknzr.Advance()
+	if (e.tknzr.TokenType() != KEYWORD) || (e.tknzr.Keyword() != STATIC && e.tknzr.Keyword() != FIELD) {
+		return fmt.Errorf("unexpected token: %v", e.tknzr.curToken)
+	}
+
+	*ret += xmlKeyword(e.tknzr.Keyword())
+	return nil
+}
+func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
+	e.tknzr.Advance()
+	if (e.tknzr.TokenType() != KEYWORD) || (e.tknzr.Keyword() != expectedKeyword) {
+		return fmt.Errorf("expected KEYWORD %s", expectedKeyword)
+	}
+
+	*ret += xmlKeyword(expectedKeyword)
 	return nil
 }
 
@@ -134,9 +140,7 @@ func xmlIdentifier(identifier string) string {
 }
 
 func xmlStartClass() string {
-	return `<class>
-	<keyword>class</keyword>
-`
+	return "<class>\n"
 }
 
 func xmlEndClass() string {
@@ -144,9 +148,7 @@ func xmlEndClass() string {
 }
 
 func xmlStartClassVarDec() string {
-	return `<classVarDec>
-	<keyword>static</keyword>
-`
+	return "<classVarDec>\n"
 }
 
 func xmlEndClassVarDec() string {

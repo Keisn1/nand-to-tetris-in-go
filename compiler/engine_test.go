@@ -33,17 +33,8 @@ func Test_compileClass(t *testing.T) {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
 
-				for tknzr.HasMoreTokens() {
-					tknzr.Advance()
-					switch tknzr.TokenType() {
-					case compiler.KEYWORD:
-						switch tknzr.Keyword() {
-						case compiler.CLASS:
-							got, _ := engine.CompileClass()
-							assert.Equal(t, want, removeWhiteSpaces(got))
-						}
-					}
-				}
+				got, _ := engine.CompileClass()
+				assert.Equal(t, want, removeWhiteSpaces(got))
 			})
 		}
 	})
@@ -54,7 +45,7 @@ func Test_compileClass(t *testing.T) {
 			error  string
 		}
 		testCases := []testCase{
-			{inputs: []string{"", "var", "   "}, error: "expected keyword CLASS"},
+			{inputs: []string{"", "var", "   "}, error: "expected KEYWORD class"},
 			{inputs: []string{"class var"}, error: "expected tokenType IDENTIFIER"},
 			{inputs: []string{"class name name", "class name ."}, error: "expected symbol {"},
 		}
@@ -62,7 +53,6 @@ func Test_compileClass(t *testing.T) {
 			for _, input := range tc.inputs {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
-				tknzr.Advance()
 				_, err := engine.CompileClass()
 				assert.ErrorContains(t, err, tc.error)
 			}
@@ -71,7 +61,6 @@ func Test_compileClass(t *testing.T) {
 }
 
 func Test_classVarDev(t *testing.T) {
-
 	t.Run("Testing happy ClassVarDeclarations", func(t *testing.T) {
 		type testCase struct {
 			name string
@@ -80,7 +69,8 @@ func Test_classVarDev(t *testing.T) {
 
 		dir := "test_programs/own/classVarDec/"
 		testCases := []testCase{
-			// {name: "mulitple static char in one line", fp: "multipleStatic"},
+			{name: "mulitple static char in one line", fp: "multipleStatic"},
+			{name: "static and field var declaration", fp: "staticAndField"},
 		}
 
 		for _, tc := range testCases {
@@ -90,7 +80,6 @@ func Test_classVarDev(t *testing.T) {
 
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
-				tknzr.Advance()
 
 				got, err := engine.CompileClassVarDec()
 				assert.NoError(t, err)
@@ -105,13 +94,12 @@ func Test_classVarDev(t *testing.T) {
 			error  string
 		}
 		testCases := []testCase{
-			{inputs: []string{"", "var", "   "}, error: "expected keyword STATIC or FIELD"},
+			{inputs: []string{"", "var", "   "}, error: "expected KEYWORD static or field"},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
-				tknzr.Advance()
 				_, err := engine.CompileClassVarDec()
 				assert.ErrorContains(t, err, tc.error)
 			}

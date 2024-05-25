@@ -137,7 +137,11 @@ func Test_tokenizer(t *testing.T) {
 				wantTokenType compiler.TokenType
 			}
 			testCases := []testCase{
-				{wantInt: 1237890099987111, wantTokenType: compiler.INT_CONST},
+				{wantInt: 123, wantTokenType: compiler.INT_CONST},
+				{wantInt: 789, wantTokenType: compiler.INT_CONST},
+				{wantInt: 99, wantTokenType: compiler.INT_CONST},
+				{wantInt: 987, wantTokenType: compiler.INT_CONST},
+				{wantInt: 111, wantTokenType: compiler.INT_CONST},
 			}
 
 			for _, tc := range testCases {
@@ -189,9 +193,9 @@ func Test_tokenizer(t *testing.T) {
 
 		t.Run("Multiple keywords", func(t *testing.T) {
 			input := `  class
-	method
-function 		static
-`
+			method
+		function 		static
+		`
 			tknzr := compiler.NewTokenizer(input)
 
 			type testCase struct {
@@ -239,24 +243,22 @@ function 		static
 				tt := tknzr.TokenType()
 				assert.Equal(t, compiler.TokenType(""), tt)
 
-				for tknzr.HasMoreTokens() {
-					err := tknzr.Advance()
-					assert.NoError(t, err)
+				err := tknzr.Advance()
+				assert.NoError(t, err)
 
-					gotTokenType := tknzr.TokenType()
-					assert.Equal(t, tc.wantTokenType, gotTokenType)
+				gotTokenType := tknzr.TokenType()
+				assert.Equal(t, tc.wantTokenType, gotTokenType)
 
-					gotToken := tknzr.Identifier()
-					assert.Equal(t, tc.wantIdentifier, gotToken)
-				}
+				gotToken := tknzr.Identifier()
+				assert.Equal(t, tc.wantIdentifier, gotToken)
 			}
 		})
 
 		t.Run("Multiple identifiers", func(t *testing.T) {
 			input := `  first
-	string
-constant
-`
+			string
+		constant
+		`
 			tknzr := compiler.NewTokenizer(input)
 
 			type testCase struct {
@@ -320,7 +322,6 @@ constant
 constant"
   `
 			tknzr := compiler.NewTokenizer(input)
-
 			type testCase struct {
 				wantStringVal string
 				wantTokenType compiler.TokenType

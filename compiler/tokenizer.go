@@ -21,12 +21,12 @@ const (
 )
 
 type Token struct {
-	token     string
-	tokenType TokenType
+	Token     string
+	TokenType TokenType
 }
 
 func NewToken(token string, tokenType TokenType) Token {
-	return Token{token: token, tokenType: tokenType}
+	return Token{Token: token, TokenType: tokenType}
 }
 
 type Tokenizer struct {
@@ -74,6 +74,24 @@ func (t *Tokenizer) Advance() error {
 	return nil
 }
 
+func (t *Tokenizer) ReadAheadNextToken() Token {
+	tmpInput := t.input
+	tmpCurToken := t.curToken
+	tmpCurrentPos := t.currentPos
+	tmpReadPos := t.readPos
+	tmpCh := t.ch
+
+	t.Advance()
+	nextToken := t.curToken
+
+	t.input = tmpInput
+	t.curToken = tmpCurToken
+	t.currentPos = tmpCurrentPos
+	t.readPos = tmpReadPos
+	t.ch = tmpCh
+	return nextToken
+}
+
 func (t Tokenizer) HasMoreTokens() bool {
 	if t.readPos >= len(t.input) {
 		return false
@@ -82,19 +100,19 @@ func (t Tokenizer) HasMoreTokens() bool {
 }
 
 func (t Tokenizer) TokenType() TokenType {
-	return t.curToken.tokenType
+	return t.curToken.TokenType
 }
 
 func (t Tokenizer) Keyword() Keyword {
-	return keywords[t.curToken.token]
+	return keywords[t.curToken.Token]
 }
 
 func (t Tokenizer) Symbol() rune {
-	return rune(t.curToken.token[0])
+	return rune(t.curToken.Token[0])
 }
 
 func (t Tokenizer) IntVal() int {
-	nbr, err := strconv.Atoi(t.curToken.token)
+	nbr, err := strconv.Atoi(t.curToken.Token)
 	if err != nil {
 		log.Fatalf("intVal: %v", err)
 	}
@@ -102,11 +120,11 @@ func (t Tokenizer) IntVal() int {
 }
 
 func (t Tokenizer) StringVal() string {
-	return t.curToken.token
+	return t.curToken.Token
 }
 
 func (t Tokenizer) Identifier() string {
-	return t.curToken.token
+	return t.curToken.Token
 }
 
 func (t *Tokenizer) readUpToNextToken() {
@@ -141,13 +159,13 @@ func (t *Tokenizer) jumpEndOfComment() {
 }
 
 func (t *Tokenizer) nextLine() {
-	for t.ch != '\n' && !t.isEOF() {
+	for t.ch != '\n' && !t.readPosAtEOF() {
 		t.readChar()
 	}
 }
 
 func (t *Tokenizer) jumpWhiteSpace() {
-	for t.isWhiteSpace() && !t.isEOF() {
+	for t.isWhiteSpace() && !t.readPosAtEOF() {
 		t.currentPos = t.readPos
 		t.readChar()
 	}
@@ -165,31 +183,40 @@ func (t *Tokenizer) readBack() {
 
 func (t *Tokenizer) readStrConst() string {
 	t.readChar()
-	for !t.isDoubleQuote() && !t.isEOF() {
+	for !t.isDoubleQuote() && !t.readPosAtEOF() {
 		t.readChar()
 	}
 
 	return t.input[t.currentPos+1 : t.readPos-1]
 }
 func (t *Tokenizer) readInteger() string {
-	for (t.isInteger() || t.isWhiteSpace()) && !t.isEOF() {
+	for t.isInteger() && !t.readPosAtEOF() {
 		t.readChar()
 	}
 
-	if !t.isEOF() {
+	if !t.isInteger() {
 		t.readBack()
 	}
+
+	if t.readPosAtEOF() {
+		return removeWhiteSpaces(t.input[t.currentPos:t.readPos])
+	}
+
 	return t.input[t.currentPos:t.readPos]
 }
+
 func (t *Tokenizer) readWord() string {
-	for t.isWordCharacter() && !t.isWhiteSpace() && !t.isEOF() {
+	for t.isWordCharacter() && !t.readPosAtEOF() {
 		t.readChar()
 	}
 
-	if t.isEOF() {
+	if !t.isWordCharacter() {
+		t.readBack()
+	}
+
+	if t.readPosAtEOF() {
 		return removeWhiteSpaces(t.input[t.currentPos:t.readPos])
 	}
-	t.readBack()
 
 	tokenS := t.input[t.currentPos:t.readPos]
 	return removeWhiteSpaces(tokenS)
@@ -229,7 +256,7 @@ func (t Tokenizer) writeToken(file *os.File, val string, tt string) {
 	fmt.Fprintf(file, "</%s>\n", tt)
 }
 
-func (t *Tokenizer) isEOF() bool {
+func (t *Tokenizer) readPosAtEOF() bool {
 	return t.readPos >= len(t.input)
 }
 
@@ -257,6 +284,13 @@ func (t Tokenizer) isInteger() bool {
 
 func (t Tokenizer) isSymbol() bool {
 	if _, ok := allSymbols[t.ch]; ok {
+		return true
+	}
+	return false
+}
+
+func (t Tokenizer) isKeyword() bool {
+	if _, ok := keywords[t.input[t.currentPos:t.readPos]]; ok {
 		return true
 	}
 	return false
