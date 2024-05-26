@@ -28,7 +28,7 @@ func (e Engine) CompileClass() (string, error) {
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
-	for isClassVarDec(Keyword(e.tknzr.NextToken().Token)) {
+	for isClassVarDec(Keyword(e.tknzr.NextToken().Literal)) {
 		classVarDec, err := e.CompileClassVarDec()
 		if err != nil {
 			return "", fmt.Errorf("compileClass: %w", err)
@@ -36,7 +36,7 @@ func (e Engine) CompileClass() (string, error) {
 		ret += classVarDec
 	}
 
-	for isSubRoutineDec(Keyword(e.tknzr.NextToken().Token)) {
+	for isSubRoutineDec(Keyword(e.tknzr.NextToken().Literal)) {
 		subRoutineDec, err := e.CompileSubroutineDec()
 		if err != nil {
 			return "", fmt.Errorf("compileClass: %w", err)
@@ -66,7 +66,7 @@ func (e Engine) CompileClassVarDec() (string, error) {
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
-	for e.tknzr.NextToken().Token == "," {
+	for e.tknzr.NextToken().Literal == "," {
 		if err := e.eatSymbol(KOMMA, &ret); err != nil {
 			return "", fmt.Errorf("compileClassVarDec: %w", err)
 		}
@@ -135,11 +135,11 @@ func (e Engine) eatParameter(ret *string) error {
 func (e Engine) CompileParameterList() (string, error) {
 	ret := xmlStartParameterList()
 
-	if e.tknzr.NextToken().Token != string(RPAREN) {
+	if e.tknzr.NextToken().Literal != string(RPAREN) {
 		if err := e.eatParameter(&ret); err != nil {
 			return "", fmt.Errorf("compileParameterList: %w", err)
 		}
-		for e.tknzr.NextToken().Token == string(KOMMA) {
+		for e.tknzr.NextToken().Literal == string(KOMMA) {
 			if err := e.eatSymbol(KOMMA, &ret); err != nil {
 				return "", fmt.Errorf("compileParameterList: %w", err)
 			}
@@ -159,7 +159,7 @@ func (e Engine) CompileSubroutineBody() (string, error) {
 		return "", fmt.Errorf("compileSubroutineBody: %w", err)
 	}
 
-	for isVarDec(Keyword(e.tknzr.NextToken().Token)) {
+	for isVarDec(Keyword(e.tknzr.NextToken().Literal)) {
 		varDec := e.CompileVarDec()
 		ret += varDec
 	}
@@ -194,7 +194,7 @@ func (e Engine) CompileReturn() string {
 }
 
 func (e Engine) eatVoidOrType(ret *string) error {
-	switch Keyword(e.tknzr.NextToken().Token) {
+	switch Keyword(e.tknzr.NextToken().Literal) {
 	case VOID:
 		e.eatKeyword(VOID, ret)
 	default:

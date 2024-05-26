@@ -21,12 +21,12 @@ const (
 )
 
 type Token struct {
-	Token     string
+	Literal   string
 	TokenType TokenType
 }
 
 func NewToken(token string, tokenType TokenType) Token {
-	return Token{Token: token, TokenType: tokenType}
+	return Token{Literal: token, TokenType: tokenType}
 }
 
 type Tokenizer struct {
@@ -104,15 +104,15 @@ func (t Tokenizer) TokenType() TokenType {
 }
 
 func (t Tokenizer) Keyword() Keyword {
-	return keywords[t.curToken.Token]
+	return keywords[t.curToken.Literal]
 }
 
 func (t Tokenizer) Symbol() rune {
-	return rune(t.curToken.Token[0])
+	return rune(t.curToken.Literal[0])
 }
 
 func (t Tokenizer) IntVal() int {
-	nbr, err := strconv.Atoi(t.curToken.Token)
+	nbr, err := strconv.Atoi(t.curToken.Literal)
 	if err != nil {
 		log.Fatalf("intVal: %v", err)
 	}
@@ -120,11 +120,11 @@ func (t Tokenizer) IntVal() int {
 }
 
 func (t Tokenizer) StringVal() string {
-	return t.curToken.Token
+	return t.curToken.Literal
 }
 
 func (t Tokenizer) Identifier() string {
-	return t.curToken.Token
+	return t.curToken.Literal
 }
 
 func (t *Tokenizer) readUpToNextToken() {
