@@ -1,0 +1,24 @@
+<subroutineDec>
+  <keyword> method </keyword>
+  <keyword> boolean </keyword>
+  <identifier> someName </identifier>
+  <symbol> ( </symbol>
+  <parameterList>
+    <keyword> boolean </keyword>
+    <identifier> x </identifier>
+    <symbol> , </symbol>
+    <keyword> char </keyword>
+    <identifier> y </identifier>
+  </parameterList>
+  <symbol> ) </symbol>
+  <subroutineBody>
+    <symbol> { </symbol>
+    <statements>
+    <returnStatement>
+        <keyword> return </keyword>
+        <symbol> ; </symbol>
+      </returnStatement>
+    </statements>
+    <symbol> } </symbol>
+  </subroutineBody>
+</subroutineDec>

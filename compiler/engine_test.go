@@ -23,6 +23,8 @@ func Test_compileClass(t *testing.T) {
 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
 			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
+			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
+			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
 		}
 
 		for _, tc := range testCases {
@@ -45,9 +47,12 @@ func Test_compileClass(t *testing.T) {
 			error  string
 		}
 		testCases := []testCase{
-			{inputs: []string{"", "var", "   "}, error: "expected KEYWORD class"},
-			{inputs: []string{"class var"}, error: "expected tokenType IDENTIFIER"},
-			{inputs: []string{"class name name", "class name ."}, error: "expected symbol {"},
+			{inputs: []string{"", "var", "   "}, error: "compileClass: expected KEYWORD class"},
+			{inputs: []string{"class var"}, error: "compileClass: expected tokenType IDENTIFIER"},
+			{inputs: []string{"class name name", "class name ."}, error: "compileClass: expected SYMBOL {"},
+			{inputs: []string{"class Main {", "class name { ."}, error: "compileClass: expected SYMBOL }"},
+			{inputs: []string{"class Main {static name"}, error: "compileClass: compileClassVarDec"},
+			{inputs: []string{"class Main {function var"}, error: "compileClass: compileSubroutineDec"},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
@@ -60,7 +65,7 @@ func Test_compileClass(t *testing.T) {
 	})
 }
 
-func Test_classVarDev(t *testing.T) {
+func Test_classVarDec(t *testing.T) {
 	t.Run("Testing happy ClassVarDeclarations", func(t *testing.T) {
 		type testCase struct {
 			name string
@@ -88,13 +93,14 @@ func Test_classVarDev(t *testing.T) {
 		}
 	})
 
-	t.Run("Testing  falsy class variable declarations", func(t *testing.T) {
+	t.Run("Testing falsy class variable declarations", func(t *testing.T) {
 		type testCase struct {
 			inputs []string
 			error  string
 		}
 		testCases := []testCase{
 			{inputs: []string{"", "var", "   "}, error: "expected KEYWORD static or field"},
+			{inputs: []string{"static boolean boo{"}, error: "compileClassVarDec: expected SYMBOL ;"},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
@@ -103,6 +109,120 @@ func Test_classVarDev(t *testing.T) {
 				_, err := engine.CompileClassVarDec()
 				assert.ErrorContains(t, err, tc.error)
 			}
+		}
+	})
+}
+
+func Test_subroutineDec(t *testing.T) {
+	t.Run("Testing happy subroutineDec", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/subRoutineDec/"
+		testCases := []testCase{
+			{name: "constructor void no parameter", fp: "constVoidNoParam"},
+			{name: "function int no parameter", fp: "funcIntNoParam"},
+			{name: "method char methodName", fp: "methCharMethodNameNoParam"},
+			{name: "one parameter", fp: "oneParameter"},
+			{name: "two parameter", fp: "twoParameter"},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(string(input))
+				engine := compiler.NewEngine(&tknzr)
+
+				got, err := engine.CompileSubroutineDec()
+				assert.NoError(t, err)
+				assert.Equal(t, want, removeWhiteSpaces(got))
+			})
+		}
+	})
+
+	t.Run("Testing falsy subroutine declarations", func(t *testing.T) {
+		type testCase struct {
+			name   string
+			inputs []string
+			error  []string
+		}
+		testCases := []testCase{
+			{name: "1", inputs: []string{"", "var", "   "}, error: []string{"compileSubroutineDec", "expected KEYWORD constructor / function / method"}},
+			{name: "2", inputs: []string{"function var"}, error: []string{
+				"compileSubroutineDec",
+				"expected type or KEYWORD void",
+				"expected className or KEYWORD int / char / boolean"},
+			},
+			{name: "3", inputs: []string{"function int var"}, error: []string{"compileSubroutineDec", "expected tokenType IDENTIFIER"}},
+			{name: "4", inputs: []string{"function int name;"}, error: []string{"compileSubroutineDec", "expected SYMBOL ("}},
+			{name: "5", inputs: []string{"function int name()}"}, error: []string{"compileSubroutineDec", "expected SYMBOL {"}},
+			{name: "6", inputs: []string{"function int name(var)", "function int name(int x, var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected className or KEYWORD int / char / boolean"}},
+			{name: "7", inputs: []string{"function int name(int var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected tokenType IDENTIFIER"}},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				for _, input := range tc.inputs {
+					tknzr := compiler.NewTokenizer(string(input))
+					engine := compiler.NewEngine(&tknzr)
+					_, err := engine.CompileSubroutineDec()
+					for _, wantErr := range tc.error {
+						assert.ErrorContains(t, err, wantErr)
+					}
+				}
+			})
+		}
+	})
+}
+
+func Test_subroutineBody(t *testing.T) {
+	t.Run("Testing happy subRoutineBodies", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/subRoutineBody/"
+		testCases := []testCase{
+			{name: "one variable declaration", fp: "oneVarDec"},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(string(input))
+				engine := compiler.NewEngine(&tknzr)
+
+				got, err := engine.CompileSubroutineBody()
+				assert.NoError(t, err)
+				assert.Equal(t, want, removeWhiteSpaces(got))
+			})
+		}
+	})
+
+	t.Run("Testing falsy subroutine bodies", func(t *testing.T) {
+		type testCase struct {
+			name   string
+			inputs []string
+			error  []string
+		}
+		testCases := []testCase{}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				for _, input := range tc.inputs {
+					tknzr := compiler.NewTokenizer(string(input))
+					engine := compiler.NewEngine(&tknzr)
+					_, err := engine.CompileSubroutineBody()
+					for _, wantErr := range tc.error {
+						assert.ErrorContains(t, err, wantErr)
+					}
+				}
+			})
 		}
 	})
 }

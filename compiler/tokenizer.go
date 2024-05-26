@@ -74,7 +74,7 @@ func (t *Tokenizer) Advance() error {
 	return nil
 }
 
-func (t *Tokenizer) ReadAheadNextToken() Token {
+func (t *Tokenizer) NextToken() Token {
 	tmpInput := t.input
 	tmpCurToken := t.curToken
 	tmpCurrentPos := t.currentPos
