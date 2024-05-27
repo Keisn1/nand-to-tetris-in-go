@@ -29,6 +29,10 @@ func NewToken(token string, tokenType TokenType) Token {
 	return Token{Literal: token, TokenType: tokenType}
 }
 
+func (t Token) String() string {
+	return fmt.Sprintf("%s %s", t.TokenType, t.Literal)
+}
+
 type Tokenizer struct {
 	input      string
 	curToken   Token

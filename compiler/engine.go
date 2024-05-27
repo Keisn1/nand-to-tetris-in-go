@@ -6,17 +6,19 @@ import (
 )
 
 type Engine struct {
-	Tknzr *Tokenizer
+	Tknzr  *Tokenizer
+	Errors []error
 }
 
 func NewEngine(tknzr *Tokenizer) Engine {
 	return Engine{Tknzr: tknzr}
 }
 
-func (e Engine) CompileClass() (string, error) {
+func (e *Engine) CompileClass() (string, error) {
 	ret := xmlStartClass()
 
 	if err := e.eatKeyword(CLASS, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
@@ -334,9 +336,27 @@ func isClassVarDec(kw Keyword) bool {
 	return kw == STATIC || kw == FIELD
 }
 
+type ErrSyntaxUnexpectedToken struct {
+	ExpectedToken Token
+	FoundToken    Token
+}
+
+func NewErrSyntaxUnexpectedToken(expectedToken, foundToken Token) ErrSyntaxUnexpectedToken {
+	return ErrSyntaxUnexpectedToken{
+		ExpectedToken: expectedToken,
+		FoundToken:    foundToken,
+	}
+}
+
+func (err ErrSyntaxUnexpectedToken) Error() string {
+	return fmt.Sprintf("expected %s but found token %s", err.ExpectedToken, err.FoundToken)
+}
+
 func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
 	if (e.Tknzr.TokenType() != KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
-		return fmt.Errorf("expected KEYWORD %s", expectedKeyword)
+		// return ErrSyntaxUnexpectedToken{}
+		expectedToken := NewToken(string(expectedKeyword), KEYWORD)
+		return NewErrSyntaxUnexpectedToken(expectedToken, e.Tknzr.curToken)
 	}
 
 	*ret += xmlKeyword(expectedKeyword)

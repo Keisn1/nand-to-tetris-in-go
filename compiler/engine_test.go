@@ -1,6 +1,7 @@
 package compiler_test
 
 import (
+	"errors"
 	"hack/compiler"
 	"os"
 	"testing"
@@ -45,11 +46,53 @@ func Test_compileClass(t *testing.T) {
 
 	t.Run("Testing falsy class statements", func(t *testing.T) {
 		type testCase struct {
+			inputs  []string
+			wantErr error
+		}
+		testCases := []testCase{
+			{
+				inputs:  []string{"", "   "},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(string(compiler.CLASS), compiler.KEYWORD), compiler.Token{}),
+			},
+			{
+				inputs:  []string{"var"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(string(compiler.CLASS), compiler.KEYWORD), compiler.NewToken(string(compiler.VAR), compiler.KEYWORD)),
+			},
+			// {inputs: []string{"class var"}, errors: "compileClass: expected tokenType IDENTIFIER"},
+			// {inputs: []string{"class name name", "class name ."}, errors: "compileClass: expected SYMBOL {"},
+			// {inputs: []string{"class Main {", "class name { ."}, errors: "compileClass: expected SYMBOL }"},
+			// {inputs: []string{"class Main {static name"}, errors: "compileClass: compileClassVarDec"},
+			// {inputs: []string{"class Main {function var"}, errors: "compileClass: compileSubroutineDec"},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(string(input))
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileClass()
+
+				foundErr := false
+				for _, gotErr := range engine.Errors {
+					if errors.Is(gotErr, tc.wantErr) {
+						foundErr = true
+					}
+				}
+
+				if !foundErr {
+					t.Log("Could not find error:", tc.wantErr, "\nPresent errors: ", engine.Errors)
+					t.Fail()
+				}
+			}
+		}
+	})
+
+	t.Run("Testing falsy class statements", func(t *testing.T) {
+		type testCase struct {
 			inputs []string
 			error  string
 		}
 		testCases := []testCase{
-			{inputs: []string{"", "var", "   "}, error: "compileClass: expected KEYWORD class"},
 			{inputs: []string{"class var"}, error: "compileClass: expected tokenType IDENTIFIER"},
 			{inputs: []string{"class name name", "class name ."}, error: "compileClass: expected SYMBOL {"},
 			{inputs: []string{"class Main {", "class name { ."}, error: "compileClass: expected SYMBOL }"},
@@ -63,6 +106,7 @@ func Test_compileClass(t *testing.T) {
 
 				engine.Tknzr.Advance()
 				_, err := engine.CompileClass()
+
 				assert.ErrorContains(t, err, tc.error)
 			}
 		}
