@@ -13,110 +13,99 @@ func NewEngine(tknzr *Tokenizer) Engine {
 	return Engine{Tknzr: tknzr}
 }
 
-func (e *Engine) CompileClass() (string, error) {
+func (e *Engine) CompileClass() string {
 	ret := xmlStartClass()
 
 	if err := e.eatKeyword(CLASS, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
-		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
-		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatSymbol(LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
-		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	for isClassVarDec(e.Tknzr.Keyword()) {
-		classVarDec, _ := e.CompileClassVarDec()
-		ret += classVarDec
-		e.Tknzr.Advance()
+		ret += e.CompileClassVarDec()
 	}
 
 	for isSubRoutineDec(e.Tknzr.Keyword()) {
-		subRoutineDec, err := e.CompileSubroutineDec()
-		if err != nil {
-			return "", fmt.Errorf("compileClass: %w", err)
-		}
-		ret += subRoutineDec
+		ret += e.CompileSubroutineDec()
 	}
 
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
-		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
-	return ret + xmlEndClass(), nil
+	e.Tknzr.Advance()
+	return ret + xmlEndClass()
 }
 
-func (e *Engine) CompileClassVarDec() (string, error) {
+func (e *Engine) CompileClassVarDec() string {
 	ret := xmlStartClassVarDec()
 
 	if err := e.eatStaticOrField(&ret); err != nil {
-		return "", fmt.Errorf("compileClassVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
-		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
-		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	for e.Tknzr.Symbol() == KOMMA {
 		if err := e.eatSymbol(KOMMA, &ret); err != nil {
-			return "", fmt.Errorf("compileClassVarDec: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
 
 		e.Tknzr.Advance()
 		if err := e.eatIdentifier(&ret); err != nil {
-			return "", fmt.Errorf("compileClassVarDec: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
 
 		e.Tknzr.Advance()
 	}
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
-		return "", fmt.Errorf("compileClassVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
-	return ret + xmlEndClassVarDec(), nil
+	e.Tknzr.Advance()
+	return ret + xmlEndClassVarDec()
 }
 
-func (e *Engine) CompileSubroutineDec() (string, error) {
+func (e *Engine) CompileSubroutineDec() string {
 	ret := xmlStartSubroutineDec()
 
 	if err := e.eatSubRoutineDecStart(&ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatVoidOrType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatSymbol(LPAREN, &ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
@@ -125,87 +114,74 @@ func (e *Engine) CompileSubroutineDec() (string, error) {
 		ret += xmlStartParameterList()
 		ret += xmlEndParameterList()
 	default:
-		parameterList, err := e.CompileParameterList()
-		if err != nil {
-			return "", fmt.Errorf("compileSubroutineDec: %w", err)
-		}
-		ret += parameterList
+		ret += e.CompileParameterList()
 	}
 
 	if err := e.eatSymbol(RPAREN, &ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
-	subroutineBody, err := e.CompileSubroutineBody()
-	if err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
-	}
-	ret += subroutineBody
+	ret += e.CompileSubroutineBody()
 
-	return ret + xmlEndSubroutineDec(), nil
+	return ret + xmlEndSubroutineDec()
 }
 
-func (e Engine) CompileParameterList() (string, error) {
+func (e *Engine) CompileParameterList() string {
 	ret := xmlStartParameterList()
 
 	if err := e.eatType(&ret); err != nil {
-		return "", fmt.Errorf("compileParameterList: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
-		return "", fmt.Errorf("compileParameterList: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	for e.Tknzr.Symbol() == KOMMA {
 		if err := e.eatSymbol(KOMMA, &ret); err != nil {
-			return "", fmt.Errorf("compileParameterList: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 
 		e.Tknzr.Advance()
 		if err := e.eatType(&ret); err != nil {
-			return "", fmt.Errorf("compileParameterList: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 
 		e.Tknzr.Advance()
 		if err := e.eatIdentifier(&ret); err != nil {
-			return "", fmt.Errorf("compileParameterList: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 
 		e.Tknzr.Advance()
 	}
 
-	return ret + xmlEndParameterList(), nil
+	return ret + xmlEndParameterList()
 }
 
-func (e Engine) CompileSubroutineBody() (string, error) {
+func (e *Engine) CompileSubroutineBody() string {
 	ret := xmlStartSubroutineBody()
 
 	if err := e.eatSymbol(LBRACE, &ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineBody: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	for e.Tknzr.Keyword() == VAR {
-		varDec, err := e.CompileVarDec()
-		if err != nil {
-			return "", fmt.Errorf("compileSubroutineBody: %w", err)
-		}
+		varDec, _ := e.CompileVarDec()
 		ret += varDec
-
-		e.Tknzr.Advance()
 	}
 
 	ret += e.CompileStatements()
 
-	e.Tknzr.Advance()
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
-		return "", fmt.Errorf("compileSubroutineBody: %w", err)
+		return ""
 	}
 
-	return ret + xmlEndSubroutineBody(), nil
+	e.Tknzr.Advance()
+	return ret + xmlEndSubroutineBody()
 }
 
 func (e Engine) CompileVarDec() (string, error) {
@@ -243,6 +219,7 @@ func (e Engine) CompileVarDec() (string, error) {
 		return "", fmt.Errorf("compileVarDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	return ret + xmlEndVarDec(), nil
 }
 
@@ -259,6 +236,7 @@ func (e Engine) CompileReturn() string {
 	e.Tknzr.Advance()
 	e.eatSymbol(SEMICOLON, &ret)
 
+	e.Tknzr.Advance()
 	return ret + xmlEndReturnStatement()
 
 }
@@ -282,9 +260,9 @@ func (e Engine) eatVoidOrType(ret *string) error {
 		e.eatKeyword(VOID, ret)
 	default:
 		if err := e.eatType(ret); err != nil {
-			return fmt.Errorf(
-				"expected KEYWORD %s or type: %w",
-				VOID, err,
+			return fmt.Errorf("%w: %w",
+				NewErrSyntaxUnexpectedToken(fmt.Sprintf("expected KEYWORD %s or type", VOID), e.Tknzr.curToken.Literal),
+				err,
 			)
 		}
 	}
@@ -320,7 +298,10 @@ func (e Engine) eatIdentifier(ret *string) error {
 
 func (e Engine) eatSubRoutineDecStart(ret *string) error {
 	if !isSubRoutineDec(e.Tknzr.Keyword()) {
-		return fmt.Errorf("unexpected token: %v : expected KEYWORD constructor / function / method", e.Tknzr.curToken)
+		return NewErrSyntaxUnexpectedToken(
+			fmt.Sprintf("KEYWORD %s / %s / %s ", CONSTRUCTOR, FUNCTION, METHOD),
+			e.Tknzr.Keyword(),
+		)
 	}
 
 	*ret += xmlKeyword(e.Tknzr.Keyword())
@@ -329,7 +310,7 @@ func (e Engine) eatSubRoutineDecStart(ret *string) error {
 
 func (e Engine) eatStaticOrField(ret *string) error {
 	if !isClassVarDec(e.Tknzr.Keyword()) {
-		return fmt.Errorf("unexpected token: %v : expected KEYWORD static or field", e.Tknzr.curToken)
+		return NewErrSyntaxUnexpectedToken(fmt.Sprintf("KEYWORD %s or %s ", STATIC, FIELD), e.Tknzr.Keyword())
 	}
 
 	*ret += xmlKeyword(e.Tknzr.Keyword())

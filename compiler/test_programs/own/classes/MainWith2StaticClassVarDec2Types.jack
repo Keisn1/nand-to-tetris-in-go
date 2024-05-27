@@ -1,5 +1,4 @@
 class Main {
     static boolean test1;
     static int test2;
-    }
 }

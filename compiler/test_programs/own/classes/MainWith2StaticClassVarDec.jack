@@ -1,5 +1,4 @@
 class Main {
     static boolean test1;    // Added for testing -- there is no static keyword
     static boolean test2;    // Added for testing -- there is no static keyword
-    }
 }

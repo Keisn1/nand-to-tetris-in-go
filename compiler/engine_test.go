@@ -27,6 +27,7 @@ func Test_compileClass(t *testing.T) {
 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
 			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
 			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
+			{name: "main with mulitple empty subroutine", fp: "MainWithMultEmptySubroutine"},
 		}
 
 		for _, tc := range testCases {
@@ -38,9 +39,10 @@ func Test_compileClass(t *testing.T) {
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
-				got, err := engine.CompileClass()
-				assert.NoError(t, err)
+				got := engine.CompileClass()
 				assert.Equal(t, want, removeWhiteSpaces(got))
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
 	})
@@ -84,8 +86,11 @@ func Test_compileClass(t *testing.T) {
 				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.EOF),
 			},
 			{
-				inputs:  []string{"class Main {static "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken("KEYWORD int / char / boolean or className", compiler.EOF),
+				inputs: []string{"class Main {static "},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+					compiler.EOF,
+				),
 			},
 			{
 				inputs: []string{"class Main {function var"},
@@ -111,17 +116,8 @@ func Test_compileClass(t *testing.T) {
 				engine.Tknzr.Advance()
 				engine.CompileClass()
 
-				foundErr := false
-				for _, gotErr := range engine.Errors {
-					if errors.Is(gotErr, tc.wantErr) {
-						foundErr = true
-					}
-				}
-
-				if !foundErr {
-					t.Log("Could not find error:", tc.wantErr, "\nPresent errors: ", engine.Errors)
-					t.Fail()
-				}
+				assertErrorFound(t, engine.Errors, tc.wantErr)
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -149,33 +145,53 @@ func Test_classVarDec(t *testing.T) {
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
-				got, err := engine.CompileClassVarDec()
-				assert.NoError(t, err)
+				got := engine.CompileClassVarDec()
 				assert.Equal(t, want, removeWhiteSpaces(got))
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
 	})
 
-	// t.Run("Testing falsy class variable declarations", func(t *testing.T) {
-	// 	type testCase struct {
-	// 		inputs []string
-	// 		error  string
-	// 	}
-	// 	testCases := []testCase{
-	// 		{inputs: []string{"", "var", "   "}, error: "expected KEYWORD static or field"},
-	// 		{inputs: []string{"static boolean boo{"}, error: "compileClassVarDec: expected SYMBOL ;"},
-	// 	}
-	// 	for _, tc := range testCases {
-	// 		for _, input := range tc.inputs {
-	// 			tknzr := compiler.NewTokenizer(input)
-	// 			engine := compiler.NewEngine(&tknzr)
+	t.Run("Testing falsy class variable declarations", func(t *testing.T) {
+		type testCase struct {
+			inputs  []string
+			wantErr error
+		}
+		testCases := []testCase{
+			{
+				inputs: []string{"", "   "},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s or %s ", compiler.STATIC, compiler.FIELD),
+					compiler.EOF,
+				),
+			},
+			{
+				inputs: []string{"var"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s or %s ", compiler.STATIC, compiler.FIELD),
+					compiler.VAR,
+				),
+			},
+			{
+				inputs:  []string{"static boolean boo{"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE),
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
 
-	// 			engine.Tknzr.Advance()
-	// 			_, err := engine.CompileClassVarDec()
-	// 			assert.ErrorContains(t, err, tc.error)
-	// 		}
-	// 	}
-	// })
+				engine.Tknzr.Advance()
+				engine.CompileClassVarDec()
+
+				assertErrorFound(t, engine.Errors, tc.wantErr)
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			}
+		}
+	})
 }
 
 func Test_subroutineDec(t *testing.T) {
@@ -203,47 +219,92 @@ func Test_subroutineDec(t *testing.T) {
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
-				got, err := engine.CompileSubroutineDec()
-				assert.NoError(t, err)
+				got := engine.CompileSubroutineDec()
+
 				assert.Equal(t, want, removeWhiteSpaces(got))
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
 	})
 
-	// t.Run("Testing falsy subroutine declarations", func(t *testing.T) {
-	// 	type testCase struct {
-	// 		name   string
-	// 		inputs []string
-	// 		error  []string
-	// 	}
-	// 	testCases := []testCase{
-	// 		{name: "1", inputs: []string{"", "var", "   "}, error: []string{"compileSubroutineDec", "expected KEYWORD constructor / function / method"}},
-	// 		{name: "2", inputs: []string{"function var"}, error: []string{
-	// 			"compileSubroutineDec",
-	// 			"expected type or KEYWORD void",
-	// 			"expected className or KEYWORD int / char / boolean"},
-	// 		},
-	// 		{name: "3", inputs: []string{"function int var"}, error: []string{"compileSubroutineDec", "expected tokenType IDENTIFIER"}},
-	// 		{name: "4", inputs: []string{"function int name;"}, error: []string{"compileSubroutineDec", "expected SYMBOL ("}},
-	// 		{name: "5", inputs: []string{"function int name()}"}, error: []string{"compileSubroutineDec", "expected SYMBOL {"}},
-	// 		{name: "6", inputs: []string{"function int name(var)", "function int name(int x, var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected className or KEYWORD int / char / boolean"}},
-	// 		{name: "7", inputs: []string{"function int name(int var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected tokenType IDENTIFIER"}},
-	// 	}
-	// 	for _, tc := range testCases {
-	// 		t.Run(tc.name, func(t *testing.T) {
-	// 			for _, input := range tc.inputs {
-	// 				tknzr := compiler.NewTokenizer(input)
-	// 				engine := compiler.NewEngine(&tknzr)
+	t.Run("Testing falsy subroutine declarations", func(t *testing.T) {
+		type testCase struct {
+			inputs   []string
+			wantErrs []error
+		}
+		testCases := []testCase{
+			{
+				inputs: []string{"", "   "},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s / %s / %s ", compiler.CONSTRUCTOR, compiler.FUNCTION, compiler.METHOD),
+					compiler.EOF,
+				)},
+			},
+			{
+				inputs: []string{"var"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s / %s / %s ", compiler.CONSTRUCTOR, compiler.FUNCTION, compiler.METHOD),
+					compiler.VAR,
+				)},
+			},
+			{
+				inputs: []string{"function var"},
+				wantErrs: []error{
+					compiler.NewErrSyntaxUnexpectedToken(
+						fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+						compiler.VAR,
+					),
+					compiler.NewErrSyntaxUnexpectedToken(fmt.Sprintf("expected KEYWORD %s or type", compiler.VOID), compiler.VAR),
+				},
+			},
+			{
+				inputs:   []string{"function int var"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+			},
+			{
+				inputs:   []string{"function int name;"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LPAREN, compiler.SEMICOLON)},
+			},
+			{
+				inputs: []string{"function int name(var", "function int name(int x, var"},
+				wantErrs: []error{
+					compiler.NewErrSyntaxUnexpectedToken(
+						fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+						compiler.VAR,
+					),
+				},
+			},
 
-	// 				engine.Tknzr.Advance()
-	// 				_, err := engine.CompileSubroutineDec()
-	// 				for _, wantErr := range tc.error {
-	// 					assert.ErrorContains(t, err, wantErr)
-	// 				}
-	// 			}
-	// 		})
-	// 	}
-	// })
+			{
+				inputs:   []string{"function int name(int var", "function int name(int name1, int var"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+			},
+			{
+				inputs:   []string{"function int name(int name1}"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.RPAREN, compiler.RBRACE)},
+			},
+			{
+				inputs:   []string{"function int name(int name1)}"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, compiler.RBRACE)},
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileSubroutineDec()
+
+				for _, wantErr := range tc.wantErrs {
+					assertErrorFound(t, engine.Errors, wantErr)
+				}
+
+				err := engine.Tknzr.Advance()
+				assert.EqualError(t, err, compiler.ErrEndOfFile.Error())
+			}
+		}
+	})
 }
 
 func Test_subroutineBody(t *testing.T) {
@@ -269,8 +330,7 @@ func Test_subroutineBody(t *testing.T) {
 				engine := compiler.NewEngine(&tknzr)
 				engine.Tknzr.Advance()
 
-				got, err := engine.CompileSubroutineBody()
-				assert.NoError(t, err)
+				got := engine.CompileSubroutineBody()
 				assert.Equal(t, want, removeWhiteSpaces(got))
 			})
 		}
@@ -329,4 +389,18 @@ func readFile(t *testing.T, fp string) string {
 func removeWhiteSpaces(input string) string {
 	regex := regexp.MustCompile(`\s+`)
 	return regex.ReplaceAllString(input, "")
+}
+
+func assertErrorFound(t *testing.T, gotErrs []error, wantErr error) {
+	foundErr := false
+	for _, gotErr := range gotErrs {
+		if errors.Is(gotErr, wantErr) {
+			foundErr = true
+		}
+	}
+
+	if !foundErr {
+		t.Log("Could not find error:", wantErr, "\nPresent errors: ", gotErrs)
+		t.Fail()
+	}
 }

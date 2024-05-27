@@ -2,5 +2,4 @@ class Main {
     static boolean test1;
     field char f1;
     static int test2;
-    }
 }

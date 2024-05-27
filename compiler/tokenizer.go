@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -49,7 +48,7 @@ func NewTokenizer(input string) Tokenizer {
 func (t *Tokenizer) Advance() error {
 	if !t.HasMoreTokens() {
 		t.curToken = NewToken(EOF, EOF_CONST)
-		return errors.New("advance should not be called if there are no more tokens")
+		return ErrEndOfFile
 	}
 
 	t.readUpToNextToken()

@@ -1,6 +1,11 @@
 package compiler
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var ErrEndOfFile = errors.New("no more tokens")
 
 type ErrSyntaxUnexpectedToken struct {
 	ExpectedToken string
@@ -23,10 +28,10 @@ type ErrSyntaxUnexpectedTokenType struct {
 	FoundToken        string
 }
 
-func NewErrSyntaxUnexpectedTokenType(expectedTokenType TokenType, foundTokenType string) ErrSyntaxUnexpectedTokenType {
+func NewErrSyntaxUnexpectedTokenType(expectedTokenType TokenType, foundToken string) ErrSyntaxUnexpectedTokenType {
 	return ErrSyntaxUnexpectedTokenType{
 		ExpectedTokenType: expectedTokenType,
-		FoundToken:        foundTokenType,
+		FoundToken:        foundToken,
 	}
 }
 

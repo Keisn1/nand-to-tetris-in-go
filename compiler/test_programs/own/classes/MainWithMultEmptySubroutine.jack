@@ -1,0 +1,8 @@
+class Main {
+    function void main1() {
+        return;
+    }
+    function void main2() {
+        return;
+    }
+}
