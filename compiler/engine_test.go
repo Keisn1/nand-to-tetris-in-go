@@ -56,7 +56,7 @@ func Test_compileClass(t *testing.T) {
 			},
 			{
 				inputs:  []string{"var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(string(compiler.CLASS), compiler.KEYWORD), compiler.NewToken(string(compiler.VAR), compiler.KEYWORD)),
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(compiler.CLASS, compiler.KEYWORD), compiler.NewToken(compiler.VAR, compiler.KEYWORD)),
 			},
 			// {inputs: []string{"class var"}, errors: "compileClass: expected tokenType IDENTIFIER"},
 			// {inputs: []string{"class name name", "class name ."}, errors: "compileClass: expected SYMBOL {"},
@@ -66,7 +66,7 @@ func Test_compileClass(t *testing.T) {
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
@@ -101,7 +101,7 @@ func Test_compileClass(t *testing.T) {
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
@@ -131,7 +131,7 @@ func Test_classVarDec(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
@@ -153,7 +153,7 @@ func Test_classVarDec(t *testing.T) {
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
@@ -185,7 +185,7 @@ func Test_subroutineDec(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
@@ -218,7 +218,7 @@ func Test_subroutineDec(t *testing.T) {
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				for _, input := range tc.inputs {
-					tknzr := compiler.NewTokenizer(string(input))
+					tknzr := compiler.NewTokenizer(input)
 					engine := compiler.NewEngine(&tknzr)
 
 					engine.Tknzr.Advance()
@@ -251,7 +251,7 @@ func Test_subroutineBody(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(string(input))
+				tknzr := compiler.NewTokenizer(input)
 				engine := compiler.NewEngine(&tknzr)
 				engine.Tknzr.Advance()
 
@@ -291,7 +291,7 @@ func Test_subroutineBody(t *testing.T) {
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				for _, input := range tc.inputs {
-					tknzr := compiler.NewTokenizer(string(input))
+					tknzr := compiler.NewTokenizer(input)
 					engine := compiler.NewEngine(&tknzr)
 
 					engine.Tknzr.Advance()

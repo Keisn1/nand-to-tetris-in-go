@@ -1,33 +1,31 @@
 package compiler
 
-type Keyword string
-
 const (
-	CLASS       Keyword = "class"
-	METHOD      Keyword = "method"
-	FUNCTION    Keyword = "function"
-	CONSTRUCTOR Keyword = "constructor"
-	INT         Keyword = "int"
-	BOOLEAN     Keyword = "boolean"
-	CHAR        Keyword = "char"
-	VOID        Keyword = "void"
-	VAR         Keyword = "var"
-	STATIC      Keyword = "static"
-	FIELD       Keyword = "field"
-	LET         Keyword = "let"
-	DO          Keyword = "do"
-	IF          Keyword = "if"
-	ELSE        Keyword = "else"
-	WHILE       Keyword = "while"
-	RETURN      Keyword = "return"
-	TRUE        Keyword = "true"
-	FALSE       Keyword = "false"
-	NULL        Keyword = "null"
-	THIS        Keyword = "this"
+	CLASS       = "class"
+	METHOD      = "method"
+	FUNCTION    = "function"
+	CONSTRUCTOR = "constructor"
+	INT         = "int"
+	BOOLEAN     = "boolean"
+	CHAR        = "char"
+	VOID        = "void"
+	VAR         = "var"
+	STATIC      = "static"
+	FIELD       = "field"
+	LET         = "let"
+	DO          = "do"
+	IF          = "if"
+	ELSE        = "else"
+	WHILE       = "while"
+	RETURN      = "return"
+	TRUE        = "true"
+	FALSE       = "false"
+	NULL        = "null"
+	THIS        = "this"
 )
 
 var (
-	keywords = map[string]Keyword{
+	keywords = map[string]string{
 		"class":       CLASS,
 		"method":      METHOD,
 		"function":    FUNCTION,

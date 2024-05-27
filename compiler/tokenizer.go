@@ -107,12 +107,12 @@ func (t Tokenizer) TokenType() TokenType {
 	return t.curToken.TokenType
 }
 
-func (t Tokenizer) Keyword() Keyword {
+func (t Tokenizer) Keyword() string {
 	return keywords[t.curToken.Literal]
 }
 
-func (t Tokenizer) Symbol() rune {
-	return rune(t.curToken.Literal[0])
+func (t Tokenizer) Symbol() string {
+	return string(t.curToken.Literal[0])
 }
 
 func (t Tokenizer) IntVal() int {
@@ -287,7 +287,7 @@ func (t Tokenizer) isInteger() bool {
 }
 
 func (t Tokenizer) isSymbol() bool {
-	if _, ok := allSymbols[t.ch]; ok {
+	if _, ok := allSymbols[string(t.ch)]; ok {
 		return true
 	}
 	return false

@@ -31,7 +31,7 @@ func Test_tokenizer(t *testing.T) {
 		t.Run("single symbols", func(t *testing.T) {
 			type testCase struct {
 				input         string
-				wantSymbol    rune
+				wantSymbol    string
 				wantTokenType compiler.TokenType
 			}
 			testCases := []testCase{
@@ -163,7 +163,7 @@ func Test_tokenizer(t *testing.T) {
 			type testCase struct {
 				name          string
 				input         string
-				wantKeyword   compiler.Keyword
+				wantKeyword   string
 				wantTokenType compiler.TokenType
 			}
 			testCases := []testCase{
@@ -199,7 +199,7 @@ func Test_tokenizer(t *testing.T) {
 			tknzr := compiler.NewTokenizer(input)
 
 			type testCase struct {
-				wantKeyword   compiler.Keyword
+				wantKeyword   string
 				wantTokenType compiler.TokenType
 			}
 			testCases := []testCase{
@@ -402,8 +402,8 @@ class Main {
 		tknzr := compiler.NewTokenizer(input)
 		type testCase struct {
 			wantTokenType  compiler.TokenType
-			wantKeyword    compiler.Keyword
-			wantSymbol     rune
+			wantKeyword    string
+			wantSymbol     string
 			wantIdentifier string
 			wantStringVal  string
 			wantIntVal     int

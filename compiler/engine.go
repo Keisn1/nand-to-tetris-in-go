@@ -328,11 +328,11 @@ func (e Engine) eatStaticOrField(ret *string) error {
 	return nil
 }
 
-func isSubRoutineDec(kw Keyword) bool {
+func isSubRoutineDec(kw string) bool {
 	return kw == CONSTRUCTOR || kw == FUNCTION || kw == METHOD
 }
 
-func isClassVarDec(kw Keyword) bool {
+func isClassVarDec(kw string) bool {
 	return kw == STATIC || kw == FIELD
 }
 
@@ -352,7 +352,7 @@ func (err ErrSyntaxUnexpectedToken) Error() string {
 	return fmt.Sprintf("expected %s but found token %s", err.ExpectedToken, err.FoundToken)
 }
 
-func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
+func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
 	if (e.Tknzr.TokenType() != KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
 		// return ErrSyntaxUnexpectedToken{}
 		expectedToken := NewToken(string(expectedKeyword), KEYWORD)
@@ -363,20 +363,20 @@ func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
 	return nil
 }
 
-func (e Engine) eatSymbol(expectedSymbol rune, ret *string) error {
+func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
 	if (e.Tknzr.TokenType() != SYMBOL) || (e.Tknzr.Symbol() != expectedSymbol) {
-		return fmt.Errorf("expected SYMBOL %c", expectedSymbol)
+		return fmt.Errorf("expected SYMBOL %s", expectedSymbol)
 	}
 
 	*ret += xmlSymbol(expectedSymbol)
 	return nil
 }
 
-func xmlSymbol(symbol rune) string {
+func xmlSymbol(symbol string) string {
 	return fmt.Sprintf("<symbol> %s </symbol>\n", string(symbol))
 }
 
-func xmlKeyword(kw Keyword) string {
+func xmlKeyword(kw string) string {
 	return fmt.Sprintf("<keyword> %s </keyword>\n", kw)
 }
 
