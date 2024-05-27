@@ -52,14 +52,28 @@ func Test_compileClass(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:  []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(string(compiler.CLASS), compiler.KEYWORD), compiler.Token{}),
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.CLASS, compiler.EOF),
 			},
 			{
 				inputs:  []string{"var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.NewToken(compiler.CLASS, compiler.KEYWORD), compiler.NewToken(compiler.VAR, compiler.KEYWORD)),
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.CLASS, compiler.VAR),
 			},
-			// {inputs: []string{"class var"}, errors: "compileClass: expected tokenType IDENTIFIER"},
-			// {inputs: []string{"class name name", "class name ."}, errors: "compileClass: expected SYMBOL {"},
+			{
+				inputs:  []string{"class var"},
+				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.KEYWORD),
+			},
+			{
+				inputs:  []string{"class name name"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, "name"),
+			},
+			{
+				inputs:  []string{"class name ."},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, "."),
+			},
+			{
+				inputs:  []string{"class Main {"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.EOF),
+			},
 			// {inputs: []string{"class Main {", "class name { ."}, errors: "compileClass: expected SYMBOL }"},
 			// {inputs: []string{"class Main {static name"}, errors: "compileClass: compileClassVarDec"},
 			// {inputs: []string{"class Main {function var"}, errors: "compileClass: compileSubroutineDec"},
@@ -94,8 +108,8 @@ func Test_compileClass(t *testing.T) {
 		}
 		testCases := []testCase{
 			{inputs: []string{"class var"}, error: "compileClass: expected tokenType IDENTIFIER"},
-			{inputs: []string{"class name name", "class name ."}, error: "compileClass: expected SYMBOL {"},
-			{inputs: []string{"class Main {", "class name { ."}, error: "compileClass: expected SYMBOL }"},
+			{inputs: []string{"class name name", "class name ."}, error: "compileClass: expected {"},
+			{inputs: []string{"class Main {", "class name { ."}, error: "compileClass: expected }"},
 			{inputs: []string{"class Main {static name"}, error: "compileClass: compileClassVarDec"},
 			{inputs: []string{"class Main {function var"}, error: "compileClass: compileSubroutineDec"},
 		}

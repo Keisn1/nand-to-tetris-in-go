@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -24,11 +23,13 @@ func (e *Engine) CompileClass() (string, error) {
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
@@ -50,8 +51,8 @@ func (e *Engine) CompileClass() (string, error) {
 		ret += subRoutineDec
 	}
 
-	e.Tknzr.Advance()
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
@@ -304,7 +305,7 @@ func (e Engine) eatType(ret *string) error {
 
 func (e Engine) eatIdentifier(ret *string) error {
 	if e.Tknzr.TokenType() != IDENTIFIER {
-		return errors.New("expected tokenType IDENTIFIER")
+		return NewErrSyntaxUnexpectedTokenType(IDENTIFIER, e.Tknzr.TokenType())
 	}
 	*ret += xmlIdentifier(e.Tknzr.Identifier())
 	return nil
@@ -336,27 +337,9 @@ func isClassVarDec(kw string) bool {
 	return kw == STATIC || kw == FIELD
 }
 
-type ErrSyntaxUnexpectedToken struct {
-	ExpectedToken Token
-	FoundToken    Token
-}
-
-func NewErrSyntaxUnexpectedToken(expectedToken, foundToken Token) ErrSyntaxUnexpectedToken {
-	return ErrSyntaxUnexpectedToken{
-		ExpectedToken: expectedToken,
-		FoundToken:    foundToken,
-	}
-}
-
-func (err ErrSyntaxUnexpectedToken) Error() string {
-	return fmt.Sprintf("expected %s but found token %s", err.ExpectedToken, err.FoundToken)
-}
-
 func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
 	if (e.Tknzr.TokenType() != KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
-		// return ErrSyntaxUnexpectedToken{}
-		expectedToken := NewToken(string(expectedKeyword), KEYWORD)
-		return NewErrSyntaxUnexpectedToken(expectedToken, e.Tknzr.curToken)
+		return NewErrSyntaxUnexpectedToken(expectedKeyword, e.Tknzr.curToken.Literal)
 	}
 
 	*ret += xmlKeyword(expectedKeyword)
@@ -365,7 +348,7 @@ func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
 
 func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
 	if (e.Tknzr.TokenType() != SYMBOL) || (e.Tknzr.Symbol() != expectedSymbol) {
-		return fmt.Errorf("expected SYMBOL %s", expectedSymbol)
+		return NewErrSyntaxUnexpectedToken(expectedSymbol, e.Tknzr.curToken.Literal)
 	}
 
 	*ret += xmlSymbol(expectedSymbol)

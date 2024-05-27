@@ -47,6 +47,7 @@ func NewTokenizer(input string) Tokenizer {
 
 func (t *Tokenizer) Advance() error {
 	if !t.HasMoreTokens() {
+		t.curToken = NewToken(EOF, KEYWORD)
 		return errors.New("advance should not be called if there are no more tokens")
 	}
 
@@ -96,7 +97,7 @@ func (t *Tokenizer) PeekToken() Token {
 	return nextToken
 }
 
-func (t Tokenizer) HasMoreTokens() bool {
+func (t *Tokenizer) HasMoreTokens() bool {
 	if t.readPos >= len(t.input) {
 		return false
 	}

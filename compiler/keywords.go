@@ -22,6 +22,7 @@ const (
 	FALSE       = "false"
 	NULL        = "null"
 	THIS        = "this"
+	EOF         = "eof"
 )
 
 var (
@@ -47,5 +48,6 @@ var (
 		"false":       FALSE,
 		"null":        NULL,
 		"this":        THIS,
+		"eof":         EOF,
 	}
 )

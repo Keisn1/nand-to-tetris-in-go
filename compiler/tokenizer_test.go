@@ -27,7 +27,6 @@ func Test_tokenizer(t *testing.T) {
 	})
 
 	t.Run("Identifying symbols", func(t *testing.T) {
-		// TODO: Check for error, not finding symbols
 		t.Run("single symbols", func(t *testing.T) {
 			type testCase struct {
 				input         string
@@ -488,6 +487,16 @@ class Main {
 				t.Fatalf("default case, no tokenType hit")
 			}
 		}
+
+		err := tknzr.Advance()
+		assert.Error(t, err)
+
+		gotTokenType := tknzr.TokenType()
+		assert.Equal(t, compiler.KEYWORD, gotTokenType)
+
+		gotSymbol := tknzr.Keyword()
+		assert.Equal(t, compiler.EOF, gotSymbol)
+
 	})
 }
 func Test_tokenizerFullPrograms1(t *testing.T) {
