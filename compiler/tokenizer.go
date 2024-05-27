@@ -18,6 +18,7 @@ const (
 	IDENTIFIER   TokenType = "IDENTIFIER"
 	INT_CONST    TokenType = "INT_CONST"
 	STRING_CONST TokenType = "STRING_CONST"
+	EOF_CONST    TokenType = "EOF_CONST"
 )
 
 type Token struct {
@@ -47,7 +48,7 @@ func NewTokenizer(input string) Tokenizer {
 
 func (t *Tokenizer) Advance() error {
 	if !t.HasMoreTokens() {
-		t.curToken = NewToken(EOF, KEYWORD)
+		t.curToken = NewToken(EOF, EOF_CONST)
 		return errors.New("advance should not be called if there are no more tokens")
 	}
 
@@ -114,6 +115,10 @@ func (t Tokenizer) Keyword() string {
 
 func (t Tokenizer) Symbol() string {
 	return string(t.curToken.Literal[0])
+}
+
+func (t Tokenizer) EOF() string {
+	return EOF
 }
 
 func (t Tokenizer) IntVal() int {

@@ -35,10 +35,7 @@ func (e *Engine) CompileClass() (string, error) {
 
 	e.Tknzr.Advance()
 	for isClassVarDec(e.Tknzr.Keyword()) {
-		classVarDec, err := e.CompileClassVarDec()
-		if err != nil {
-			return "", fmt.Errorf("compileClass: %w", err)
-		}
+		classVarDec, _ := e.CompileClassVarDec()
 		ret += classVarDec
 		e.Tknzr.Advance()
 	}
@@ -59,7 +56,7 @@ func (e *Engine) CompileClass() (string, error) {
 	return ret + xmlEndClass(), nil
 }
 
-func (e Engine) CompileClassVarDec() (string, error) {
+func (e *Engine) CompileClassVarDec() (string, error) {
 	ret := xmlStartClassVarDec()
 
 	if err := e.eatStaticOrField(&ret); err != nil {
@@ -68,11 +65,13 @@ func (e Engine) CompileClassVarDec() (string, error) {
 
 	e.Tknzr.Advance()
 	if err := e.eatType(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
@@ -97,7 +96,7 @@ func (e Engine) CompileClassVarDec() (string, error) {
 	return ret + xmlEndClassVarDec(), nil
 }
 
-func (e Engine) CompileSubroutineDec() (string, error) {
+func (e *Engine) CompileSubroutineDec() (string, error) {
 	ret := xmlStartSubroutineDec()
 
 	if err := e.eatSubRoutineDecStart(&ret); err != nil {
@@ -106,6 +105,7 @@ func (e Engine) CompileSubroutineDec() (string, error) {
 
 	e.Tknzr.Advance()
 	if err := e.eatVoidOrType(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
@@ -282,30 +282,37 @@ func (e Engine) eatVoidOrType(ret *string) error {
 		e.eatKeyword(VOID, ret)
 	default:
 		if err := e.eatType(ret); err != nil {
-			return fmt.Errorf("eatVoidOrType: expected type or KEYWORD void: %w", err)
+			return fmt.Errorf(
+				"expected KEYWORD %s or type: %w",
+				VOID, err,
+			)
 		}
 	}
 	return nil
 }
 
-func (e Engine) eatType(ret *string) error {
+func (e *Engine) eatType(ret *string) error {
 	switch e.Tknzr.TokenType() {
 	case IDENTIFIER:
 		*ret += xmlIdentifier(e.Tknzr.Identifier())
 	case KEYWORD:
 		if e.Tknzr.Keyword() != INT && e.Tknzr.Keyword() != CHAR && e.Tknzr.Keyword() != BOOLEAN {
-			return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.Tknzr.Keyword())
+			return NewErrSyntaxUnexpectedToken(
+				fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+				e.Tknzr.Keyword())
 		}
 		*ret += xmlKeyword(e.Tknzr.Keyword())
 	default:
-		return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.Tknzr.Keyword())
+		return NewErrSyntaxUnexpectedToken(
+			fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+			e.Tknzr.curToken.Literal)
 	}
 	return nil
 }
 
 func (e Engine) eatIdentifier(ret *string) error {
 	if e.Tknzr.TokenType() != IDENTIFIER {
-		return NewErrSyntaxUnexpectedTokenType(IDENTIFIER, e.Tknzr.TokenType())
+		return NewErrSyntaxUnexpectedTokenType(IDENTIFIER, e.Tknzr.curToken.Literal)
 	}
 	*ret += xmlIdentifier(e.Tknzr.Identifier())
 	return nil

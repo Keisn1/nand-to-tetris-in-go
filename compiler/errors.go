@@ -20,16 +20,16 @@ func (err ErrSyntaxUnexpectedToken) Error() string {
 
 type ErrSyntaxUnexpectedTokenType struct {
 	ExpectedTokenType TokenType
-	FoundTokenType    TokenType
+	FoundToken        string
 }
 
-func NewErrSyntaxUnexpectedTokenType(expectedTokenType, foundTokenType TokenType) ErrSyntaxUnexpectedTokenType {
+func NewErrSyntaxUnexpectedTokenType(expectedTokenType TokenType, foundTokenType string) ErrSyntaxUnexpectedTokenType {
 	return ErrSyntaxUnexpectedTokenType{
 		ExpectedTokenType: expectedTokenType,
-		FoundTokenType:    foundTokenType,
+		FoundToken:        foundTokenType,
 	}
 }
 
 func (err ErrSyntaxUnexpectedTokenType) Error() string {
-	return fmt.Sprintf("expected tokenType %s but found tokenType %s", err.ExpectedTokenType, err.FoundTokenType)
+	return fmt.Sprintf("expected tokenType %s but found tokenType %s", err.ExpectedTokenType, err.FoundToken)
 }

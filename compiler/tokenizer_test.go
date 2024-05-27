@@ -492,10 +492,10 @@ class Main {
 		assert.Error(t, err)
 
 		gotTokenType := tknzr.TokenType()
-		assert.Equal(t, compiler.KEYWORD, gotTokenType)
+		assert.Equal(t, compiler.EOF_CONST, gotTokenType)
 
-		gotSymbol := tknzr.Keyword()
-		assert.Equal(t, compiler.EOF, gotSymbol)
+		got := tknzr.EOF()
+		assert.Equal(t, compiler.EOF, got)
 
 	})
 }

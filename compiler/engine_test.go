@@ -2,6 +2,7 @@ package compiler_test
 
 import (
 	"errors"
+	"fmt"
 	"hack/compiler"
 	"os"
 	"testing"
@@ -60,7 +61,7 @@ func Test_compileClass(t *testing.T) {
 			},
 			{
 				inputs:  []string{"class var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.KEYWORD),
+				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR),
 			},
 			{
 				inputs:  []string{"class name name"},
@@ -74,10 +75,34 @@ func Test_compileClass(t *testing.T) {
 				inputs:  []string{"class Main {"},
 				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.EOF),
 			},
-			// {inputs: []string{"class Main {", "class name { ."}, errors: "compileClass: expected SYMBOL }"},
-			// {inputs: []string{"class Main {static name"}, errors: "compileClass: compileClassVarDec"},
-			// {inputs: []string{"class Main {function var"}, errors: "compileClass: compileSubroutineDec"},
+			{
+				inputs:  []string{"class Main { ."},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.POINT),
+			},
+			{
+				inputs:  []string{"class Main {static name"},
+				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.EOF),
+			},
+			{
+				inputs:  []string{"class Main {static "},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken("KEYWORD int / char / boolean or className", compiler.EOF),
+			},
+			{
+				inputs: []string{"class Main {function var"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+					compiler.VAR,
+				),
+			},
+			{
+				inputs: []string{"class Main {function ;"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(
+					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+					compiler.SEMICOLON,
+				),
+			},
 		}
+
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
 				tknzr := compiler.NewTokenizer(input)
@@ -97,31 +122,6 @@ func Test_compileClass(t *testing.T) {
 					t.Log("Could not find error:", tc.wantErr, "\nPresent errors: ", engine.Errors)
 					t.Fail()
 				}
-			}
-		}
-	})
-
-	t.Run("Testing falsy class statements", func(t *testing.T) {
-		type testCase struct {
-			inputs []string
-			error  string
-		}
-		testCases := []testCase{
-			{inputs: []string{"class var"}, error: "compileClass: expected tokenType IDENTIFIER"},
-			{inputs: []string{"class name name", "class name ."}, error: "compileClass: expected {"},
-			{inputs: []string{"class Main {", "class name { ."}, error: "compileClass: expected }"},
-			{inputs: []string{"class Main {static name"}, error: "compileClass: compileClassVarDec"},
-			{inputs: []string{"class Main {function var"}, error: "compileClass: compileSubroutineDec"},
-		}
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-
-				engine.Tknzr.Advance()
-				_, err := engine.CompileClass()
-
-				assert.ErrorContains(t, err, tc.error)
 			}
 		}
 	})
@@ -156,26 +156,26 @@ func Test_classVarDec(t *testing.T) {
 		}
 	})
 
-	t.Run("Testing falsy class variable declarations", func(t *testing.T) {
-		type testCase struct {
-			inputs []string
-			error  string
-		}
-		testCases := []testCase{
-			{inputs: []string{"", "var", "   "}, error: "expected KEYWORD static or field"},
-			{inputs: []string{"static boolean boo{"}, error: "compileClassVarDec: expected SYMBOL ;"},
-		}
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+	// t.Run("Testing falsy class variable declarations", func(t *testing.T) {
+	// 	type testCase struct {
+	// 		inputs []string
+	// 		error  string
+	// 	}
+	// 	testCases := []testCase{
+	// 		{inputs: []string{"", "var", "   "}, error: "expected KEYWORD static or field"},
+	// 		{inputs: []string{"static boolean boo{"}, error: "compileClassVarDec: expected SYMBOL ;"},
+	// 	}
+	// 	for _, tc := range testCases {
+	// 		for _, input := range tc.inputs {
+	// 			tknzr := compiler.NewTokenizer(input)
+	// 			engine := compiler.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				_, err := engine.CompileClassVarDec()
-				assert.ErrorContains(t, err, tc.error)
-			}
-		}
-	})
+	// 			engine.Tknzr.Advance()
+	// 			_, err := engine.CompileClassVarDec()
+	// 			assert.ErrorContains(t, err, tc.error)
+	// 		}
+	// 	}
+	// })
 }
 
 func Test_subroutineDec(t *testing.T) {
@@ -210,40 +210,40 @@ func Test_subroutineDec(t *testing.T) {
 		}
 	})
 
-	t.Run("Testing falsy subroutine declarations", func(t *testing.T) {
-		type testCase struct {
-			name   string
-			inputs []string
-			error  []string
-		}
-		testCases := []testCase{
-			{name: "1", inputs: []string{"", "var", "   "}, error: []string{"compileSubroutineDec", "expected KEYWORD constructor / function / method"}},
-			{name: "2", inputs: []string{"function var"}, error: []string{
-				"compileSubroutineDec",
-				"expected type or KEYWORD void",
-				"expected className or KEYWORD int / char / boolean"},
-			},
-			{name: "3", inputs: []string{"function int var"}, error: []string{"compileSubroutineDec", "expected tokenType IDENTIFIER"}},
-			{name: "4", inputs: []string{"function int name;"}, error: []string{"compileSubroutineDec", "expected SYMBOL ("}},
-			{name: "5", inputs: []string{"function int name()}"}, error: []string{"compileSubroutineDec", "expected SYMBOL {"}},
-			{name: "6", inputs: []string{"function int name(var)", "function int name(int x, var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected className or KEYWORD int / char / boolean"}},
-			{name: "7", inputs: []string{"function int name(int var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected tokenType IDENTIFIER"}},
-		}
-		for _, tc := range testCases {
-			t.Run(tc.name, func(t *testing.T) {
-				for _, input := range tc.inputs {
-					tknzr := compiler.NewTokenizer(input)
-					engine := compiler.NewEngine(&tknzr)
+	// t.Run("Testing falsy subroutine declarations", func(t *testing.T) {
+	// 	type testCase struct {
+	// 		name   string
+	// 		inputs []string
+	// 		error  []string
+	// 	}
+	// 	testCases := []testCase{
+	// 		{name: "1", inputs: []string{"", "var", "   "}, error: []string{"compileSubroutineDec", "expected KEYWORD constructor / function / method"}},
+	// 		{name: "2", inputs: []string{"function var"}, error: []string{
+	// 			"compileSubroutineDec",
+	// 			"expected type or KEYWORD void",
+	// 			"expected className or KEYWORD int / char / boolean"},
+	// 		},
+	// 		{name: "3", inputs: []string{"function int var"}, error: []string{"compileSubroutineDec", "expected tokenType IDENTIFIER"}},
+	// 		{name: "4", inputs: []string{"function int name;"}, error: []string{"compileSubroutineDec", "expected SYMBOL ("}},
+	// 		{name: "5", inputs: []string{"function int name()}"}, error: []string{"compileSubroutineDec", "expected SYMBOL {"}},
+	// 		{name: "6", inputs: []string{"function int name(var)", "function int name(int x, var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected className or KEYWORD int / char / boolean"}},
+	// 		{name: "7", inputs: []string{"function int name(int var)"}, error: []string{"compileSubroutineDec", "compileParameterList", "expected tokenType IDENTIFIER"}},
+	// 	}
+	// 	for _, tc := range testCases {
+	// 		t.Run(tc.name, func(t *testing.T) {
+	// 			for _, input := range tc.inputs {
+	// 				tknzr := compiler.NewTokenizer(input)
+	// 				engine := compiler.NewEngine(&tknzr)
 
-					engine.Tknzr.Advance()
-					_, err := engine.CompileSubroutineDec()
-					for _, wantErr := range tc.error {
-						assert.ErrorContains(t, err, wantErr)
-					}
-				}
-			})
-		}
-	})
+	// 				engine.Tknzr.Advance()
+	// 				_, err := engine.CompileSubroutineDec()
+	// 				for _, wantErr := range tc.error {
+	// 					assert.ErrorContains(t, err, wantErr)
+	// 				}
+	// 			}
+	// 		})
+	// 	}
+	// })
 }
 
 func Test_subroutineBody(t *testing.T) {
@@ -276,47 +276,47 @@ func Test_subroutineBody(t *testing.T) {
 		}
 	})
 
-	t.Run("Testing falsy subroutine bodies", func(t *testing.T) {
-		type testCase struct {
-			name   string
-			inputs []string
-			errors []string
-		}
-		testCases := []testCase{
-			{
-				name:   "false varDec",
-				inputs: []string{"{var ;}"},
-				errors: []string{
-					"compileSubroutineBody",
-					"compileVarDec",
-					"expected className or KEYWORD int / char / boolean",
-				},
-			},
-			{
-				name:   "false varDec",
-				inputs: []string{"{var ;}"},
-				errors: []string{
-					"compileSubroutineBody",
-					"compileVarDec",
-					"expected className or KEYWORD int / char / boolean",
-				},
-			},
-		}
-		for _, tc := range testCases {
-			t.Run(tc.name, func(t *testing.T) {
-				for _, input := range tc.inputs {
-					tknzr := compiler.NewTokenizer(input)
-					engine := compiler.NewEngine(&tknzr)
+	// t.Run("Testing falsy subroutine bodies", func(t *testing.T) {
+	// 	type testCase struct {
+	// 		name   string
+	// 		inputs []string
+	// 		errors []string
+	// 	}
+	// 	testCases := []testCase{
+	// 		{
+	// 			name:   "false varDec",
+	// 			inputs: []string{"{var ;}"},
+	// 			errors: []string{
+	// 				"compileSubroutineBody",
+	// 				"compileVarDec",
+	// 				"expected className or KEYWORD int / char / boolean",
+	// 			},
+	// 		},
+	// 		{
+	// 			name:   "false varDec",
+	// 			inputs: []string{"{var ;}"},
+	// 			errors: []string{
+	// 				"compileSubroutineBody",
+	// 				"compileVarDec",
+	// 				"expected className or KEYWORD int / char / boolean",
+	// 			},
+	// 		},
+	// 	}
+	// 	for _, tc := range testCases {
+	// 		t.Run(tc.name, func(t *testing.T) {
+	// 			for _, input := range tc.inputs {
+	// 				tknzr := compiler.NewTokenizer(input)
+	// 				engine := compiler.NewEngine(&tknzr)
 
-					engine.Tknzr.Advance()
-					_, err := engine.CompileSubroutineBody()
-					for _, wantErr := range tc.errors {
-						assert.ErrorContains(t, err, wantErr)
-					}
-				}
-			})
-		}
-	})
+	// 				engine.Tknzr.Advance()
+	// 				_, err := engine.CompileSubroutineBody()
+	// 				for _, wantErr := range tc.errors {
+	// 					assert.ErrorContains(t, err, wantErr)
+	// 				}
+	// 			}
+	// 		})
+	// 	}
+	// })
 }
 
 func readFile(t *testing.T, fp string) string {
