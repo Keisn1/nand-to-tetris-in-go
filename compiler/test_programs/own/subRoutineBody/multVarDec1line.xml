@@ -1,0 +1,24 @@
+<subroutineBody>
+  <symbol> { </symbol>
+    <varDec>
+      <keyword> var </keyword>
+      <keyword> int </keyword>
+      <identifier> game1 </identifier>
+      <symbol> , </symbol>
+      <identifier> game2 </identifier>
+      <symbol> ; </symbol>
+    </varDec>
+    <varDec>
+      <keyword> var </keyword>
+      <keyword> boolean </keyword>
+      <identifier> game3 </identifier>
+      <symbol> ; </symbol>
+    </varDec>
+    <statements>
+    <returnStatement>
+        <keyword> return </keyword>
+        <symbol> ; </symbol>
+      </returnStatement>
+    </statements>
+  <symbol> } </symbol>
+</subroutineBody>

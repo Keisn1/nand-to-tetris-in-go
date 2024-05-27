@@ -35,7 +35,9 @@ func Test_compileClass(t *testing.T) {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
 
-				got, _ := engine.CompileClass()
+				engine.Tknzr.Advance()
+				got, err := engine.CompileClass()
+				assert.NoError(t, err)
 				assert.Equal(t, want, removeWhiteSpaces(got))
 			})
 		}
@@ -58,6 +60,8 @@ func Test_compileClass(t *testing.T) {
 			for _, input := range tc.inputs {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
 				_, err := engine.CompileClass()
 				assert.ErrorContains(t, err, tc.error)
 			}
@@ -86,6 +90,7 @@ func Test_classVarDec(t *testing.T) {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
 
+				engine.Tknzr.Advance()
 				got, err := engine.CompileClassVarDec()
 				assert.NoError(t, err)
 				assert.Equal(t, want, removeWhiteSpaces(got))
@@ -106,6 +111,8 @@ func Test_classVarDec(t *testing.T) {
 			for _, input := range tc.inputs {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
 				_, err := engine.CompileClassVarDec()
 				assert.ErrorContains(t, err, tc.error)
 			}
@@ -137,6 +144,7 @@ func Test_subroutineDec(t *testing.T) {
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
 
+				engine.Tknzr.Advance()
 				got, err := engine.CompileSubroutineDec()
 				assert.NoError(t, err)
 				assert.Equal(t, want, removeWhiteSpaces(got))
@@ -168,6 +176,8 @@ func Test_subroutineDec(t *testing.T) {
 				for _, input := range tc.inputs {
 					tknzr := compiler.NewTokenizer(string(input))
 					engine := compiler.NewEngine(&tknzr)
+
+					engine.Tknzr.Advance()
 					_, err := engine.CompileSubroutineDec()
 					for _, wantErr := range tc.error {
 						assert.ErrorContains(t, err, wantErr)
@@ -188,6 +198,8 @@ func Test_subroutineBody(t *testing.T) {
 		dir := "test_programs/own/subRoutineBody/"
 		testCases := []testCase{
 			{name: "one variable declaration", fp: "oneVarDec"},
+			{name: "multiple variable declaration", fp: "multVarDec"},
+			{name: "multiple variable declaration one line", fp: "multVarDec1line"},
 		}
 
 		for _, tc := range testCases {
@@ -197,6 +209,7 @@ func Test_subroutineBody(t *testing.T) {
 
 				tknzr := compiler.NewTokenizer(string(input))
 				engine := compiler.NewEngine(&tknzr)
+				engine.Tknzr.Advance()
 
 				got, err := engine.CompileSubroutineBody()
 				assert.NoError(t, err)
@@ -209,16 +222,37 @@ func Test_subroutineBody(t *testing.T) {
 		type testCase struct {
 			name   string
 			inputs []string
-			error  []string
+			errors []string
 		}
-		testCases := []testCase{}
+		testCases := []testCase{
+			{
+				name:   "false varDec",
+				inputs: []string{"{var ;}"},
+				errors: []string{
+					"compileSubroutineBody",
+					"compileVarDec",
+					"expected className or KEYWORD int / char / boolean",
+				},
+			},
+			{
+				name:   "false varDec",
+				inputs: []string{"{var ;}"},
+				errors: []string{
+					"compileSubroutineBody",
+					"compileVarDec",
+					"expected className or KEYWORD int / char / boolean",
+				},
+			},
+		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
 				for _, input := range tc.inputs {
 					tknzr := compiler.NewTokenizer(string(input))
 					engine := compiler.NewEngine(&tknzr)
+
+					engine.Tknzr.Advance()
 					_, err := engine.CompileSubroutineBody()
-					for _, wantErr := range tc.error {
+					for _, wantErr := range tc.errors {
 						assert.ErrorContains(t, err, wantErr)
 					}
 				}

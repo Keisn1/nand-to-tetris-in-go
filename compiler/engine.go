@@ -6,11 +6,11 @@ import (
 )
 
 type Engine struct {
-	tknzr *Tokenizer
+	Tknzr *Tokenizer
 }
 
 func NewEngine(tknzr *Tokenizer) Engine {
-	return Engine{tknzr: tknzr}
+	return Engine{Tknzr: tknzr}
 }
 
 func (e Engine) CompileClass() (string, error) {
@@ -20,23 +20,27 @@ func (e Engine) CompileClass() (string, error) {
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatSymbol(LBRACE, &ret); err != nil {
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
 
-	for isClassVarDec(Keyword(e.tknzr.NextToken().Literal)) {
+	e.Tknzr.Advance()
+	for isClassVarDec(e.Tknzr.Keyword()) {
 		classVarDec, err := e.CompileClassVarDec()
 		if err != nil {
 			return "", fmt.Errorf("compileClass: %w", err)
 		}
 		ret += classVarDec
+		e.Tknzr.Advance()
 	}
 
-	for isSubRoutineDec(Keyword(e.tknzr.NextToken().Literal)) {
+	for isSubRoutineDec(e.Tknzr.Keyword()) {
 		subRoutineDec, err := e.CompileSubroutineDec()
 		if err != nil {
 			return "", fmt.Errorf("compileClass: %w", err)
@@ -44,6 +48,7 @@ func (e Engine) CompileClass() (string, error) {
 		ret += subRoutineDec
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
 		return "", fmt.Errorf("compileClass: %w", err)
 	}
@@ -58,21 +63,28 @@ func (e Engine) CompileClassVarDec() (string, error) {
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatType(&ret); err != nil {
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
 		return "", fmt.Errorf("compileClassVarDec: %w", err)
 	}
 
-	for e.tknzr.NextToken().Literal == "," {
+	e.Tknzr.Advance()
+	for e.Tknzr.Symbol() == KOMMA {
 		if err := e.eatSymbol(KOMMA, &ret); err != nil {
 			return "", fmt.Errorf("compileClassVarDec: %w", err)
 		}
+
+		e.Tknzr.Advance()
 		if err := e.eatIdentifier(&ret); err != nil {
 			return "", fmt.Errorf("compileClassVarDec: %w", err)
 		}
+
+		e.Tknzr.Advance()
 	}
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
@@ -89,28 +101,39 @@ func (e Engine) CompileSubroutineDec() (string, error) {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatVoidOrType(&ret); err != nil {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	if err := e.eatSymbol(LPAREN, &ret); err != nil {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
-	parameterList, err := e.CompileParameterList()
-	if err != nil {
-		return "", fmt.Errorf("compileSubroutineDec: %w", err)
+	e.Tknzr.Advance()
+	switch e.Tknzr.Symbol() {
+	case RPAREN:
+		ret += xmlStartParameterList()
+		ret += xmlEndParameterList()
+	default:
+		parameterList, err := e.CompileParameterList()
+		if err != nil {
+			return "", fmt.Errorf("compileSubroutineDec: %w", err)
+		}
+		ret += parameterList
 	}
-	ret += parameterList
 
 	if err := e.eatSymbol(RPAREN, &ret); err != nil {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
 	}
 
+	e.Tknzr.Advance()
 	subroutineBody, err := e.CompileSubroutineBody()
 	if err != nil {
 		return "", fmt.Errorf("compileSubroutineDec: %w", err)
@@ -120,33 +143,35 @@ func (e Engine) CompileSubroutineDec() (string, error) {
 	return ret + xmlEndSubroutineDec(), nil
 }
 
-func (e Engine) eatParameter(ret *string) error {
-	if err := e.eatType(ret); err != nil {
-		return fmt.Errorf("eatParameter: %w", err)
-	}
-
-	if err := e.eatIdentifier(ret); err != nil {
-		return fmt.Errorf("eatParameter: %w", err)
-	}
-
-	return nil
-}
-
 func (e Engine) CompileParameterList() (string, error) {
 	ret := xmlStartParameterList()
 
-	if e.tknzr.NextToken().Literal != string(RPAREN) {
-		if err := e.eatParameter(&ret); err != nil {
+	if err := e.eatType(&ret); err != nil {
+		return "", fmt.Errorf("compileParameterList: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	if err := e.eatIdentifier(&ret); err != nil {
+		return "", fmt.Errorf("compileParameterList: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	for e.Tknzr.Symbol() == KOMMA {
+		if err := e.eatSymbol(KOMMA, &ret); err != nil {
 			return "", fmt.Errorf("compileParameterList: %w", err)
 		}
-		for e.tknzr.NextToken().Literal == string(KOMMA) {
-			if err := e.eatSymbol(KOMMA, &ret); err != nil {
-				return "", fmt.Errorf("compileParameterList: %w", err)
-			}
-			if err := e.eatParameter(&ret); err != nil {
-				return "", fmt.Errorf("compileParameterList: %w", err)
-			}
+
+		e.Tknzr.Advance()
+		if err := e.eatType(&ret); err != nil {
+			return "", fmt.Errorf("compileParameterList: %w", err)
 		}
+
+		e.Tknzr.Advance()
+		if err := e.eatIdentifier(&ret); err != nil {
+			return "", fmt.Errorf("compileParameterList: %w", err)
+		}
+
+		e.Tknzr.Advance()
 	}
 
 	return ret + xmlEndParameterList(), nil
@@ -159,24 +184,63 @@ func (e Engine) CompileSubroutineBody() (string, error) {
 		return "", fmt.Errorf("compileSubroutineBody: %w", err)
 	}
 
-	for isVarDec(Keyword(e.tknzr.NextToken().Literal)) {
-		varDec := e.CompileVarDec()
+	e.Tknzr.Advance()
+	for e.Tknzr.Keyword() == VAR {
+		varDec, err := e.CompileVarDec()
+		if err != nil {
+			return "", fmt.Errorf("compileSubroutineBody: %w", err)
+		}
 		ret += varDec
+
+		e.Tknzr.Advance()
 	}
 
 	ret += e.CompileStatements()
-	e.eatSymbol(RBRACE, &ret)
+
+	e.Tknzr.Advance()
+	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+		return "", fmt.Errorf("compileSubroutineBody: %w", err)
+	}
 
 	return ret + xmlEndSubroutineBody(), nil
 }
 
-func (e Engine) CompileVarDec() string {
+func (e Engine) CompileVarDec() (string, error) {
 	ret := xmlStartVarDec()
-	e.eatKeyword(VAR, &ret)
-	e.eatIdentifier(&ret)
-	e.eatIdentifier(&ret)
-	e.eatSymbol(SEMICOLON, &ret)
-	return ret + xmlEndVarDec()
+
+	if err := e.eatKeyword(VAR, &ret); err != nil {
+		return "", fmt.Errorf("compileVarDec: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	if err := e.eatType(&ret); err != nil {
+		return "", fmt.Errorf("compileVarDec: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	if err := e.eatIdentifier(&ret); err != nil {
+		return "", fmt.Errorf("compileVarDec: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	for e.Tknzr.Symbol() == KOMMA {
+		if err := e.eatSymbol(KOMMA, &ret); err != nil {
+			return "", fmt.Errorf("compileClassVarDec: %w", err)
+		}
+
+		e.Tknzr.Advance()
+		if err := e.eatIdentifier(&ret); err != nil {
+			return "", fmt.Errorf("compileVarDec: %w", err)
+		}
+
+		e.Tknzr.Advance()
+	}
+
+	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+		return "", fmt.Errorf("compileVarDec: %w", err)
+	}
+
+	return ret + xmlEndVarDec(), nil
 }
 
 func (e Engine) CompileStatements() string {
@@ -188,13 +252,29 @@ func (e Engine) CompileStatements() string {
 func (e Engine) CompileReturn() string {
 	ret := xmlStartReturnStatement()
 	e.eatKeyword(RETURN, &ret)
+
+	e.Tknzr.Advance()
 	e.eatSymbol(SEMICOLON, &ret)
+
 	return ret + xmlEndReturnStatement()
 
 }
 
+func (e Engine) eatParameter(ret *string) error {
+	if err := e.eatType(ret); err != nil {
+		return fmt.Errorf("eatParameter: %w", err)
+	}
+
+	e.Tknzr.Advance()
+	if err := e.eatIdentifier(ret); err != nil {
+		return fmt.Errorf("eatParameter: %w", err)
+	}
+
+	return nil
+}
+
 func (e Engine) eatVoidOrType(ret *string) error {
-	switch Keyword(e.tknzr.NextToken().Literal) {
+	switch e.Tknzr.Keyword() {
 	case VOID:
 		e.eatKeyword(VOID, ret)
 	default:
@@ -206,47 +286,43 @@ func (e Engine) eatVoidOrType(ret *string) error {
 }
 
 func (e Engine) eatType(ret *string) error {
-	e.tknzr.Advance()
-	switch e.tknzr.TokenType() {
+	switch e.Tknzr.TokenType() {
 	case IDENTIFIER:
-		*ret += xmlIdentifier(e.tknzr.Identifier())
+		*ret += xmlIdentifier(e.Tknzr.Identifier())
 	case KEYWORD:
-		if e.tknzr.Keyword() != INT && e.tknzr.Keyword() != CHAR && e.tknzr.Keyword() != BOOLEAN {
-			return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.tknzr.Keyword())
+		if e.Tknzr.Keyword() != INT && e.Tknzr.Keyword() != CHAR && e.Tknzr.Keyword() != BOOLEAN {
+			return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.Tknzr.Keyword())
 		}
-		*ret += xmlKeyword(e.tknzr.Keyword())
+		*ret += xmlKeyword(e.Tknzr.Keyword())
 	default:
-		return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.tknzr.Keyword())
+		return fmt.Errorf("expected className or KEYWORD int / char / boolean, got: %s", e.Tknzr.Keyword())
 	}
 	return nil
 }
 
 func (e Engine) eatIdentifier(ret *string) error {
-	e.tknzr.Advance()
-	if e.tknzr.TokenType() != IDENTIFIER {
+	if e.Tknzr.TokenType() != IDENTIFIER {
 		return errors.New("expected tokenType IDENTIFIER")
 	}
-	*ret += xmlIdentifier(e.tknzr.Identifier())
+	*ret += xmlIdentifier(e.Tknzr.Identifier())
 	return nil
 }
 
 func (e Engine) eatSubRoutineDecStart(ret *string) error {
-	e.tknzr.Advance()
-	if !isSubRoutineDec(e.tknzr.Keyword()) {
-		return fmt.Errorf("unexpected token: %v : expected KEYWORD constructor / function / method", e.tknzr.curToken)
+	if !isSubRoutineDec(e.Tknzr.Keyword()) {
+		return fmt.Errorf("unexpected token: %v : expected KEYWORD constructor / function / method", e.Tknzr.curToken)
 	}
 
-	*ret += xmlKeyword(e.tknzr.Keyword())
+	*ret += xmlKeyword(e.Tknzr.Keyword())
 	return nil
 }
 
 func (e Engine) eatStaticOrField(ret *string) error {
-	e.tknzr.Advance()
-	if !isClassVarDec(e.tknzr.Keyword()) {
-		return fmt.Errorf("unexpected token: %v : expected KEYWORD static or field", e.tknzr.curToken)
+	if !isClassVarDec(e.Tknzr.Keyword()) {
+		return fmt.Errorf("unexpected token: %v : expected KEYWORD static or field", e.Tknzr.curToken)
 	}
 
-	*ret += xmlKeyword(e.tknzr.Keyword())
+	*ret += xmlKeyword(e.Tknzr.Keyword())
 	return nil
 }
 
@@ -258,13 +334,8 @@ func isClassVarDec(kw Keyword) bool {
 	return kw == STATIC || kw == FIELD
 }
 
-func isVarDec(kw Keyword) bool {
-	return kw == VAR
-}
-
 func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
-	e.tknzr.Advance()
-	if (e.tknzr.TokenType() != KEYWORD) || (e.tknzr.Keyword() != expectedKeyword) {
+	if (e.Tknzr.TokenType() != KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
 		return fmt.Errorf("expected KEYWORD %s", expectedKeyword)
 	}
 
@@ -273,8 +344,7 @@ func (e Engine) eatKeyword(expectedKeyword Keyword, ret *string) error {
 }
 
 func (e Engine) eatSymbol(expectedSymbol rune, ret *string) error {
-	e.tknzr.Advance()
-	if (e.tknzr.TokenType() != SYMBOL) || (e.tknzr.Symbol() != expectedSymbol) {
+	if (e.Tknzr.TokenType() != SYMBOL) || (e.Tknzr.Symbol() != expectedSymbol) {
 		return fmt.Errorf("expected SYMBOL %c", expectedSymbol)
 	}
 
