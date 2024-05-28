@@ -170,8 +170,7 @@ func (e *Engine) CompileSubroutineBody() string {
 
 	e.Tknzr.Advance()
 	for e.Tknzr.Keyword() == VAR {
-		varDec, _ := e.CompileVarDec()
-		ret += varDec
+		ret += e.CompileVarDec()
 	}
 
 	ret += e.CompileStatements()
@@ -184,43 +183,43 @@ func (e *Engine) CompileSubroutineBody() string {
 	return ret + xmlEndSubroutineBody()
 }
 
-func (e Engine) CompileVarDec() (string, error) {
+func (e *Engine) CompileVarDec() string {
 	ret := xmlStartVarDec()
 
 	if err := e.eatKeyword(VAR, &ret); err != nil {
-		return "", fmt.Errorf("compileVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatType(&ret); err != nil {
-		return "", fmt.Errorf("compileVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	if err := e.eatIdentifier(&ret); err != nil {
-		return "", fmt.Errorf("compileVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
 	for e.Tknzr.Symbol() == KOMMA {
 		if err := e.eatSymbol(KOMMA, &ret); err != nil {
-			return "", fmt.Errorf("compileClassVarDec: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 		}
 
 		e.Tknzr.Advance()
 		if err := e.eatIdentifier(&ret); err != nil {
-			return "", fmt.Errorf("compileVarDec: %w", err)
+			e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 		}
 
 		e.Tknzr.Advance()
 	}
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
-		return "", fmt.Errorf("compileVarDec: %w", err)
+		e.Errors = append(e.Errors, fmt.Errorf("compilerVarDec: %w", err))
 	}
 
 	e.Tknzr.Advance()
-	return ret + xmlEndVarDec(), nil
+	return ret + xmlEndVarDec()
 }
 
 func (e Engine) CompileStatements() string {
@@ -229,16 +228,20 @@ func (e Engine) CompileStatements() string {
 	return ret + xmlEndStatements()
 }
 
-func (e Engine) CompileReturn() string {
+func (e *Engine) CompileReturn() string {
 	ret := xmlStartReturnStatement()
-	e.eatKeyword(RETURN, &ret)
+
+	if err := e.eatKeyword(RETURN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
+	}
 
 	e.Tknzr.Advance()
-	e.eatSymbol(SEMICOLON, &ret)
+	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
+	}
 
 	e.Tknzr.Advance()
 	return ret + xmlEndReturnStatement()
-
 }
 
 func (e Engine) eatParameter(ret *string) error {
