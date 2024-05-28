@@ -86,25 +86,16 @@ func Test_compileClass(t *testing.T) {
 				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.EOF),
 			},
 			{
-				inputs: []string{"class Main {static "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-					compiler.EOF,
-				),
+				inputs:  []string{"class Main {static "},
+				wantErr: compiler.NewErrSyntaxNotAType(compiler.EOF),
 			},
 			{
-				inputs: []string{"class Main {function var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-					compiler.VAR,
-				),
+				inputs:  []string{"class Main {function var"},
+				wantErr: compiler.NewErrSyntaxNotAType(compiler.VAR),
 			},
 			{
-				inputs: []string{"class Main {function ;"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-					compiler.SEMICOLON,
-				),
+				inputs:  []string{"class Main {function ;"},
+				wantErr: compiler.NewErrSyntaxNotAType(compiler.SEMICOLON),
 			},
 		}
 
@@ -250,10 +241,7 @@ func Test_subroutineDec(t *testing.T) {
 			{
 				inputs: []string{"function var"},
 				wantErrs: []error{
-					compiler.NewErrSyntaxUnexpectedToken(
-						fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-						compiler.VAR,
-					),
+					compiler.NewErrSyntaxNotAType(compiler.VAR),
 					compiler.NewErrSyntaxUnexpectedToken(fmt.Sprintf("expected KEYWORD %s or type", compiler.VOID), compiler.VAR),
 				},
 			},
@@ -266,13 +254,8 @@ func Test_subroutineDec(t *testing.T) {
 				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LPAREN, compiler.SEMICOLON)},
 			},
 			{
-				inputs: []string{"function int name(var", "function int name(int x, var"},
-				wantErrs: []error{
-					compiler.NewErrSyntaxUnexpectedToken(
-						fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-						compiler.VAR,
-					),
-				},
+				inputs:   []string{"function int name(var", "function int name(int x, var"},
+				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR)},
 			},
 			{
 				inputs:   []string{"function int name(int var", "function int name(int name1, int var"},
@@ -379,10 +362,13 @@ func Test_VarDec(t *testing.T) {
 			},
 			{
 				inputs: []string{"var;"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-					compiler.SEMICOLON,
-				)},
+				wantErrs: []error{
+					compiler.NewErrSyntaxNotAType(compiler.SEMICOLON),
+
+					// compiler.NewErrSyntaxUnexpectedToken(
+					// fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
+					// compiler.SEMICOLON,)
+				},
 			},
 			{
 				inputs:   []string{"var int ;"},
@@ -591,6 +577,7 @@ func removeWhiteSpaces(input string) string {
 }
 
 func assertErrorFound(t *testing.T, gotErrs []error, wantErr error) {
+	t.Helper()
 	foundErr := false
 	for _, gotErr := range gotErrs {
 		if errors.Is(gotErr, wantErr) {

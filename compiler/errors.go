@@ -23,6 +23,19 @@ func (err ErrSyntaxUnexpectedToken) Error() string {
 	return fmt.Sprintf("expected %s, found %s", err.ExpectedToken, err.FoundToken)
 }
 
+type ErrSyntaxNotAType struct {
+	ErrSyntaxUnexpectedToken
+}
+
+func NewErrSyntaxNotAType(foundToken string) ErrSyntaxNotAType {
+	return ErrSyntaxNotAType{
+		ErrSyntaxUnexpectedToken: NewErrSyntaxUnexpectedToken(
+			fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+			foundToken,
+		),
+	}
+}
+
 type ErrSyntaxUnexpectedTokenType struct {
 	ExpectedTokenType TokenType
 	FoundToken        string

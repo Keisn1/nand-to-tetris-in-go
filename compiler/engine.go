@@ -394,15 +394,17 @@ func (e *Engine) eatType(ret *string) error {
 		*ret += xmlIdentifier(e.Tknzr.Identifier())
 	case KEYWORD:
 		if e.Tknzr.Keyword() != INT && e.Tknzr.Keyword() != CHAR && e.Tknzr.Keyword() != BOOLEAN {
-			return NewErrSyntaxUnexpectedToken(
-				fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
-				e.Tknzr.Keyword())
+			return NewErrSyntaxNotAType(e.Tknzr.Keyword())
+			// return NewErrSyntaxUnexpectedToken(
+			// 	fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+			// 	e.Tknzr.Keyword())
 		}
 		*ret += xmlKeyword(e.Tknzr.Keyword())
 	default:
-		return NewErrSyntaxUnexpectedToken(
-			fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
-			e.Tknzr.curToken.Literal)
+		return NewErrSyntaxNotAType(e.Tknzr.curToken.Literal)
+		// return NewErrSyntaxUnexpectedToken(
+		// 	fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+		// 	e.Tknzr.curToken.Literal)
 	}
 	return nil
 }
