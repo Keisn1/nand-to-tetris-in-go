@@ -424,7 +424,8 @@ func Test_letStatement(t *testing.T) {
 
 		dir := "test_programs/own/letStatements/"
 		testCases := []testCase{
-			{name: "one array assignment", fp: "ArrayAssignment"},
+			{name: "one array assignment", fp: "arrayAssignment"},
+			{name: "one array assignment", fp: "arrayAssignmentExpressionLHS"},
 		}
 
 		for _, tc := range testCases {
@@ -458,6 +459,10 @@ func Test_letStatement(t *testing.T) {
 				inputs:   []string{"let var"},
 				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
 			},
+			{
+				inputs:   []string{"let arr[;"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken("expression", compiler.SEMICOLON)},
+			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
@@ -477,6 +482,70 @@ func Test_letStatement(t *testing.T) {
 	})
 }
 
+func Test_term(t *testing.T) {
+	t.Run("Testing happy terms", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/letStatements/"
+		testCases := []testCase{
+			// {name: "one array assignment", fp: "arrayAssignmentExpressionLHS"},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+				engine.Tknzr.Advance()
+
+				got := engine.CompileTerm()
+				assert.Equal(t, want, removeWhiteSpaces(got))
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			})
+		}
+	})
+
+	t.Run("Testing falsy terms", func(t *testing.T) {
+		type testCase struct {
+			inputs   []string
+			wantErrs []error
+		}
+		testCases := []testCase{
+			{
+				inputs: []string{"", "   "},
+				wantErrs: []error{
+					compiler.NewErrSyntaxUnexpectedToken(
+						fmt.Sprintf(
+							"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
+							compiler.INT_CONST, compiler.STRING_CONST, compiler.KEYWORD, compiler.IDENTIFIER, compiler.LPAREN, compiler.TILDE, compiler.MINUS),
+						compiler.EOF,
+					),
+				},
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileTerm()
+
+				for _, wantErr := range tc.wantErrs {
+					assertErrorFound(t, engine.Errors, wantErr)
+				}
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			}
+		}
+	})
+}
 func Test_Return(t *testing.T) {
 	t.Run("Testing falsy return statements", func(t *testing.T) {
 		type testCase struct {

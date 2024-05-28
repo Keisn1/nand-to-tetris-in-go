@@ -1,0 +1,18 @@
+<letStatement>
+  <keyword> let </keyword>
+  <identifier> a </identifier>
+  <symbol> [ </symbol>
+  <expression>
+    <term>
+      <integerConstant> 1 </integerConstant>
+    </term>
+    <symbol> + </symbol>
+    <term>
+      <integerConstant> 2 </integerConstant>
+    </term>
+  </expression>
+  <symbol> ] </symbol>
+  <symbol> = </symbol>
+  <integerConstant> 1 </integerConstant>
+  <symbol> ; </symbol>
+</letStatement>

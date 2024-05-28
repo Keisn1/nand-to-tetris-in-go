@@ -11,4 +11,5 @@ const (
 	LET_T            = "letStatement"
 	RETURN_T         = "returnStatement"
 	EXPRESSION_T     = "expression"
+	TERM_T           = "term"
 )

@@ -276,17 +276,72 @@ func (e *Engine) CompileLetStatement() string {
 	return ret + xmlEnd(LET_T)
 }
 
-func (e Engine) CompileExpression() string {
+func (e *Engine) CompileExpression() string {
 	ret := xmlStart(EXPRESSION_T)
-	ret += `<term>`
+
+	ret += e.CompileTerm()
+
+	for isOperator(e.Tknzr.Symbol()) {
+		if err := e.eatSymbol(e.Tknzr.Symbol(), &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileExpression: %w", err))
+		}
+		e.Tknzr.Advance()
+
+		ret += e.CompileTerm()
+	}
+
+	return ret + xmlEnd(EXPRESSION_T)
+}
+
+func (e Engine) isTerm() bool {
+	switch e.Tknzr.TokenType() {
+	case INT_CONST:
+		return true
+	case STRING_CONST:
+		return true
+	case KEYWORD:
+		return true
+	case IDENTIFIER:
+		return true
+	case SYMBOL:
+		switch e.Tknzr.Symbol() {
+		case LPAREN:
+			return true
+		case TILDE:
+			return true
+		case MINUS:
+			return true
+		}
+	}
+	return false
+}
+
+func (e *Engine) CompileTerm() string {
+	ret := xmlStart(TERM_T)
+
+	if !e.isTerm() {
+		e.Errors = append(
+			e.Errors,
+			NewErrSyntaxUnexpectedToken(
+				fmt.Sprintf(
+					"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
+					INT_CONST, STRING_CONST, KEYWORD, IDENTIFIER, LPAREN, TILDE, MINUS),
+				e.Tknzr.curToken.Literal),
+		)
+	}
 
 	if err := e.eatIntVal(&ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
+		e.Errors = append(e.Errors,
+			fmt.Errorf(
+				"compileTerm: %w, %w",
+				NewErrSyntaxUnexpectedToken("expression", e.Tknzr.curToken.Literal),
+				err,
+			),
+		)
 	}
 	e.Tknzr.Advance()
 
-	ret += `</term>`
-	return ret + xmlEnd(EXPRESSION_T)
+	return ret + xmlEnd(TERM_T)
 }
 
 func (e *Engine) CompileReturn() string {
@@ -395,6 +450,13 @@ func isSubRoutineDec(kw string) bool {
 
 func isClassVarDec(kw string) bool {
 	return kw == STATIC || kw == FIELD
+}
+
+func isOperator(sym string) bool {
+	if _, ok := operators[sym]; ok {
+		return true
+	}
+	return false
 }
 
 func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
