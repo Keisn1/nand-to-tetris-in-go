@@ -1,0 +1,23 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> int </keyword>
+    <identifier> x1 </identifier>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <letStatement>
+      <keyword> let </keyword>
+      <identifier> x1 </identifier>
+      <symbol> = </symbol>
+      <integerConstant> 1 </integerConstant>
+      <symbol> ; </symbol>
+    </letStatement>
+    <returnStatement>
+      <keyword> return </keyword>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>

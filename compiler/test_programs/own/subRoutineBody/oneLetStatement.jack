@@ -1,0 +1,5 @@
+{
+    var int x1;
+    let x1 = 1;
+    return;
+}

@@ -274,7 +274,6 @@ func Test_subroutineDec(t *testing.T) {
 					),
 				},
 			},
-
 			{
 				inputs:   []string{"function int name(int var", "function int name(int name1, int var"},
 				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
@@ -318,6 +317,7 @@ func Test_subroutineBody(t *testing.T) {
 			{name: "one variable declaration", fp: "oneVarDec"},
 			{name: "multiple variable declaration", fp: "multVarDec"},
 			{name: "multiple variable declaration one line", fp: "multVarDec1line"},
+			{name: "one var + a let statement", fp: "oneLetStatement"},
 		}
 
 		for _, tc := range testCases {
@@ -404,6 +404,68 @@ func Test_VarDec(t *testing.T) {
 
 				engine.Tknzr.Advance()
 				engine.CompileVarDec()
+
+				for _, wantErr := range tc.wantErrs {
+					assertErrorFound(t, engine.Errors, wantErr)
+				}
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			}
+		}
+	})
+}
+
+func Test_letStatement(t *testing.T) {
+	t.Run("Testing happy letStatements", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/letStatements/"
+		testCases := []testCase{
+			{name: "one array assignment", fp: "ArrayAssignment"},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+				engine.Tknzr.Advance()
+
+				got := engine.CompileLetStatement()
+				assert.Equal(t, want, removeWhiteSpaces(got))
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			})
+		}
+	})
+
+	t.Run("Testing falsy letStatements", func(t *testing.T) {
+		type testCase struct {
+			inputs   []string
+			wantErrs []error
+		}
+		testCases := []testCase{
+			{
+				inputs:   []string{"", "   "},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LET, compiler.EOF)},
+			},
+			{
+				inputs:   []string{"let var"},
+				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileLetStatement()
 
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)

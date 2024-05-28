@@ -7,7 +7,7 @@
       <symbol> ; </symbol>
     </varDec>
     <statements>
-    <returnStatement>
+      <returnStatement>
         <keyword> return </keyword>
         <symbol> ; </symbol>
       </returnStatement>
