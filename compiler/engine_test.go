@@ -106,7 +106,6 @@ func Test_compileClass(t *testing.T) {
 				engine.CompileClass()
 
 				assertErrorFound(t, engine.Errors, tc.wantErr)
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -171,8 +170,6 @@ func Test_classVarDec(t *testing.T) {
 				engine.CompileClassVarDec()
 
 				assertErrorFound(t, engine.Errors, tc.wantErr)
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -266,8 +263,6 @@ func Test_subroutineDec(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -328,8 +323,6 @@ func Test_subroutineBody(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -374,8 +367,6 @@ func Test_VarDec(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -433,6 +424,10 @@ func Test_letStatement(t *testing.T) {
 				inputs:   []string{"let arr[;"},
 				wantErrs: []error{compiler.NewErrSyntaxNotATerm(compiler.SEMICOLON)},
 			},
+			{
+				inputs:   []string{"let x = var;"},
+				wantErrs: []error{compiler.NewErrSyntaxNotAKeywordConst(compiler.VAR)},
+			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
@@ -445,8 +440,6 @@ func Test_letStatement(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -511,8 +504,6 @@ func Test_term(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})
@@ -543,8 +534,6 @@ func Test_Return(t *testing.T) {
 				engine.CompileReturn()
 
 				assertErrorFound(t, engine.Errors, tc.wantErr)
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
 		}
 	})

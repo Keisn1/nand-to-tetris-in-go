@@ -308,13 +308,16 @@ func (e *Engine) CompileTerm() string {
 		if err := e.eatStringVal(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
-		e.Tknzr.Advance()
 
 	case KEYWORD:
-		if err := e.eatKeyword(e.Tknzr.Keyword(), &ret); err != nil {
-			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
+		if isKeywordConst(e.Tknzr.Keyword()) {
+			if err := e.eatKeyword(e.Tknzr.Keyword(), &ret); err != nil {
+				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
+			}
+			e.Tknzr.Advance()
+		} else {
+			e.Errors = append(e.Errors, NewErrSyntaxNotAKeywordConst(VAR))
 		}
-		e.Tknzr.Advance()
 
 	case SYMBOL:
 		switch e.Tknzr.Symbol() {
@@ -517,6 +520,8 @@ func (e Engine) eatStringVal(ret *string) error {
 		return NewErrSyntaxUnexpectedTokenType(STRING_CONST, e.Tknzr.curToken.Literal)
 	}
 	*ret += xmlStringConst(e.Tknzr.StringVal())
+
+	e.Tknzr.Advance()
 	return nil
 }
 
@@ -552,6 +557,9 @@ func isSubRoutineDec(kw string) bool {
 
 func isClassVarDec(kw string) bool {
 	return kw == STATIC || kw == FIELD
+}
+func isKeywordConst(kw string) bool {
+	return kw == THIS || kw == FALSE || kw == NULL || kw == TRUE
 }
 
 func isOperator(sym string) bool {

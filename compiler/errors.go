@@ -33,6 +33,13 @@ func NewErrSyntaxNotATerm(foundToken string) ErrSyntaxUnexpectedToken {
 	)
 }
 
+func NewErrSyntaxNotAKeywordConst(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf("KEYWORD %s / %s / %s / %s", TRUE, FALSE, NULL, THIS),
+		foundToken,
+	)
+}
+
 func NewErrSyntaxNotAType(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
 		fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
