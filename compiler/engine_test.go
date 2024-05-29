@@ -37,8 +37,9 @@ func Test_compileClass(t *testing.T) {
 
 				engine.Tknzr.Advance()
 				got := engine.CompileClass()
-				assert.Equal(t, want, removeWhiteSpaces(got))
 
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
@@ -134,8 +135,9 @@ func Test_classVarDec(t *testing.T) {
 
 				engine.Tknzr.Advance()
 				got := engine.CompileClassVarDec()
-				assert.Equal(t, want, removeWhiteSpaces(got))
 
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
@@ -203,6 +205,7 @@ func Test_subroutineDec(t *testing.T) {
 				engine.Tknzr.Advance()
 				got := engine.CompileSubroutineDec()
 
+				assert.Empty(t, engine.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
@@ -295,8 +298,9 @@ func Test_subroutineBody(t *testing.T) {
 				engine.Tknzr.Advance()
 
 				got := engine.CompileSubroutineBody()
-				assert.Equal(t, want, removeWhiteSpaces(got))
 
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
@@ -390,6 +394,7 @@ func Test_letStatement(t *testing.T) {
 			{name: "array assignment 1+2 expression", fp: "arrayAssignmentExpressionLHS"},
 			{name: "let statement string RHS ", fp: "stringRHS"},
 			{name: "let statement keywordConst RHS ", fp: "kwConstRHS"},
+			{name: "let statement variableName RHS ", fp: "varNameRHS"},
 		}
 
 		for _, tc := range testCases {
@@ -402,8 +407,9 @@ func Test_letStatement(t *testing.T) {
 				engine.Tknzr.Advance()
 
 				got := engine.CompileLetStatement()
-				assert.Equal(t, want, removeWhiteSpaces(got))
 
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
@@ -446,38 +452,6 @@ func Test_letStatement(t *testing.T) {
 	})
 }
 
-func Test_Return(t *testing.T) {
-	t.Run("Testing falsy return statements", func(t *testing.T) {
-		type testCase struct {
-			inputs  []string
-			wantErr error
-		}
-		testCases := []testCase{
-			{
-				inputs:  []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RETURN, compiler.EOF),
-			},
-			{
-				inputs:  []string{"return{"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE),
-			},
-		}
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-
-				engine.Tknzr.Advance()
-				engine.CompileReturn()
-
-				assertErrorFound(t, engine.Errors, tc.wantErr)
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
-			}
-		}
-	})
-}
-
 func Test_term(t *testing.T) {
 	t.Run("Testing happy terms", func(t *testing.T) {
 		type testCase struct {
@@ -485,8 +459,17 @@ func Test_term(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/letStatements/"
-		testCases := []testCase{}
+		dir := "test_programs/own/terms/"
+		testCases := []testCase{
+			{name: "arr[5+6]", fp: "arr5Plus6"},
+			{name: "(x+y)", fp: "xPlusYinParenthesis"},
+			{name: "-x", fp: "minusX"},
+			{name: "~x", fp: "tildeX"},
+			{name: "foo()", fp: "foo"},
+			{name: "foo.bar(true)", fp: "foobar"},
+			{name: "foo(x, (y + z))", fp: "withExpList"},
+			{name: "foo.bar(x, (y + z))", fp: "fooBarExpList"},
+		}
 
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
@@ -498,8 +481,9 @@ func Test_term(t *testing.T) {
 				engine.Tknzr.Advance()
 
 				got := engine.CompileTerm()
-				assert.Equal(t, want, removeWhiteSpaces(got))
 
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			})
 		}
@@ -527,6 +511,38 @@ func Test_term(t *testing.T) {
 				for _, wantErr := range tc.wantErrs {
 					assertErrorFound(t, engine.Errors, wantErr)
 				}
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			}
+		}
+	})
+}
+
+func Test_Return(t *testing.T) {
+	t.Run("Testing falsy return statements", func(t *testing.T) {
+		type testCase struct {
+			inputs  []string
+			wantErr error
+		}
+		testCases := []testCase{
+			{
+				inputs:  []string{"", "   "},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RETURN, compiler.EOF),
+			},
+			{
+				inputs:  []string{"return{"},
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE),
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileReturn()
+
+				assertErrorFound(t, engine.Errors, tc.wantErr)
 
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}

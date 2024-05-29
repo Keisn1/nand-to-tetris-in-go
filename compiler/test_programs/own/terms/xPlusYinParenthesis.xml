@@ -1,0 +1,13 @@
+<term>
+  <symbol> ( </symbol>
+  <expression>
+    <term>
+      <identifier> x </identifier>
+    </term>
+    <symbol> + </symbol>
+    <term>
+      <identifier> y </identifier>
+    </term>
+  </expression>
+  <symbol> ) </symbol>
+</term>
