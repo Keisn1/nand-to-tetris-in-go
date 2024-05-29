@@ -61,13 +61,6 @@ func NewErrSyntaxNotASubroutineDec(foundToken string) ErrSyntaxUnexpectedToken {
 	)
 }
 
-func NewErrSyntaxNotVoidOrType(foundToken string) ErrSyntaxUnexpectedToken {
-	return NewErrSyntaxUnexpectedToken(
-		fmt.Sprintf("expected KEYWORD %s or type", VOID),
-		foundToken,
-	)
-}
-
 type ErrSyntaxUnexpectedTokenType struct {
 	ExpectedTokenType TokenType
 	FoundToken        string

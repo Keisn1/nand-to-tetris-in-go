@@ -225,7 +225,7 @@ func Test_subroutineDec(t *testing.T) {
 			},
 			{
 				inputs:   []string{"function var"},
-				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR), compiler.NewErrSyntaxNotVoidOrType(compiler.VAR)},
+				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR)},
 			},
 			{
 				inputs:   []string{"function int var"},
