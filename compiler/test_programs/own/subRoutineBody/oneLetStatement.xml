@@ -11,7 +11,11 @@
       <keyword> let </keyword>
       <identifier> x1 </identifier>
       <symbol> = </symbol>
-      <integerConstant> 1 </integerConstant>
+      <expression>
+        <term>
+          <integerConstant> 1 </integerConstant>
+        </term>
+      </expression>
       <symbol> ; </symbol>
     </letStatement>
     <returnStatement>

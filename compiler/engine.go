@@ -263,10 +263,7 @@ func (e *Engine) CompileLetStatement() string {
 	}
 	e.Tknzr.Advance()
 
-	if err := e.eatIntVal(&ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
-	}
-	e.Tknzr.Advance()
+	ret += e.CompileExpression()
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
@@ -293,6 +290,36 @@ func (e *Engine) CompileExpression() string {
 	return ret + xmlEnd(EXPRESSION_T)
 }
 
+func (e *Engine) CompileTerm() string {
+	ret := xmlStart(TERM_T)
+
+	if !e.isTerm() {
+		e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.curToken.Literal))
+	}
+
+	switch e.Tknzr.TokenType() {
+	case INT_CONST:
+		if err := e.eatIntVal(&ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
+		}
+		e.Tknzr.Advance()
+
+	case STRING_CONST:
+		if err := e.eatStringVal(&ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
+		}
+		e.Tknzr.Advance()
+
+	case KEYWORD:
+		if err := e.eatKeyword(e.Tknzr.Keyword(), &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
+		}
+		e.Tknzr.Advance()
+	}
+
+	return ret + xmlEnd(TERM_T)
+}
+
 func (e Engine) isTerm() bool {
 	switch e.Tknzr.TokenType() {
 	case INT_CONST:
@@ -315,35 +342,6 @@ func (e Engine) isTerm() bool {
 	}
 	return false
 }
-
-func (e *Engine) CompileTerm() string {
-	ret := xmlStart(TERM_T)
-
-	if !e.isTerm() {
-		e.Errors = append(
-			e.Errors,
-			NewErrSyntaxUnexpectedToken(
-				fmt.Sprintf(
-					"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
-					INT_CONST, STRING_CONST, KEYWORD, IDENTIFIER, LPAREN, TILDE, MINUS),
-				e.Tknzr.curToken.Literal),
-		)
-	}
-
-	if err := e.eatIntVal(&ret); err != nil {
-		e.Errors = append(e.Errors,
-			fmt.Errorf(
-				"compileTerm: %w, %w",
-				NewErrSyntaxUnexpectedToken("expression", e.Tknzr.curToken.Literal),
-				err,
-			),
-		)
-	}
-	e.Tknzr.Advance()
-
-	return ret + xmlEnd(TERM_T)
-}
-
 func (e *Engine) CompileReturn() string {
 	ret := xmlStart(RETURN_T)
 
@@ -379,10 +377,7 @@ func (e Engine) eatVoidOrType(ret *string) error {
 		e.eatKeyword(VOID, ret)
 	default:
 		if err := e.eatType(ret); err != nil {
-			return fmt.Errorf("%w: %w",
-				NewErrSyntaxUnexpectedToken(fmt.Sprintf("expected KEYWORD %s or type", VOID), e.Tknzr.curToken.Literal),
-				err,
-			)
+			return fmt.Errorf("%w: %w", NewErrSyntaxNotVoidOrType(e.Tknzr.curToken.Literal), err)
 		}
 	}
 	return nil
@@ -395,16 +390,10 @@ func (e *Engine) eatType(ret *string) error {
 	case KEYWORD:
 		if e.Tknzr.Keyword() != INT && e.Tknzr.Keyword() != CHAR && e.Tknzr.Keyword() != BOOLEAN {
 			return NewErrSyntaxNotAType(e.Tknzr.Keyword())
-			// return NewErrSyntaxUnexpectedToken(
-			// 	fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
-			// 	e.Tknzr.Keyword())
 		}
 		*ret += xmlKeyword(e.Tknzr.Keyword())
 	default:
 		return NewErrSyntaxNotAType(e.Tknzr.curToken.Literal)
-		// return NewErrSyntaxUnexpectedToken(
-		// 	fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
-		// 	e.Tknzr.curToken.Literal)
 	}
 	return nil
 }
@@ -414,6 +403,14 @@ func (e Engine) eatIntVal(ret *string) error {
 		return NewErrSyntaxUnexpectedTokenType(INT_CONST, e.Tknzr.curToken.Literal)
 	}
 	*ret += xmlIntegerConst(e.Tknzr.IntVal())
+	return nil
+}
+
+func (e Engine) eatStringVal(ret *string) error {
+	if e.Tknzr.TokenType() != STRING_CONST {
+		return NewErrSyntaxUnexpectedTokenType(STRING_CONST, e.Tknzr.curToken.Literal)
+	}
+	*ret += xmlStringConst(e.Tknzr.StringVal())
 	return nil
 }
 
@@ -427,10 +424,7 @@ func (e Engine) eatIdentifier(ret *string) error {
 
 func (e Engine) eatSubRoutineDecStart(ret *string) error {
 	if !isSubRoutineDec(e.Tknzr.Keyword()) {
-		return NewErrSyntaxUnexpectedToken(
-			fmt.Sprintf("KEYWORD %s / %s / %s ", CONSTRUCTOR, FUNCTION, METHOD),
-			e.Tknzr.Keyword(),
-		)
+		return NewErrSyntaxNotASubroutineDec(e.Tknzr.Keyword())
 	}
 
 	*ret += xmlKeyword(e.Tknzr.Keyword())
@@ -439,7 +433,7 @@ func (e Engine) eatSubRoutineDecStart(ret *string) error {
 
 func (e Engine) eatStaticOrField(ret *string) error {
 	if !isClassVarDec(e.Tknzr.Keyword()) {
-		return NewErrSyntaxUnexpectedToken(fmt.Sprintf("KEYWORD %s or %s ", STATIC, FIELD), e.Tknzr.Keyword())
+		return NewErrSyntaxNotAClassVarDec(e.Tknzr.Keyword())
 	}
 
 	*ret += xmlKeyword(e.Tknzr.Keyword())
@@ -489,6 +483,10 @@ func xmlKeyword(kw string) string {
 
 func xmlIntegerConst(val int) string {
 	return fmt.Sprintf("<integerConstant> %d </integerConstant>\n", val)
+}
+
+func xmlStringConst(val string) string {
+	return fmt.Sprintf("<stringConstant> %s </stringConstant>\n", val)
 }
 
 func xmlIdentifier(identifier string) string {

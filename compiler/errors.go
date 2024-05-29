@@ -23,17 +23,42 @@ func (err ErrSyntaxUnexpectedToken) Error() string {
 	return fmt.Sprintf("expected %s, found %s", err.ExpectedToken, err.FoundToken)
 }
 
-type ErrSyntaxNotAType struct {
-	ErrSyntaxUnexpectedToken
+func NewErrSyntaxNotATerm(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf(
+			"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
+			INT_CONST, STRING_CONST, KEYWORD, IDENTIFIER, LPAREN, TILDE, MINUS,
+		),
+		foundToken,
+	)
 }
 
-func NewErrSyntaxNotAType(foundToken string) ErrSyntaxNotAType {
-	return ErrSyntaxNotAType{
-		ErrSyntaxUnexpectedToken: NewErrSyntaxUnexpectedToken(
-			fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
-			foundToken,
-		),
-	}
+func NewErrSyntaxNotAType(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+		foundToken,
+	)
+}
+
+func NewErrSyntaxNotAClassVarDec(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf("KEYWORD %s or %s ", STATIC, FIELD),
+		foundToken,
+	)
+}
+
+func NewErrSyntaxNotASubroutineDec(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf("KEYWORD %s / %s / %s ", CONSTRUCTOR, FUNCTION, METHOD),
+		foundToken,
+	)
+}
+
+func NewErrSyntaxNotVoidOrType(foundToken string) ErrSyntaxUnexpectedToken {
+	return NewErrSyntaxUnexpectedToken(
+		fmt.Sprintf("expected KEYWORD %s or type", VOID),
+		foundToken,
+	)
 }
 
 type ErrSyntaxUnexpectedTokenType struct {

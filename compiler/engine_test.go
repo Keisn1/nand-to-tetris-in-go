@@ -2,14 +2,11 @@ package compiler_test
 
 import (
 	"errors"
-	"fmt"
+	"github.com/stretchr/testify/assert"
 	"hack/compiler"
 	"os"
-	"testing"
-
 	"regexp"
-
-	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func Test_compileClass(t *testing.T) {
@@ -151,18 +148,12 @@ func Test_classVarDec(t *testing.T) {
 		}
 		testCases := []testCase{
 			{
-				inputs: []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s or %s ", compiler.STATIC, compiler.FIELD),
-					compiler.EOF,
-				),
+				inputs:  []string{"", "   "},
+				wantErr: compiler.NewErrSyntaxNotAClassVarDec(compiler.EOF),
 			},
 			{
-				inputs: []string{"var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s or %s ", compiler.STATIC, compiler.FIELD),
-					compiler.VAR,
-				),
+				inputs:  []string{"var"},
+				wantErr: compiler.NewErrSyntaxNotAClassVarDec(compiler.VAR),
 			},
 			{
 				inputs:  []string{"static boolean boo{"},
@@ -225,25 +216,16 @@ func Test_subroutineDec(t *testing.T) {
 		}
 		testCases := []testCase{
 			{
-				inputs: []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s ", compiler.CONSTRUCTOR, compiler.FUNCTION, compiler.METHOD),
-					compiler.EOF,
-				)},
+				inputs:   []string{"", "   "},
+				wantErrs: []error{compiler.NewErrSyntaxNotASubroutineDec(compiler.EOF)},
 			},
 			{
-				inputs: []string{"var"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(
-					fmt.Sprintf("KEYWORD %s / %s / %s ", compiler.CONSTRUCTOR, compiler.FUNCTION, compiler.METHOD),
-					compiler.VAR,
-				)},
+				inputs:   []string{"var"},
+				wantErrs: []error{compiler.NewErrSyntaxNotASubroutineDec(compiler.VAR)},
 			},
 			{
-				inputs: []string{"function var"},
-				wantErrs: []error{
-					compiler.NewErrSyntaxNotAType(compiler.VAR),
-					compiler.NewErrSyntaxUnexpectedToken(fmt.Sprintf("expected KEYWORD %s or type", compiler.VOID), compiler.VAR),
-				},
+				inputs:   []string{"function var"},
+				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR), compiler.NewErrSyntaxNotVoidOrType(compiler.VAR)},
 			},
 			{
 				inputs:   []string{"function int var"},
@@ -361,14 +343,8 @@ func Test_VarDec(t *testing.T) {
 				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.VAR, compiler.EOF)},
 			},
 			{
-				inputs: []string{"var;"},
-				wantErrs: []error{
-					compiler.NewErrSyntaxNotAType(compiler.SEMICOLON),
-
-					// compiler.NewErrSyntaxUnexpectedToken(
-					// fmt.Sprintf("KEYWORD %s / %s / %s or className", compiler.INT, compiler.CHAR, compiler.BOOLEAN),
-					// compiler.SEMICOLON,)
-				},
+				inputs:   []string{"var;"},
+				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.SEMICOLON)},
 			},
 			{
 				inputs:   []string{"var int ;"},
@@ -411,7 +387,9 @@ func Test_letStatement(t *testing.T) {
 		dir := "test_programs/own/letStatements/"
 		testCases := []testCase{
 			{name: "one array assignment", fp: "arrayAssignment"},
-			{name: "one array assignment", fp: "arrayAssignmentExpressionLHS"},
+			{name: "array assignment 1+2 expression", fp: "arrayAssignmentExpressionLHS"},
+			{name: "let statement string RHS ", fp: "stringRHS"},
+			{name: "let statement keywordConst RHS ", fp: "kwConstRHS"},
 		}
 
 		for _, tc := range testCases {
@@ -447,7 +425,7 @@ func Test_letStatement(t *testing.T) {
 			},
 			{
 				inputs:   []string{"let arr[;"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken("expression", compiler.SEMICOLON)},
+				wantErrs: []error{compiler.NewErrSyntaxNotATerm(compiler.SEMICOLON)},
 			},
 		}
 		for _, tc := range testCases {
@@ -468,70 +446,6 @@ func Test_letStatement(t *testing.T) {
 	})
 }
 
-func Test_term(t *testing.T) {
-	t.Run("Testing happy terms", func(t *testing.T) {
-		type testCase struct {
-			name string
-			fp   string
-		}
-
-		dir := "test_programs/own/letStatements/"
-		testCases := []testCase{
-			// {name: "one array assignment", fp: "arrayAssignmentExpressionLHS"},
-		}
-
-		for _, tc := range testCases {
-			t.Run(tc.name, func(t *testing.T) {
-				input := readFile(t, dir+tc.fp+".jack")
-				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
-
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-				engine.Tknzr.Advance()
-
-				got := engine.CompileTerm()
-				assert.Equal(t, want, removeWhiteSpaces(got))
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
-			})
-		}
-	})
-
-	t.Run("Testing falsy terms", func(t *testing.T) {
-		type testCase struct {
-			inputs   []string
-			wantErrs []error
-		}
-		testCases := []testCase{
-			{
-				inputs: []string{"", "   "},
-				wantErrs: []error{
-					compiler.NewErrSyntaxUnexpectedToken(
-						fmt.Sprintf(
-							"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
-							compiler.INT_CONST, compiler.STRING_CONST, compiler.KEYWORD, compiler.IDENTIFIER, compiler.LPAREN, compiler.TILDE, compiler.MINUS),
-						compiler.EOF,
-					),
-				},
-			},
-		}
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-
-				engine.Tknzr.Advance()
-				engine.CompileTerm()
-
-				for _, wantErr := range tc.wantErrs {
-					assertErrorFound(t, engine.Errors, wantErr)
-				}
-
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
-			}
-		}
-	})
-}
 func Test_Return(t *testing.T) {
 	t.Run("Testing falsy return statements", func(t *testing.T) {
 		type testCase struct {
@@ -557,6 +471,62 @@ func Test_Return(t *testing.T) {
 				engine.CompileReturn()
 
 				assertErrorFound(t, engine.Errors, tc.wantErr)
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			}
+		}
+	})
+}
+
+func Test_term(t *testing.T) {
+	t.Run("Testing happy terms", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/letStatements/"
+		testCases := []testCase{}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+				engine.Tknzr.Advance()
+
+				got := engine.CompileTerm()
+				assert.Equal(t, want, removeWhiteSpaces(got))
+
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			})
+		}
+	})
+
+	t.Run("Testing falsy terms", func(t *testing.T) {
+		type testCase struct {
+			inputs   []string
+			wantErrs []error
+		}
+		testCases := []testCase{
+			{
+				inputs:   []string{"", "   "},
+				wantErrs: []error{compiler.NewErrSyntaxNotATerm(compiler.EOF)},
+			},
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileTerm()
+
+				for _, wantErr := range tc.wantErrs {
+					assertErrorFound(t, engine.Errors, wantErr)
+				}
 
 				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
 			}
