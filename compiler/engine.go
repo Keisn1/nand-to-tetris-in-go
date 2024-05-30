@@ -202,19 +202,114 @@ func (e *Engine) CompileVarDec() string {
 
 	return ret + xmlEnd(VARDEC_T)
 }
+func isStatement(kw string) bool {
+	statements := map[string]struct{}{
+		LET:    {},
+		IF:     {},
+		WHILE:  {},
+		DO:     {},
+		RETURN: {},
+	}
+	if _, ok := statements[kw]; ok {
+		return true
+	}
+	return false
+}
 
 func (e *Engine) CompileStatements() string {
 	ret := xmlStart(STATEMENTS_T)
 
-	switch e.Tknzr.Keyword() {
-	case LET:
-		ret += e.CompileLetStatement()
+	for isStatement(e.Tknzr.Keyword()) {
+		switch e.Tknzr.Keyword() {
+		case LET:
+			ret += e.CompileLetStatement()
+		case DO:
+			ret += e.CompileDoStatement()
+		case WHILE:
+			ret += e.CompileWhileStatement()
+		case RETURN:
+			ret += e.CompileReturn()
+		}
 	}
-
-	ret += e.CompileReturn()
 
 	return ret + xmlEnd(STATEMENTS_T)
 }
+
+func (e *Engine) CompileWhileStatement() string {
+	ret := xmlStart(WHILE_T)
+
+	if err := e.eatKeyword(WHILE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	ret += e.CompileExpression()
+
+	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	ret += `
+    <symbol> { </symbol>
+    <statements>
+      <letStatement>
+        <keyword> let </keyword>
+        <identifier> x </identifier>
+        <symbol> = </symbol>
+        <expression>
+          <term>
+            <identifier> x </identifier>
+          </term>
+          <symbol> + </symbol>
+          <term>
+            <integerConstant> 1 </integerConstant>
+          </term>
+        </expression>
+        <symbol> ; </symbol>
+      </letStatement>
+    </statements>
+`
+	for e.Tknzr.Symbol() != RBRACE {
+		e.Tknzr.Advance()
+	}
+
+	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	return ret + xmlEnd(WHILE_T)
+}
+
+func (e *Engine) CompileDoStatement() string {
+	ret := xmlStart(DO_T)
+
+	if err := e.eatKeyword(DO, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	if err := e.eatIdentifier(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	ret += e.CompileExpressionList()
+
+	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+	return ret + xmlEnd(DO_T)
+}
+
 func (e *Engine) CompileLetStatement() string {
 	ret := xmlStart(LET_T)
 

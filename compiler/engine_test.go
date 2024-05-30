@@ -372,6 +372,65 @@ func Test_VarDec(t *testing.T) {
 	})
 }
 
+func Test_statements(t *testing.T) {
+	t.Run("Testing happy statements", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+
+		dir := "test_programs/own/statements/"
+		testCases := []testCase{
+			{name: "two let statements", fp: "twoLetStatements"},
+			{name: "let, do and return statement", fp: "letDoReturn"},
+			{name: "while statement", fp: "while"},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+				engine.Tknzr.Advance()
+
+				got := engine.CompileStatements()
+
+				assert.Empty(t, engine.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
+				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+			})
+		}
+	})
+
+	t.Run("Testing falsy letStatements", func(t *testing.T) {
+		type testCase struct {
+			inputs   []string
+			wantErrs []error
+		}
+		testCases := []testCase{
+			// {
+			// 	inputs:   []string{"", "   "},
+			// 	wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LET, compiler.EOF)},
+			// },
+		}
+		for _, tc := range testCases {
+			for _, input := range tc.inputs {
+				tknzr := compiler.NewTokenizer(input)
+				engine := compiler.NewEngine(&tknzr)
+
+				engine.Tknzr.Advance()
+				engine.CompileStatements()
+
+				for _, wantErr := range tc.wantErrs {
+					assertErrorFound(t, engine.Errors, wantErr)
+				}
+			}
+		}
+	})
+
+}
+
 func Test_letStatement(t *testing.T) {
 	t.Run("Testing happy letStatements", func(t *testing.T) {
 		type testCase struct {
