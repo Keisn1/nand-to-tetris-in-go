@@ -9,6 +9,7 @@ const (
 	VARDEC_T         = "varDec"
 	STATEMENTS_T     = "statements"
 	LET_T            = "letStatement"
+	IF_T             = "ifStatement"
 	DO_T             = "doStatement"
 	WHILE_T          = "whileStatement"
 	RETURN_T         = "returnStatement"

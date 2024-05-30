@@ -42,10 +42,23 @@ type Tokenizer struct {
 }
 
 func NewTokenizer(input string) Tokenizer {
-	return Tokenizer{input: input}
+	// re := regexp.MustCompile(`//.*?\n`)
+	// output1 := re.ReplaceAllString(input, "")
+
+	re := regexp.MustCompile(`//.*?$`)
+	output1 := re.ReplaceAllString(input, "")
+
+	re = regexp.MustCompile(`//.*?\n`)
+	output2 := re.ReplaceAllString(output1, "")
+
+	// re = regexp.MustCompile(`/\**?\*/`)
+	// output3 := re.ReplaceAllString(output2, "")
+
+	return Tokenizer{input: output2}
 }
 
 func (t *Tokenizer) Advance() error {
+
 	if !t.HasMoreTokens() {
 		t.curToken = NewToken(EOF, EOF_CONST)
 		return ErrEndOfFile
@@ -79,28 +92,11 @@ func (t *Tokenizer) Advance() error {
 	return nil
 }
 
-func (t *Tokenizer) PeekToken() Token {
-	tmpInput := t.input
-	tmpCurToken := t.curToken
-	tmpCurrentPos := t.currentPos
-	tmpReadPos := t.readPos
-	tmpCh := t.ch
-
-	t.Advance()
-	nextToken := t.curToken
-
-	t.input = tmpInput
-	t.curToken = tmpCurToken
-	t.currentPos = tmpCurrentPos
-	t.readPos = tmpReadPos
-	t.ch = tmpCh
-	return nextToken
-}
-
 func (t *Tokenizer) HasMoreTokens() bool {
-	if t.readPos >= len(t.input) {
+	if t.readPosAtEOF() {
 		return false
 	}
+
 	return len(strings.TrimSpace(t.input[t.readPos:])) > 0
 }
 
@@ -114,10 +110,6 @@ func (t Tokenizer) Keyword() string {
 
 func (t Tokenizer) Symbol() string {
 	return string(t.curToken.Literal[0])
-}
-
-func (t Tokenizer) EOF() string {
-	return EOF
 }
 
 func (t Tokenizer) IntVal() int {
@@ -137,6 +129,9 @@ func (t Tokenizer) Identifier() string {
 }
 
 func (t *Tokenizer) readUpToNextToken() {
+	if t.readPosAtEOF() {
+		return
+	}
 	t.readChar()
 	for t.isWhiteSpace() || t.ch == '/' {
 		if t.isWhiteSpace() {

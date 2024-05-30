@@ -2,11 +2,12 @@ package compiler_test
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"hack/compiler"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_compileClass(t *testing.T) {
@@ -384,6 +385,7 @@ func Test_statements(t *testing.T) {
 			{name: "two let statements", fp: "twoLetStatements"},
 			{name: "let, do and return statement", fp: "letDoReturn"},
 			{name: "while statement", fp: "while"},
+			{name: "if without else statement", fp: "ifWithoutElse"},
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
@@ -398,7 +400,7 @@ func Test_statements(t *testing.T) {
 
 				assert.Empty(t, engine.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, compiler.EOF, engine.Tknzr.Keyword())
 			})
 		}
 	})

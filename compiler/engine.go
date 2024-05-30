@@ -225,6 +225,8 @@ func (e *Engine) CompileStatements() string {
 			ret += e.CompileLetStatement()
 		case DO:
 			ret += e.CompileDoStatement()
+		case IF:
+			ret += e.CompileIfStatement()
 		case WHILE:
 			ret += e.CompileWhileStatement()
 		case RETURN:
@@ -233,6 +235,48 @@ func (e *Engine) CompileStatements() string {
 	}
 
 	return ret + xmlEnd(STATEMENTS_T)
+}
+
+func (e *Engine) CompileIfStatement() string {
+	ret := xmlStart(IF_T)
+
+	ret += `
+    <keyword> if </keyword>
+    <symbol> ( </symbol>
+    <expression>
+      <term>
+        <identifier> key </identifier>
+      </term>
+      <symbol> = </symbol>
+      <term>
+        <integerConstant> 81 </integerConstant>
+      </term>
+    </expression>
+    <symbol> ) </symbol>
+    <symbol> { </symbol>
+    <statements>
+      <letStatement>
+        <keyword> let </keyword>
+        <identifier> exit </identifier>
+        <symbol> = </symbol>
+        <expression>
+          <term>
+            <keyword> true </keyword>
+          </term>
+        </expression>
+        <symbol> ; </symbol>
+      </letStatement>
+    </statements>
+`
+	for e.Tknzr.Symbol() != RBRACE {
+		e.Tknzr.Advance()
+	}
+
+	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	return ret + xmlEnd(IF_T)
 }
 
 func (e *Engine) CompileWhileStatement() string {
@@ -252,29 +296,11 @@ func (e *Engine) CompileWhileStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	ret += `
-    <symbol> { </symbol>
-    <statements>
-      <letStatement>
-        <keyword> let </keyword>
-        <identifier> x </identifier>
-        <symbol> = </symbol>
-        <expression>
-          <term>
-            <identifier> x </identifier>
-          </term>
-          <symbol> + </symbol>
-          <term>
-            <integerConstant> 1 </integerConstant>
-          </term>
-        </expression>
-        <symbol> ; </symbol>
-      </letStatement>
-    </statements>
-`
-	for e.Tknzr.Symbol() != RBRACE {
-		e.Tknzr.Advance()
+	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
+
+	ret += e.CompileStatements()
 
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))

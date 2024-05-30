@@ -1,0 +1,31 @@
+<statements>
+  <ifStatement>
+    <keyword> if </keyword>
+    <symbol> ( </symbol>
+    <expression>
+      <term>
+        <identifier> key </identifier>
+      </term>
+      <symbol> = </symbol>
+      <term>
+        <integerConstant> 81 </integerConstant>
+      </term>
+    </expression>
+    <symbol> ) </symbol>
+    <symbol> { </symbol>
+    <statements>
+      <letStatement>
+        <keyword> let </keyword>
+        <identifier> exit </identifier>
+        <symbol> = </symbol>
+        <expression>
+          <term>
+            <keyword> true </keyword>
+          </term>
+        </expression>
+        <symbol> ; </symbol>
+      </letStatement>
+    </statements>
+    <symbol> } </symbol>
+  </ifStatement>
+</statements>
