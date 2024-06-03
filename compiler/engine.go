@@ -240,42 +240,45 @@ func (e *Engine) CompileStatements() string {
 func (e *Engine) CompileIfStatement() string {
 	ret := xmlStart(IF_T)
 
-	ret += `
-    <keyword> if </keyword>
-    <symbol> ( </symbol>
-    <expression>
-      <term>
-        <identifier> key </identifier>
-      </term>
-      <symbol> = </symbol>
-      <term>
-        <integerConstant> 81 </integerConstant>
-      </term>
-    </expression>
-    <symbol> ) </symbol>
-    <symbol> { </symbol>
-    <statements>
-      <letStatement>
-        <keyword> let </keyword>
-        <identifier> exit </identifier>
-        <symbol> = </symbol>
-        <expression>
-          <term>
-            <keyword> true </keyword>
-          </term>
-        </expression>
-        <symbol> ; </symbol>
-      </letStatement>
-    </statements>
-`
-	for e.Tknzr.Symbol() != RBRACE {
-		e.Tknzr.Advance()
+	if err := e.eatKeyword(IF, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
+
+	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	ret += e.CompileExpression()
+
+	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+	}
+
+	ret += e.CompileStatements()
 
 	if err := e.eatSymbol(RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	if e.Tknzr.Keyword() == ELSE {
+		if err := e.eatKeyword(ELSE, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+		}
+
+		if err := e.eatSymbol(LBRACE, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+		}
+
+		ret += e.CompileStatements()
+
+		if err := e.eatSymbol(RBRACE, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+		}
+	}
 	return ret + xmlEnd(IF_T)
 }
 
@@ -320,14 +323,46 @@ func (e *Engine) CompileDoStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatSymbol(LPAREN, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
-	}
+	switch e.Tknzr.Symbol() {
+	case LSQUARE:
+		if err := e.eatSymbol(LSQUARE, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
 
-	ret += e.CompileExpressionList()
+		ret += e.CompileExpression()
 
-	if err := e.eatSymbol(RPAREN, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
+		if err := e.eatSymbol(RSQUARE, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+
+	case LPAREN:
+		if err := e.eatSymbol(LPAREN, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+
+		ret += e.CompileExpressionList()
+
+		if err := e.eatSymbol(RPAREN, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+	case DOT:
+		if err := e.eatSymbol(DOT, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+
+		if err := e.eatIdentifier(&ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+
+		if err := e.eatSymbol(LPAREN, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
+
+		ret += e.CompileExpressionList()
+
+		if err := e.eatSymbol(RPAREN, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
+		}
 	}
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
@@ -475,8 +510,8 @@ func (e *Engine) CompileTerm() string {
 			if err := e.eatSymbol(RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
-		case POINT:
-			if err := e.eatSymbol(POINT, &ret); err != nil {
+		case DOT:
+			if err := e.eatSymbol(DOT, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
@@ -541,6 +576,10 @@ func (e *Engine) CompileReturn() string {
 
 	if err := e.eatKeyword(RETURN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
+	}
+
+	if e.isTerm() {
+		ret += e.CompileExpression()
 	}
 
 	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
@@ -610,10 +649,6 @@ func isStaticOrField(kw string) bool {
 	return kw == STATIC || kw == FIELD
 }
 
-func isKeywordConst(kw string) bool {
-	return kw == THIS || kw == FALSE || kw == NULL || kw == TRUE
-}
-
 func isOperator(sym string) bool {
 	if _, ok := operators[sym]; ok {
 		return true
@@ -642,7 +677,7 @@ func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
 }
 
 func xmlSymbol(symbol string) string {
-	return fmt.Sprintf("<symbol> %s </symbol>\n", string(symbol))
+	return fmt.Sprintf("<symbol> %s </symbol>\n", xmlSymbols[string(symbol)])
 }
 
 func xmlKeyword(kw string) string {

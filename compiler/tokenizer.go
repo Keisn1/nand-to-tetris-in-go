@@ -42,19 +42,16 @@ type Tokenizer struct {
 }
 
 func NewTokenizer(input string) Tokenizer {
-	// re := regexp.MustCompile(`//.*?\n`)
-	// output1 := re.ReplaceAllString(input, "")
-
 	re := regexp.MustCompile(`//.*?$`)
 	output1 := re.ReplaceAllString(input, "")
 
 	re = regexp.MustCompile(`//.*?\n`)
 	output2 := re.ReplaceAllString(output1, "")
 
-	// re = regexp.MustCompile(`/\**?\*/`)
-	// output3 := re.ReplaceAllString(output2, "")
+	re = regexp.MustCompile(`(?s)/\*\*.*?\*/`)
+	output3 := re.ReplaceAllString(output2, "")
 
-	return Tokenizer{input: output2}
+	return Tokenizer{input: output3}
 }
 
 func (t *Tokenizer) Advance() error {
@@ -133,38 +130,9 @@ func (t *Tokenizer) readUpToNextToken() {
 		return
 	}
 	t.readChar()
-	for t.isWhiteSpace() || t.ch == '/' {
-		if t.isWhiteSpace() {
-			t.jumpWhiteSpace()
-		}
-		if t.ch == '/' {
-			if t.readPos < len(t.input) {
-				switch t.input[t.readPos] {
-				case '/':
-					t.nextLine()
-				case '*':
-					t.jumpEndOfComment()
-				default:
-					return
-				}
-			}
-		}
-	}
-}
 
-func (t *Tokenizer) jumpEndOfComment() {
-	t.readPos++
-	for t.input[t.readPos:t.readPos+2] != "*/" {
-		t.readPos++
-	}
-	t.readPos += 2
-	t.currentPos = t.readPos
-	t.readChar()
-}
-
-func (t *Tokenizer) nextLine() {
-	for t.ch != '\n' && !t.readPosAtEOF() {
-		t.readChar()
+	for t.isWhiteSpace() {
+		t.jumpWhiteSpace()
 	}
 }
 
@@ -288,13 +256,6 @@ func (t Tokenizer) isInteger() bool {
 
 func (t Tokenizer) isSymbol() bool {
 	if _, ok := allSymbols[string(t.ch)]; ok {
-		return true
-	}
-	return false
-}
-
-func (t Tokenizer) isKeyword() bool {
-	if _, ok := keywords[t.input[t.currentPos:t.readPos]]; ok {
 		return true
 	}
 	return false

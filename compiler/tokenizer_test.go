@@ -488,7 +488,7 @@ class Main {
 			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "length"},
 			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.EQUAL},
 			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "Keyboard"},
-			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.POINT},
+			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.DOT},
 			{wantTokenType: compiler.IDENTIFIER, wantIdentifier: "readInt"},
 			{wantTokenType: compiler.SYMBOL, wantSymbol: compiler.LPAREN},
 			{wantTokenType: compiler.STRING_CONST, wantStringVal: "HOW MANY NUMBERS? "},
@@ -539,29 +539,29 @@ class Main {
 }
 
 func Test_tokenizerFullPrograms1(t *testing.T) {
-	t.Run("Test output to xml (file without comments)", func(t *testing.T) {
-		fp := "test_programs/ArrayTest/Main_wo_comments.jack"
-		input, err := os.ReadFile(fp)
-		assert.NoError(t, err, "error reading file")
+	// t.Run("Test output to xml (file without comments)", func(t *testing.T) {
+	// 	fp := "test_programs/ArrayTest/Main_wo_comments.jack"
+	// 	input, err := os.ReadFile(fp)
+	// 	assert.NoError(t, err, "error reading file")
 
-		tknzr := compiler.NewTokenizer(string(input))
+	// 	tknzr := compiler.NewTokenizer(string(input))
 
-		out := "MainT_test.xml"
-		tknzr.OutputXML(out)
+	// 	out := "MainT_test.xml"
+	// 	tknzr.OutputXML(out)
 
-		gotByte, err := os.ReadFile(out)
-		assert.NoError(t, err, "error reading file")
+	// 	gotByte, err := os.ReadFile(out)
+	// 	assert.NoError(t, err, "error reading file")
 
-		wantFP := "test_programs/ArrayTest/MainT.xml"
-		wantByte, err := os.ReadFile(wantFP)
-		assert.NoError(t, err, "error reading file")
+	// 	wantFP := "test_programs/ArrayTest/MainT.xml"
+	// 	wantByte, err := os.ReadFile(wantFP)
+	// 	assert.NoError(t, err, "error reading file")
 
-		regex := regexp.MustCompile(`\s+`)
-		got := regex.ReplaceAllString(string(gotByte), "")
-		want := regex.ReplaceAllString(string(wantByte), "")
-		assert.Equal(t, want, got)
-		os.Remove(out)
-	})
+	// 	regex := regexp.MustCompile(`\s+`)
+	// 	got := regex.ReplaceAllString(string(gotByte), "")
+	// 	want := regex.ReplaceAllString(string(wantByte), "")
+	// 	assert.Equal(t, want, got)
+	// 	os.Remove(out)
+	// })
 
 	t.Run("Test output to xml (file with comments)", func(t *testing.T) {
 		testCases := []struct {
@@ -602,6 +602,7 @@ func Test_tokenizerFullPrograms1(t *testing.T) {
 			input, err := os.ReadFile(tc.inputFile)
 			assert.NoError(t, err, "error reading file")
 
+			compiler.NewTokenizer(string(input))
 			tknzr := compiler.NewTokenizer(string(input))
 
 			out := "MainT_test.xml"

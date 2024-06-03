@@ -7,7 +7,7 @@ const (
 	RPAREN    = ")"
 	LSQUARE   = "["
 	RSQUARE   = "]"
-	POINT     = "."
+	DOT       = "."
 	KOMMA     = ","
 	SEMICOLON = ";"
 	PLUS      = "+"
@@ -30,7 +30,7 @@ var (
 		RPAREN:    {},
 		LSQUARE:   {},
 		RSQUARE:   {},
-		POINT:     {},
+		DOT:       {},
 		KOMMA:     {},
 		SEMICOLON: {},
 		PLUS:      {},
@@ -46,26 +46,14 @@ var (
 	}
 )
 
-var (
-	xmlSymbols = map[string]string{
-		LBRACE:    LBRACE,
-		RBRACE:    RBRACE,
-		LPAREN:    LPAREN,
-		RPAREN:    RPAREN,
-		LSQUARE:   LSQUARE,
-		RSQUARE:   RSQUARE,
-		POINT:     POINT,
-		KOMMA:     KOMMA,
-		SEMICOLON: SEMICOLON,
-		PLUS:      PLUS,
-		MINUS:     MINUS,
-		STAR:      STAR,
-		SLASH:     SLASH,
-		AND:       "&amp;",
-		PIPE:      PIPE,
-		LT:        "&lt;",
-		GT:        "&gt;",
-		EQUAL:     EQUAL,
-		TILDE:     TILDE,
-	}
-)
+var operators = map[string]struct{}{
+	PLUS:  {},
+	MINUS: {},
+	STAR:  {},
+	SLASH: {},
+	AND:   {},
+	PIPE:  {},
+	LT:    {},
+	GT:    {},
+	EQUAL: {},
+}

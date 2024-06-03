@@ -20,7 +20,7 @@ func NewErrSyntaxUnexpectedToken(expectedToken, foundToken string) ErrSyntaxUnex
 }
 
 func (err ErrSyntaxUnexpectedToken) Error() string {
-	return fmt.Sprintf("expected %s, found %s", err.ExpectedToken, err.FoundToken)
+	return fmt.Sprintf("expected %s, found %q", err.ExpectedToken, err.FoundToken)
 }
 
 func NewErrSyntaxNotATerm(foundToken string) ErrSyntaxUnexpectedToken {

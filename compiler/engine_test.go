@@ -25,7 +25,7 @@ func Test_compileClass(t *testing.T) {
 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
 			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
 			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
-			{name: "main with mulitple empty subroutine", fp: "MainWithMultEmptySubroutine"},
+			{name: "main with mulitple subroutines", fp: "main2Subroutine"},
 		}
 
 		for _, tc := range testCases {
@@ -78,7 +78,7 @@ func Test_compileClass(t *testing.T) {
 			},
 			{
 				inputs:  []string{"class Main { ."},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.POINT),
+				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.DOT),
 			},
 			{
 				inputs:  []string{"class Main {static name"},
@@ -384,8 +384,11 @@ func Test_statements(t *testing.T) {
 		testCases := []testCase{
 			{name: "two let statements", fp: "twoLetStatements"},
 			{name: "let, do and return statement", fp: "letDoReturn"},
+			{name: "do statement with dot", fp: "doWithDot"},
 			{name: "while statement", fp: "while"},
+			{name: "while with < symbol", fp: "while"},
 			{name: "if without else statement", fp: "ifWithoutElse"},
+			{name: "if with else statement", fp: "whileWithLowerThan"},
 		}
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
