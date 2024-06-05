@@ -202,20 +202,6 @@ func (e *Engine) CompileVarDec() string {
 
 	return ret + xmlEnd(VARDEC_T)
 }
-func isStatement(kw string) bool {
-	statements := map[string]struct{}{
-		LET:    {},
-		IF:     {},
-		WHILE:  {},
-		DO:     {},
-		RETURN: {},
-	}
-	if _, ok := statements[kw]; ok {
-		return true
-	}
-	return false
-}
-
 func (e *Engine) CompileStatements() string {
 	ret := xmlStart(STATEMENTS_T)
 
@@ -548,29 +534,6 @@ func (e *Engine) CompileExpressionList() string {
 	return ret + xmlEnd("expressionList")
 }
 
-func (e Engine) isTerm() bool {
-	switch e.Tknzr.TokenType() {
-	case INT_CONST:
-		return true
-	case STRING_CONST:
-		return true
-	case KEYWORD:
-		return true
-	case IDENTIFIER:
-		return true
-	case SYMBOL:
-		switch e.Tknzr.Symbol() {
-		case LPAREN:
-			return true
-		case TILDE:
-			return true
-		case MINUS:
-			return true
-		}
-	}
-	return false
-}
-
 func (e *Engine) CompileReturn() string {
 	ret := xmlStart(RETURN_T)
 
@@ -589,7 +552,7 @@ func (e *Engine) CompileReturn() string {
 	return ret + xmlEnd(RETURN_T)
 }
 
-func (e *Engine) eatType(ret *string) error {
+func (e Engine) eatType(ret *string) error {
 	switch e.Tknzr.TokenType() {
 	case IDENTIFIER:
 		e.eatIdentifier(ret)
@@ -641,17 +604,25 @@ func (e Engine) eatIdentifier(ret *string) error {
 	return nil
 }
 
-func isSubRoutineDec(kw string) bool {
-	return kw == CONSTRUCTOR || kw == FUNCTION || kw == METHOD
-}
-
-func isStaticOrField(kw string) bool {
-	return kw == STATIC || kw == FIELD
-}
-
-func isOperator(sym string) bool {
-	if _, ok := operators[sym]; ok {
+func (e Engine) isTerm() bool {
+	switch e.Tknzr.TokenType() {
+	case INT_CONST:
 		return true
+	case STRING_CONST:
+		return true
+	case KEYWORD:
+		return true
+	case IDENTIFIER:
+		return true
+	case SYMBOL:
+		switch e.Tknzr.Symbol() {
+		case LPAREN:
+			return true
+		case TILDE:
+			return true
+		case MINUS:
+			return true
+		}
 	}
 	return false
 }
@@ -674,6 +645,35 @@ func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
 	*ret += xmlSymbol(expectedSymbol)
 	e.Tknzr.Advance()
 	return nil
+}
+
+func isStatement(kw string) bool {
+	statements := map[string]struct{}{
+		LET:    {},
+		IF:     {},
+		WHILE:  {},
+		DO:     {},
+		RETURN: {},
+	}
+	if _, ok := statements[kw]; ok {
+		return true
+	}
+	return false
+}
+
+func isSubRoutineDec(kw string) bool {
+	return kw == CONSTRUCTOR || kw == FUNCTION || kw == METHOD
+}
+
+func isStaticOrField(kw string) bool {
+	return kw == STATIC || kw == FIELD
+}
+
+func isOperator(sym string) bool {
+	if _, ok := operators[sym]; ok {
+		return true
+	}
+	return false
 }
 
 func xmlSymbol(symbol string) string {
