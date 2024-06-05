@@ -1,11 +1,8 @@
 package compiler
 
 import (
-	"errors"
 	"fmt"
 )
-
-var ErrEndOfFile = errors.New("no more tokens")
 
 type ErrSyntaxUnexpectedToken struct {
 	ExpectedToken string

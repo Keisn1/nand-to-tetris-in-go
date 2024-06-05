@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -8,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 )
+
+var ErrEndOfFile = errors.New("no more tokens")
 
 type TokenType string
 

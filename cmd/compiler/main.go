@@ -22,7 +22,6 @@ func main() {
 	}
 
 	if fileInfo.IsDir() {
-
 		dirEntries, err := os.ReadDir(path)
 		if err != nil {
 			log.Fatal(err)
@@ -51,7 +50,6 @@ func main() {
 				f.Write([]byte(s))
 
 				f.Close()
-
 			}
 		}
 	} else {
@@ -77,7 +75,6 @@ func main() {
 		engine.Tknzr.Advance()
 		s := engine.CompileClass()
 		f.Write([]byte(s))
-
 	}
 
 }
