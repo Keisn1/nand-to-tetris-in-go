@@ -29,7 +29,7 @@ func (e *Engine) CompileClass() string {
 	}
 
 	e.clAndSubR[e.Tknzr.Identifier()] = "class"
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
@@ -73,7 +73,7 @@ func (e *Engine) CompileClassVarDec() string {
 	}
 
 	e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
@@ -81,7 +81,7 @@ func (e *Engine) CompileClassVarDec() string {
 		e.eatSymbol(token.KOMMA, &ret)
 
 		e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
-		if err := e.eatIdentifier(&ret); err != nil {
+		if err := e.eatIdentifier(&ret, true); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
 	}
@@ -117,7 +117,7 @@ func (e *Engine) CompileSubroutineDec() string {
 	}
 
 	e.clAndSubR[e.Tknzr.Identifier()] = "subroutine"
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
@@ -149,7 +149,7 @@ func (e *Engine) CompileParameterList() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
@@ -160,7 +160,7 @@ func (e *Engine) CompileParameterList() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 
-		if err := e.eatIdentifier(&ret); err != nil {
+		if err := e.eatIdentifier(&ret, true); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 	}
@@ -199,14 +199,14 @@ func (e *Engine) CompileVarDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
 	for e.Tknzr.Symbol() == token.KOMMA {
 		e.eatSymbol(token.KOMMA, &ret)
 
-		if err := e.eatIdentifier(&ret); err != nil {
+		if err := e.eatIdentifier(&ret, true); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 		}
 
@@ -321,7 +321,7 @@ func (e *Engine) CompileDoStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
@@ -352,7 +352,7 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		if err := e.eatIdentifier(&ret); err != nil {
+		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
@@ -380,7 +380,7 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
-	if err := e.eatIdentifier(&ret); err != nil {
+	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
@@ -486,7 +486,7 @@ func (e *Engine) CompileTerm() string {
 		}
 
 	case token.IDENTIFIER:
-		if err := e.eatIdentifier(&ret); err != nil {
+		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
@@ -517,7 +517,7 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			if err := e.eatIdentifier(&ret); err != nil {
+			if err := e.eatIdentifier(&ret, false); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
@@ -571,7 +571,7 @@ func (e *Engine) CompileReturn() string {
 func (e Engine) eatType(ret *string) error {
 	switch e.Tknzr.TokenType() {
 	case token.IDENTIFIER:
-		e.eatIdentifier(ret)
+		e.eatIdentifier(ret, false)
 
 	case token.KEYWORD:
 		switch e.Tknzr.Keyword() {
@@ -610,7 +610,7 @@ func (e Engine) eatStringVal(ret *string) error {
 	return nil
 }
 
-func (e Engine) eatIdentifier(ret *string) error {
+func (e Engine) eatIdentifier(ret *string, def bool) error {
 	if e.Tknzr.TokenType() != token.IDENTIFIER {
 		return NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, e.Tknzr.GetTokenLiteral())
 	}
@@ -624,7 +624,12 @@ func (e Engine) eatIdentifier(ret *string) error {
 		info = "_" + e.clAndSubR[name]
 	}
 
-	*ret += xmlIdentifier(name, info+"_def")
+	if def {
+		*ret += xmlIdentifier(name, info+"_def")
+	} else {
+		*ret += xmlIdentifier(name, info+"_used")
+	}
+
 	e.Tknzr.Advance()
 	return nil
 }
