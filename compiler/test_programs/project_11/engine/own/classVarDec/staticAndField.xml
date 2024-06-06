@@ -1,8 +1,8 @@
 <classVarDec>
   <keyword> field </keyword>
   <keyword> char </keyword>
-  <identifier> f1 </identifier>
+  <identifier_field_0_def> f1 </identifier_field_0_def>
   <symbol> , </symbol>
-  <identifier> f2 </identifier>
+  <identifier_field_1_def> f2 </identifier_field_1_def>
   <symbol> ; </symbol>
 </classVarDec>

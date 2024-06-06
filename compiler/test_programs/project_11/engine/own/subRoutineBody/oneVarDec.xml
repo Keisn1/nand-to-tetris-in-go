@@ -1,16 +1,16 @@
 <subroutineBody>
   <symbol> { </symbol>
-    <varDec>
-      <keyword> var </keyword>
-      <identifier> SquareGame </identifier>
-      <identifier> game </identifier>
+  <varDec>
+    <keyword> var </keyword>
+    <identifier_class_used> SquareGame </identifier_class_used>
+    <identifier_local_0_def> game </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <returnStatement>
+      <keyword> return </keyword>
       <symbol> ; </symbol>
-    </varDec>
-    <statements>
-      <returnStatement>
-        <keyword> return </keyword>
-        <symbol> ; </symbol>
-      </returnStatement>
-    </statements>
+    </returnStatement>
+  </statements>
   <symbol> } </symbol>
 </subroutineBody>

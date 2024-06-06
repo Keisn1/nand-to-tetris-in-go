@@ -1,7 +1,7 @@
 <subroutineDec>
   <keyword> method </keyword>
   <keyword> char </keyword>
-  <identifier> methodName </identifier>
+  <identifier_subroutine_def> methodName </identifier_subroutine_def>
   <symbol> ( </symbol>
   <parameterList>
   </parameterList>

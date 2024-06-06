@@ -1,8 +1,8 @@
 <classVarDec>
   <keyword> static </keyword>
   <keyword> char </keyword>
-  <identifier> c1 </identifier>
+  <identifier_static_0_def> c1 </identifier_static_0_def>
   <symbol> , </symbol>
-  <identifier> c2 </identifier>
+  <identifier_static_1_def> c2 </identifier_static_1_def>
   <symbol> ; </symbol>
 </classVarDec>

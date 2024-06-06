@@ -1,14 +1,14 @@
 <subroutineDec>
   <keyword> method </keyword>
   <keyword> boolean </keyword>
-  <identifier> someName </identifier>
+  <identifier_subroutine_def> someName </identifier_subroutine_def>
   <symbol> ( </symbol>
   <parameterList>
     <keyword> boolean </keyword>
-    <identifier> x </identifier>
+    <identifier_argument_0_def> x </identifier_argument_0_def>
     <symbol> , </symbol>
     <keyword> char </keyword>
-    <identifier> y </identifier>
+    <identifier_argument_1_def> y </identifier_argument_1_def>
   </parameterList>
   <symbol> ) </symbol>
   <subroutineBody>

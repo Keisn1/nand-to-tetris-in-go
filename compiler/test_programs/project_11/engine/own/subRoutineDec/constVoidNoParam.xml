@@ -1,7 +1,7 @@
 <subroutineDec>
   <keyword> constructor </keyword>
   <keyword> void </keyword>
-  <identifier> main </identifier>
+  <identifier_subroutine_def> main </identifier_subroutine_def>
   <symbol> ( </symbol>
   <parameterList>
   </parameterList>

@@ -3,19 +3,19 @@
     <varDec>
       <keyword> var </keyword>
       <keyword> int </keyword>
-      <identifier> game1 </identifier>
+      <identifier_local_0_def> game1 </identifier_local_0_def>
       <symbol> ; </symbol>
     </varDec>
     <varDec>
       <keyword> var </keyword>
       <keyword> char </keyword>
-      <identifier> game2 </identifier>
+      <identifier_local_1_def> game2 </identifier_local_1_def>
       <symbol> ; </symbol>
     </varDec>
     <varDec>
       <keyword> var </keyword>
       <keyword> boolean </keyword>
-      <identifier> game3 </identifier>
+      <identifier_local_2_def> game3 </identifier_local_2_def>
       <symbol> ; </symbol>
     </varDec>
     <statements>

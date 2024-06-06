@@ -68,7 +68,7 @@ func (e *Engine) CompileClassVarDec() string {
 	}
 
 	varType := e.Tknzr.Keyword()
-	if err := e.eatType(&ret); err != nil {
+	if _, err := e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
@@ -111,7 +111,7 @@ func (e *Engine) CompileSubroutineDec() string {
 	case token.VOID:
 		e.eatKeyword(token.VOID, &ret)
 	default:
-		if err := e.eatType(&ret); err != nil {
+		if _, err := e.eatType(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 		}
 	}
@@ -145,10 +145,15 @@ func (e *Engine) CompileSubroutineDec() string {
 func (e *Engine) CompileParameterList() string {
 	ret := xmlStart(PLIST_T)
 
-	if err := e.eatType(&ret); err != nil {
+	kind := symbolTable.ARG
+
+	var varType string
+	var err error
+	if varType, err = e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
+	e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
 	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
@@ -156,10 +161,11 @@ func (e *Engine) CompileParameterList() string {
 	for e.Tknzr.Symbol() == token.KOMMA {
 		e.eatSymbol(token.KOMMA, &ret)
 
-		if err := e.eatType(&ret); err != nil {
+		if varType, err = e.eatType(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
 
+		e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
 		if err := e.eatIdentifier(&ret, true); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 		}
@@ -195,10 +201,13 @@ func (e *Engine) CompileVarDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	if err := e.eatType(&ret); err != nil {
+	var varType string
+	var err error
+	if varType, err = e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
+	e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
 	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
@@ -206,6 +215,7 @@ func (e *Engine) CompileVarDec() string {
 	for e.Tknzr.Symbol() == token.KOMMA {
 		e.eatSymbol(token.KOMMA, &ret)
 
+		e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
 		if err := e.eatIdentifier(&ret, true); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 		}
@@ -568,13 +578,16 @@ func (e *Engine) CompileReturn() string {
 	return ret + xmlEnd(RETURN_T)
 }
 
-func (e Engine) eatType(ret *string) error {
+func (e Engine) eatType(ret *string) (string, error) {
+	var varType string
 	switch e.Tknzr.TokenType() {
 	case token.IDENTIFIER:
+		varType = e.Tknzr.Identifier()
 		e.eatIdentifier(ret, false)
 
 	case token.KEYWORD:
-		switch e.Tknzr.Keyword() {
+		varType = e.Tknzr.Keyword()
+		switch varType {
 		case token.INT:
 			e.eatKeyword(token.INT, ret)
 		case token.CHAR:
@@ -582,12 +595,12 @@ func (e Engine) eatType(ret *string) error {
 		case token.BOOLEAN:
 			e.eatKeyword(token.BOOLEAN, ret)
 		default:
-			return NewErrSyntaxNotAType(e.Tknzr.Keyword())
+			return "", NewErrSyntaxNotAType(e.Tknzr.Keyword())
 		}
 	default:
-		return NewErrSyntaxNotAType(e.Tknzr.GetTokenLiteral())
+		return "", NewErrSyntaxNotAType(e.Tknzr.GetTokenLiteral())
 	}
-	return nil
+	return varType, nil
 }
 
 func (e Engine) eatIntVal(ret *string) error {
@@ -610,27 +623,33 @@ func (e Engine) eatStringVal(ret *string) error {
 	return nil
 }
 
-func (e Engine) eatIdentifier(ret *string, def bool) error {
+func (e Engine) eatIdentifier(ret *string, isDefinition bool) error {
 	if e.Tknzr.TokenType() != token.IDENTIFIER {
 		return NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, e.Tknzr.GetTokenLiteral())
 	}
 
 	name := e.Tknzr.Identifier()
+	e.Tknzr.Advance()
 
 	var info string
 	if e.symTab.KindOf(name) != "" {
 		info = fmt.Sprintf("_%s_%d", e.symTab.KindOf(name), e.symTab.IndexOf(name))
 	} else {
-		info = "_" + e.clAndSubR[name]
+		switch e.Tknzr.Symbol() {
+		case token.LPAREN:
+			info += "_subroutine"
+		default:
+			info += "_class"
+		}
 	}
 
-	if def {
-		*ret += xmlIdentifier(name, info+"_def")
+	if isDefinition {
+		info += "_def"
 	} else {
-		*ret += xmlIdentifier(name, info+"_used")
+		info += "_used"
 	}
 
-	e.Tknzr.Advance()
+	*ret += xmlIdentifier(name, info)
 	return nil
 }
 

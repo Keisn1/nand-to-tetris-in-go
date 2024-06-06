@@ -1,11 +1,11 @@
 <subroutineDec>
   <keyword> function </keyword>
   <keyword> int </keyword>
-  <identifier> main </identifier>
+  <identifier_subroutine_def> main </identifier_subroutine_def>
   <symbol> ( </symbol>
   <parameterList>
     <keyword> int </keyword>
-    <identifier> x </identifier>
+    <identifier_argument_0_def> x </identifier_argument_0_def>
   </parameterList>
   <symbol> ) </symbol>
   <subroutineBody>
