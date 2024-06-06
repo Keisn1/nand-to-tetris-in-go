@@ -1,0 +1,14 @@
+<term>
+  <identifier> foo </identifier>
+  <symbol> . </symbol>
+  <identifier> bar </identifier>
+  <symbol> ( </symbol>
+  <expressionList>
+    <expression>
+      <term>
+        <keyword> true </keyword>
+      </term>
+    </expression>
+  </expressionList>
+  <symbol> ) </symbol>
+</term>

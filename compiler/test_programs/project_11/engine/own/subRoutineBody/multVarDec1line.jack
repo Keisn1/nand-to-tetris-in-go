@@ -1,0 +1,6 @@
+
+{
+    var int game1, game2;
+    var boolean game3;
+    return;
+}

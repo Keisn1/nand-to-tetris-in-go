@@ -1,0 +1,3 @@
+let x1 = "hello";
+do foo(true);
+return;

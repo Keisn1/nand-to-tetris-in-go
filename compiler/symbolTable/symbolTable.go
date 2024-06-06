@@ -19,8 +19,8 @@ func NewSymbolTable() SymbolTable {
 }
 
 func (st *SymbolTable) StartSubroutine() {
-	st.counts[VAR] = 0
-	st.counts[ARG] = 0
+	st.symbols = make(map[string]Symbol)
+	st.counts = make(map[string]int)
 }
 
 func (st *SymbolTable) Define(name, varType, kind string) {

@@ -1,0 +1,11 @@
+<letStatement>
+  <keyword> let </keyword>
+  <identifier> x </identifier>
+  <symbol> = </symbol>
+  <expression>
+    <term>
+      <identifier> name </identifier>
+    </term>
+  </expression>
+  <symbol> ; </symbol>
+</letStatement>

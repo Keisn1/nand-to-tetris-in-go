@@ -1,0 +1,28 @@
+<term>
+  <identifier> foo </identifier>
+  <symbol> ( </symbol>
+  <expressionList>
+    <expression>
+      <term>
+        <identifier> x </identifier>
+      </term>
+    </expression>
+    <symbol> , </symbol>
+    <expression>
+      <term>
+        <symbol> ( </symbol>
+        <expression>
+          <term>
+            <identifier> y </identifier>
+          </term>
+          <symbol> + </symbol>
+          <term>
+            <identifier> z </identifier>
+          </term>
+        </expression>
+        <symbol> ) </symbol>
+      </term>
+    </expression>
+  </expressionList>
+  <symbol> ) </symbol>
+</term>

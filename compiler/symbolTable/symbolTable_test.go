@@ -35,6 +35,7 @@ func Test_SymbolTable(t *testing.T) {
 		{randomS(15), "Point", symbolTable.STATIC, 1, 2},
 		{randomS(15), token.INT, symbolTable.ARG, 0, 1},
 		{randomS(15), token.CHAR, symbolTable.VAR, 0, 1},
+		{randomS(15), token.BOOLEAN, symbolTable.VAR, 1, 2},
 	}
 
 	for _, tc := range testCases {
@@ -48,11 +49,10 @@ func Test_SymbolTable(t *testing.T) {
 	sTab.StartSubroutine()
 	// | name | type  | kind     | # |
 	// |------+-------+----------+---|
-	// | x1   | int   | static   | 0 |
-	// | s1   | char  | field    | 0 |
-	// | p1   | point | static   | 1 |
+	//
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.VAR))
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.ARG))
+	assert.Equal(t, 0, sTab.VarCount(symbolTable.STATIC))
 
 }
 

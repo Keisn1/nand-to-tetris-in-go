@@ -1,0 +1,14 @@
+<term>
+  <identifier> arr </identifier>
+  <symbol> [ </symbol>
+  <expression>
+    <term>
+      <integerConstant> 5 </integerConstant>
+    </term>
+    <symbol> + </symbol>
+    <term>
+      <integerConstant> 6 </integerConstant>
+    </term>
+  </expression>
+  <symbol> ] </symbol>
+</term>

@@ -1,0 +1,3 @@
+method boolean someName (boolean x, char y) {
+    return;
+}
