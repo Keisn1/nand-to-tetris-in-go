@@ -53,7 +53,6 @@ func Test_SymbolTable(t *testing.T) {
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.VAR))
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.ARG))
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.STATIC))
-
 }
 
 func randomS(length int) string {

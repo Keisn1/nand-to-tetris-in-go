@@ -5,7 +5,7 @@
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier> test </identifier>
+    <identifier_static_0> test </identifier_static_0>
     <symbol> ; </symbol>
   </classVarDec>
   <symbol> } </symbol>
