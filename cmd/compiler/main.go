@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"hack/compiler"
+	"hack/compiler/engine"
+	"hack/compiler/token"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,11 +43,11 @@ func main() {
 					log.Fatal("Couldn't read input", err)
 				}
 
-				tknzr := compiler.NewTokenizer(string(input))
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(string(input))
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				s := engine.CompileClass()
+				e.Tknzr.Advance()
+				s := e.CompileClass()
 				f.Write([]byte(s))
 
 				f.Close()
@@ -69,12 +70,11 @@ func main() {
 			log.Fatal(err)
 		}
 
-		tknzr := compiler.NewTokenizer(string(input))
-		engine := compiler.NewEngine(&tknzr)
+		tknzr := token.NewTokenizer(string(input))
+		e := engine.NewEngine(&tknzr)
 
-		engine.Tknzr.Advance()
-		s := engine.CompileClass()
+		e.Tknzr.Advance()
+		s := e.CompileClass()
 		f.Write([]byte(s))
 	}
-
 }

@@ -1,4 +1,4 @@
-package compiler
+package token
 
 import (
 	"errors"
@@ -58,7 +58,6 @@ func NewTokenizer(input string) Tokenizer {
 }
 
 func (t *Tokenizer) Advance() error {
-
 	if !t.HasMoreTokens() {
 		t.curToken = NewToken(EOF, EOF_CONST)
 		return ErrEndOfFile
@@ -213,7 +212,7 @@ func (t *Tokenizer) OutputXML(out string) {
 		case KEYWORD:
 			t.writeToken(file, string(t.Keyword()), "keyword")
 		case SYMBOL:
-			xmlSymbol := xmlSymbols[t.Symbol()]
+			xmlSymbol := XmlSymbols[t.Symbol()]
 			t.writeToken(file, xmlSymbol, "symbol")
 		case IDENTIFIER:
 			t.writeToken(file, t.Identifier(), "identifier")
@@ -224,15 +223,6 @@ func (t *Tokenizer) OutputXML(out string) {
 		}
 	}
 	file.Write([]byte("</tokens>"))
-}
-func (t Tokenizer) writeToken(file *os.File, val string, tt string) {
-	fmt.Fprintf(file, "<%s>", tt)
-	fmt.Fprintf(file, "%s", val)
-	fmt.Fprintf(file, "</%s>\n", tt)
-}
-
-func (t *Tokenizer) readPosAtEOF() bool {
-	return t.readPos >= len(t.input)
 }
 
 func (t Tokenizer) isWhiteSpace() bool {
@@ -262,6 +252,20 @@ func (t Tokenizer) isSymbol() bool {
 		return true
 	}
 	return false
+}
+
+func (t Tokenizer) writeToken(file *os.File, val string, tt string) {
+	fmt.Fprintf(file, "<%s>", tt)
+	fmt.Fprintf(file, "%s", val)
+	fmt.Fprintf(file, "</%s>\n", tt)
+}
+
+func (t *Tokenizer) readPosAtEOF() bool {
+	return t.readPos >= len(t.input)
+}
+
+func (t *Tokenizer) GetTokenLiteral() string {
+	return t.curToken.Literal
 }
 
 func removeWhiteSpaces(input string) string {

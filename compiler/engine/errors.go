@@ -1,7 +1,8 @@
-package compiler
+package engine
 
 import (
 	"fmt"
+	"hack/compiler/token"
 )
 
 type ErrSyntaxUnexpectedToken struct {
@@ -24,7 +25,7 @@ func NewErrSyntaxNotATerm(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
 		fmt.Sprintf(
 			"TOKENTYPE '%s' / '%s' / '%s' / '%s' or SYMBOL '%s' / '%s' / '%s'",
-			INT_CONST, STRING_CONST, KEYWORD, IDENTIFIER, LPAREN, TILDE, MINUS,
+			token.INT_CONST, token.STRING_CONST, token.KEYWORD, token.IDENTIFIER, token.LPAREN, token.TILDE, token.MINUS,
 		),
 		foundToken,
 	)
@@ -32,38 +33,38 @@ func NewErrSyntaxNotATerm(foundToken string) ErrSyntaxUnexpectedToken {
 
 func NewErrSyntaxNotAKeywordConst(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
-		fmt.Sprintf("KEYWORD %s / %s / %s / %s", TRUE, FALSE, NULL, THIS),
+		fmt.Sprintf("KEYWORD %s / %s / %s / %s", token.TRUE, token.FALSE, token.NULL, token.THIS),
 		foundToken,
 	)
 }
 
 func NewErrSyntaxNotAType(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
-		fmt.Sprintf("KEYWORD %s / %s / %s or className", INT, CHAR, BOOLEAN),
+		fmt.Sprintf("KEYWORD %s / %s / %s or className", token.INT, token.CHAR, token.BOOLEAN),
 		foundToken,
 	)
 }
 
 func NewErrSyntaxNotAClassVarDec(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
-		fmt.Sprintf("KEYWORD %s or %s ", STATIC, FIELD),
+		fmt.Sprintf("KEYWORD %s or %s ", token.STATIC, token.FIELD),
 		foundToken,
 	)
 }
 
 func NewErrSyntaxNotASubroutineDec(foundToken string) ErrSyntaxUnexpectedToken {
 	return NewErrSyntaxUnexpectedToken(
-		fmt.Sprintf("KEYWORD %s / %s / %s ", CONSTRUCTOR, FUNCTION, METHOD),
+		fmt.Sprintf("KEYWORD %s / %s / %s ", token.CONSTRUCTOR, token.FUNCTION, token.METHOD),
 		foundToken,
 	)
 }
 
 type ErrSyntaxUnexpectedTokenType struct {
-	ExpectedTokenType TokenType
+	ExpectedTokenType token.TokenType
 	FoundToken        string
 }
 
-func NewErrSyntaxUnexpectedTokenType(expectedTokenType TokenType, foundToken string) ErrSyntaxUnexpectedTokenType {
+func NewErrSyntaxUnexpectedTokenType(expectedTokenType token.TokenType, foundToken string) ErrSyntaxUnexpectedTokenType {
 	return ErrSyntaxUnexpectedTokenType{
 		ExpectedTokenType: expectedTokenType,
 		FoundToken:        foundToken,

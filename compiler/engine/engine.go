@@ -1,22 +1,23 @@
-package compiler
+package engine
 
 import (
 	"fmt"
+	"hack/compiler/token"
 )
 
 type Engine struct {
-	Tknzr  *Tokenizer
+	Tknzr  *token.Tokenizer
 	Errors []error
 }
 
-func NewEngine(tknzr *Tokenizer) Engine {
+func NewEngine(tknzr *token.Tokenizer) Engine {
 	return Engine{Tknzr: tknzr}
 }
 
 func (e *Engine) CompileClass() string {
 	ret := xmlStart(CLASS_T)
 
-	if err := e.eatKeyword(CLASS, &ret); err != nil {
+	if err := e.eatKeyword(token.CLASS, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
@@ -24,7 +25,7 @@ func (e *Engine) CompileClass() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
-	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
@@ -36,7 +37,7 @@ func (e *Engine) CompileClass() string {
 		ret += e.CompileSubroutineDec()
 	}
 
-	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
@@ -47,12 +48,12 @@ func (e *Engine) CompileClassVarDec() string {
 	ret := xmlStart(CLASSVARDEC_T)
 
 	switch e.Tknzr.Keyword() {
-	case STATIC:
-		e.eatKeyword(STATIC, &ret)
-	case FIELD:
-		e.eatKeyword(FIELD, &ret)
+	case token.STATIC:
+		e.eatKeyword(token.STATIC, &ret)
+	case token.FIELD:
+		e.eatKeyword(token.FIELD, &ret)
 	default:
-		e.Errors = append(e.Errors, NewErrSyntaxNotAClassVarDec(e.Tknzr.curToken.Literal))
+		e.Errors = append(e.Errors, NewErrSyntaxNotAClassVarDec(e.Tknzr.GetTokenLiteral()))
 	}
 
 	if err := e.eatType(&ret); err != nil {
@@ -63,15 +64,15 @@ func (e *Engine) CompileClassVarDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
-	for e.Tknzr.Symbol() == KOMMA {
-		e.eatSymbol(KOMMA, &ret)
+	for e.Tknzr.Symbol() == token.KOMMA {
+		e.eatSymbol(token.KOMMA, &ret)
 
 		if err := e.eatIdentifier(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
 	}
 
-	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
@@ -82,19 +83,19 @@ func (e *Engine) CompileSubroutineDec() string {
 	ret := xmlStart(SUBROUTINEDEC_T)
 
 	switch e.Tknzr.Keyword() {
-	case CONSTRUCTOR:
-		e.eatKeyword(CONSTRUCTOR, &ret)
-	case FUNCTION:
-		e.eatKeyword(FUNCTION, &ret)
-	case METHOD:
-		e.eatKeyword(METHOD, &ret)
+	case token.CONSTRUCTOR:
+		e.eatKeyword(token.CONSTRUCTOR, &ret)
+	case token.FUNCTION:
+		e.eatKeyword(token.FUNCTION, &ret)
+	case token.METHOD:
+		e.eatKeyword(token.METHOD, &ret)
 	default:
 		e.Errors = append(e.Errors, NewErrSyntaxNotASubroutineDec(e.Tknzr.Keyword()))
 	}
 
 	switch e.Tknzr.Keyword() {
-	case VOID:
-		e.eatKeyword(VOID, &ret)
+	case token.VOID:
+		e.eatKeyword(token.VOID, &ret)
 	default:
 		if err := e.eatType(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
@@ -105,19 +106,19 @@ func (e *Engine) CompileSubroutineDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
-	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	switch e.Tknzr.Symbol() {
-	case RPAREN:
+	case token.RPAREN:
 		ret += xmlStart(PLIST_T)
 		ret += xmlEnd(PLIST_T)
 	default:
 		ret += e.CompileParameterList()
 	}
 
-	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
@@ -137,8 +138,8 @@ func (e *Engine) CompileParameterList() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
-	for e.Tknzr.Symbol() == KOMMA {
-		e.eatSymbol(KOMMA, &ret)
+	for e.Tknzr.Symbol() == token.KOMMA {
+		e.eatSymbol(token.KOMMA, &ret)
 
 		if err := e.eatType(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
@@ -155,17 +156,17 @@ func (e *Engine) CompileParameterList() string {
 func (e *Engine) CompileSubroutineBody() string {
 	ret := xmlStart(SUBROUTINEBODY_T)
 
-	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
 	}
 
-	for e.Tknzr.Keyword() == VAR {
+	for e.Tknzr.Keyword() == token.VAR {
 		ret += e.CompileVarDec()
 	}
 
 	ret += e.CompileStatements()
 
-	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
 	}
 
@@ -175,7 +176,7 @@ func (e *Engine) CompileSubroutineBody() string {
 func (e *Engine) CompileVarDec() string {
 	ret := xmlStart(VARDEC_T)
 
-	if err := e.eatKeyword(VAR, &ret); err != nil {
+	if err := e.eatKeyword(token.VAR, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
@@ -187,8 +188,8 @@ func (e *Engine) CompileVarDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	for e.Tknzr.Symbol() == KOMMA {
-		e.eatSymbol(KOMMA, &ret)
+	for e.Tknzr.Symbol() == token.KOMMA {
+		e.eatSymbol(token.KOMMA, &ret)
 
 		if err := e.eatIdentifier(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
@@ -196,7 +197,7 @@ func (e *Engine) CompileVarDec() string {
 
 	}
 
-	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
@@ -207,15 +208,15 @@ func (e *Engine) CompileStatements() string {
 
 	for isStatement(e.Tknzr.Keyword()) {
 		switch e.Tknzr.Keyword() {
-		case LET:
+		case token.LET:
 			ret += e.CompileLetStatement()
-		case DO:
+		case token.DO:
 			ret += e.CompileDoStatement()
-		case IF:
+		case token.IF:
 			ret += e.CompileIfStatement()
-		case WHILE:
+		case token.WHILE:
 			ret += e.CompileWhileStatement()
-		case RETURN:
+		case token.RETURN:
 			ret += e.CompileReturn()
 		}
 	}
@@ -226,42 +227,42 @@ func (e *Engine) CompileStatements() string {
 func (e *Engine) CompileIfStatement() string {
 	ret := xmlStart(IF_T)
 
-	if err := e.eatKeyword(IF, &ret); err != nil {
+	if err := e.eatKeyword(token.IF, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
 	ret += e.CompileExpression()
 
-	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
 	ret += e.CompileStatements()
 
-	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if e.Tknzr.Keyword() == ELSE {
-		if err := e.eatKeyword(ELSE, &ret); err != nil {
+	if e.Tknzr.Keyword() == token.ELSE {
+		if err := e.eatKeyword(token.ELSE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 		}
 
-		if err := e.eatSymbol(LBRACE, &ret); err != nil {
+		if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 		}
 
 		ret += e.CompileStatements()
 
-		if err := e.eatSymbol(RBRACE, &ret); err != nil {
+		if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 		}
 	}
@@ -271,27 +272,27 @@ func (e *Engine) CompileIfStatement() string {
 func (e *Engine) CompileWhileStatement() string {
 	ret := xmlStart(WHILE_T)
 
-	if err := e.eatKeyword(WHILE, &ret); err != nil {
+	if err := e.eatKeyword(token.WHILE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatSymbol(LPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
 	ret += e.CompileExpression()
 
-	if err := e.eatSymbol(RPAREN, &ret); err != nil {
+	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	if err := e.eatSymbol(LBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
 	ret += e.CompileStatements()
 
-	if err := e.eatSymbol(RBRACE, &ret); err != nil {
+	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
@@ -301,7 +302,7 @@ func (e *Engine) CompileWhileStatement() string {
 func (e *Engine) CompileDoStatement() string {
 	ret := xmlStart(DO_T)
 
-	if err := e.eatKeyword(DO, &ret); err != nil {
+	if err := e.eatKeyword(token.DO, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
@@ -310,29 +311,29 @@ func (e *Engine) CompileDoStatement() string {
 	}
 
 	switch e.Tknzr.Symbol() {
-	case LSQUARE:
-		if err := e.eatSymbol(LSQUARE, &ret); err != nil {
+	case token.LSQUARE:
+		if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
 		ret += e.CompileExpression()
 
-		if err := e.eatSymbol(RSQUARE, &ret); err != nil {
+		if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-	case LPAREN:
-		if err := e.eatSymbol(LPAREN, &ret); err != nil {
+	case token.LPAREN:
+		if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
 		ret += e.CompileExpressionList()
 
-		if err := e.eatSymbol(RPAREN, &ret); err != nil {
+		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
-	case DOT:
-		if err := e.eatSymbol(DOT, &ret); err != nil {
+	case token.DOT:
+		if err := e.eatSymbol(token.DOT, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
@@ -340,18 +341,18 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		if err := e.eatSymbol(LPAREN, &ret); err != nil {
+		if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
 		ret += e.CompileExpressionList()
 
-		if err := e.eatSymbol(RPAREN, &ret); err != nil {
+		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 	}
 
-	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 	return ret + xmlEnd(DO_T)
@@ -360,7 +361,7 @@ func (e *Engine) CompileDoStatement() string {
 func (e *Engine) CompileLetStatement() string {
 	ret := xmlStart(LET_T)
 
-	if err := e.eatKeyword(LET, &ret); err != nil {
+	if err := e.eatKeyword(token.LET, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
@@ -368,25 +369,25 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
-	if e.Tknzr.Symbol() == LSQUARE {
-		if err := e.eatSymbol(LSQUARE, &ret); err != nil {
+	if e.Tknzr.Symbol() == token.LSQUARE {
+		if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 		}
 
 		ret += e.CompileExpression()
 
-		if err := e.eatSymbol(RSQUARE, &ret); err != nil {
+		if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 		}
 	}
 
-	if err := e.eatSymbol(EQUAL, &ret); err != nil {
+	if err := e.eatSymbol(token.EQUAL, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
 	ret += e.CompileExpression()
 
-	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
@@ -412,92 +413,92 @@ func (e *Engine) CompileTerm() string {
 
 	switch e.Tknzr.TokenType() {
 	default:
-		e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.curToken.Literal))
+		e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.GetTokenLiteral()))
 
-	case INT_CONST:
+	case token.INT_CONST:
 		if err := e.eatIntVal(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
-	case STRING_CONST:
+	case token.STRING_CONST:
 		if err := e.eatStringVal(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
-	case KEYWORD:
+	case token.KEYWORD:
 		switch e.Tknzr.Keyword() {
-		case TRUE:
-			e.eatKeyword(TRUE, &ret)
-		case FALSE:
-			e.eatKeyword(FALSE, &ret)
-		case NULL:
-			e.eatKeyword(NULL, &ret)
-		case THIS:
-			e.eatKeyword(THIS, &ret)
+		case token.TRUE:
+			e.eatKeyword(token.TRUE, &ret)
+		case token.FALSE:
+			e.eatKeyword(token.FALSE, &ret)
+		case token.NULL:
+			e.eatKeyword(token.NULL, &ret)
+		case token.THIS:
+			e.eatKeyword(token.THIS, &ret)
 		default:
 			e.Errors = append(e.Errors, NewErrSyntaxNotAKeywordConst(e.Tknzr.Keyword()))
 		}
 
-	case SYMBOL:
+	case token.SYMBOL:
 		switch e.Tknzr.Symbol() {
 
 		default:
-			e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.curToken.Literal))
-		case LPAREN:
-			if err := e.eatSymbol(LPAREN, &ret); err != nil {
+			e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.GetTokenLiteral()))
+		case token.LPAREN:
+			if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf(" compileTerm: %w", err))
 			}
 
 			ret += e.CompileExpression()
 
-			if err := e.eatSymbol(RPAREN, &ret); err != nil {
+			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-		case MINUS:
-			if err := e.eatSymbol(MINUS, &ret); err != nil {
+		case token.MINUS:
+			if err := e.eatSymbol(token.MINUS, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
 			ret += e.CompileTerm()
 
-		case TILDE:
-			if err := e.eatSymbol(TILDE, &ret); err != nil {
+		case token.TILDE:
+			if err := e.eatSymbol(token.TILDE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
 			ret += e.CompileTerm()
 		}
 
-	case IDENTIFIER:
+	case token.IDENTIFIER:
 		if err := e.eatIdentifier(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
 		switch e.Tknzr.Symbol() {
-		case LSQUARE:
-			if err := e.eatSymbol(LSQUARE, &ret); err != nil {
+		case token.LSQUARE:
+			if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
 			ret += e.CompileExpression()
 
-			if err := e.eatSymbol(RSQUARE, &ret); err != nil {
+			if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-		case LPAREN:
-			if err := e.eatSymbol(LPAREN, &ret); err != nil {
+		case token.LPAREN:
+			if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
 			ret += e.CompileExpressionList()
 
-			if err := e.eatSymbol(RPAREN, &ret); err != nil {
+			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
-		case DOT:
-			if err := e.eatSymbol(DOT, &ret); err != nil {
+		case token.DOT:
+			if err := e.eatSymbol(token.DOT, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
@@ -505,13 +506,13 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			if err := e.eatSymbol(LPAREN, &ret); err != nil {
+			if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
 			ret += e.CompileExpressionList()
 
-			if err := e.eatSymbol(RPAREN, &ret); err != nil {
+			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 		}
@@ -526,8 +527,8 @@ func (e *Engine) CompileExpressionList() string {
 	if e.isTerm() {
 		ret += e.CompileExpression()
 
-		for e.Tknzr.Symbol() == KOMMA {
-			e.eatSymbol(KOMMA, &ret)
+		for e.Tknzr.Symbol() == token.KOMMA {
+			e.eatSymbol(token.KOMMA, &ret)
 			ret += e.CompileExpression()
 		}
 	}
@@ -537,7 +538,7 @@ func (e *Engine) CompileExpressionList() string {
 func (e *Engine) CompileReturn() string {
 	ret := xmlStart(RETURN_T)
 
-	if err := e.eatKeyword(RETURN, &ret); err != nil {
+	if err := e.eatKeyword(token.RETURN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
 	}
 
@@ -545,7 +546,7 @@ func (e *Engine) CompileReturn() string {
 		ret += e.CompileExpression()
 	}
 
-	if err := e.eatSymbol(SEMICOLON, &ret); err != nil {
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
 	}
 
@@ -554,29 +555,29 @@ func (e *Engine) CompileReturn() string {
 
 func (e Engine) eatType(ret *string) error {
 	switch e.Tknzr.TokenType() {
-	case IDENTIFIER:
+	case token.IDENTIFIER:
 		e.eatIdentifier(ret)
 
-	case KEYWORD:
+	case token.KEYWORD:
 		switch e.Tknzr.Keyword() {
-		case INT:
-			e.eatKeyword(INT, ret)
-		case CHAR:
-			e.eatKeyword(CHAR, ret)
-		case BOOLEAN:
-			e.eatKeyword(BOOLEAN, ret)
+		case token.INT:
+			e.eatKeyword(token.INT, ret)
+		case token.CHAR:
+			e.eatKeyword(token.CHAR, ret)
+		case token.BOOLEAN:
+			e.eatKeyword(token.BOOLEAN, ret)
 		default:
 			return NewErrSyntaxNotAType(e.Tknzr.Keyword())
 		}
 	default:
-		return NewErrSyntaxNotAType(e.Tknzr.curToken.Literal)
+		return NewErrSyntaxNotAType(e.Tknzr.GetTokenLiteral())
 	}
 	return nil
 }
 
 func (e Engine) eatIntVal(ret *string) error {
-	if e.Tknzr.TokenType() != INT_CONST {
-		return NewErrSyntaxUnexpectedTokenType(INT_CONST, e.Tknzr.curToken.Literal)
+	if e.Tknzr.TokenType() != token.INT_CONST {
+		return NewErrSyntaxUnexpectedTokenType(token.INT_CONST, e.Tknzr.GetTokenLiteral())
 	}
 
 	*ret += xmlIntegerConst(e.Tknzr.IntVal())
@@ -585,8 +586,8 @@ func (e Engine) eatIntVal(ret *string) error {
 }
 
 func (e Engine) eatStringVal(ret *string) error {
-	if e.Tknzr.TokenType() != STRING_CONST {
-		return NewErrSyntaxUnexpectedTokenType(STRING_CONST, e.Tknzr.curToken.Literal)
+	if e.Tknzr.TokenType() != token.STRING_CONST {
+		return NewErrSyntaxUnexpectedTokenType(token.STRING_CONST, e.Tknzr.GetTokenLiteral())
 	}
 
 	*ret += xmlStringConst(e.Tknzr.StringVal())
@@ -595,8 +596,8 @@ func (e Engine) eatStringVal(ret *string) error {
 }
 
 func (e Engine) eatIdentifier(ret *string) error {
-	if e.Tknzr.TokenType() != IDENTIFIER {
-		return NewErrSyntaxUnexpectedTokenType(IDENTIFIER, e.Tknzr.curToken.Literal)
+	if e.Tknzr.TokenType() != token.IDENTIFIER {
+		return NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, e.Tknzr.GetTokenLiteral())
 	}
 
 	*ret += xmlIdentifier(e.Tknzr.Identifier())
@@ -606,21 +607,21 @@ func (e Engine) eatIdentifier(ret *string) error {
 
 func (e Engine) isTerm() bool {
 	switch e.Tknzr.TokenType() {
-	case INT_CONST:
+	case token.INT_CONST:
 		return true
-	case STRING_CONST:
+	case token.STRING_CONST:
 		return true
-	case KEYWORD:
+	case token.KEYWORD:
 		return true
-	case IDENTIFIER:
+	case token.IDENTIFIER:
 		return true
-	case SYMBOL:
+	case token.SYMBOL:
 		switch e.Tknzr.Symbol() {
-		case LPAREN:
+		case token.LPAREN:
 			return true
-		case TILDE:
+		case token.TILDE:
 			return true
-		case MINUS:
+		case token.MINUS:
 			return true
 		}
 	}
@@ -628,8 +629,8 @@ func (e Engine) isTerm() bool {
 }
 
 func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
-	if (e.Tknzr.TokenType() != KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
-		return NewErrSyntaxUnexpectedToken(expectedKeyword, e.Tknzr.curToken.Literal)
+	if (e.Tknzr.TokenType() != token.KEYWORD) || (e.Tknzr.Keyword() != expectedKeyword) {
+		return NewErrSyntaxUnexpectedToken(expectedKeyword, e.Tknzr.GetTokenLiteral())
 	}
 
 	*ret += xmlKeyword(expectedKeyword)
@@ -638,8 +639,8 @@ func (e Engine) eatKeyword(expectedKeyword string, ret *string) error {
 }
 
 func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
-	if (e.Tknzr.TokenType() != SYMBOL) || (e.Tknzr.Symbol() != expectedSymbol) {
-		return NewErrSyntaxUnexpectedToken(expectedSymbol, e.Tknzr.curToken.Literal)
+	if (e.Tknzr.TokenType() != token.SYMBOL) || (e.Tknzr.Symbol() != expectedSymbol) {
+		return NewErrSyntaxUnexpectedToken(expectedSymbol, e.Tknzr.GetTokenLiteral())
 	}
 
 	*ret += xmlSymbol(expectedSymbol)
@@ -649,11 +650,11 @@ func (e Engine) eatSymbol(expectedSymbol string, ret *string) error {
 
 func isStatement(kw string) bool {
 	statements := map[string]struct{}{
-		LET:    {},
-		IF:     {},
-		WHILE:  {},
-		DO:     {},
-		RETURN: {},
+		token.LET:    {},
+		token.IF:     {},
+		token.WHILE:  {},
+		token.DO:     {},
+		token.RETURN: {},
 	}
 	if _, ok := statements[kw]; ok {
 		return true
@@ -662,22 +663,22 @@ func isStatement(kw string) bool {
 }
 
 func isSubRoutineDec(kw string) bool {
-	return kw == CONSTRUCTOR || kw == FUNCTION || kw == METHOD
+	return kw == token.CONSTRUCTOR || kw == token.FUNCTION || kw == token.METHOD
 }
 
 func isStaticOrField(kw string) bool {
-	return kw == STATIC || kw == FIELD
+	return kw == token.STATIC || kw == token.FIELD
 }
 
 func isOperator(sym string) bool {
-	if _, ok := operators[sym]; ok {
+	if _, ok := token.Operators[sym]; ok {
 		return true
 	}
 	return false
 }
 
 func xmlSymbol(symbol string) string {
-	return fmt.Sprintf("<symbol> %s </symbol>\n", xmlSymbols[string(symbol)])
+	return fmt.Sprintf("<symbol> %s </symbol>\n", token.XmlSymbols[string(symbol)])
 }
 
 func xmlKeyword(kw string) string {

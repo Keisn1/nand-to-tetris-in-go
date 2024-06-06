@@ -1,13 +1,14 @@
-package compiler_test
+package engine_test
 
 import (
 	"errors"
-	"hack/compiler"
 	"os"
 	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"hack/compiler/engine"
+	"hack/compiler/token"
 )
 
 func Test_compileClass(t *testing.T) {
@@ -17,7 +18,7 @@ func Test_compileClass(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/classes/"
+		dir := "../test_programs/own/classes/"
 		testCases := []testCase{
 			{name: "empty main", fp: "emptyMain"},
 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
@@ -33,15 +34,15 @@ func Test_compileClass(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(string(input))
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(string(input))
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				got := engine.CompileClass()
+				e.Tknzr.Advance()
+				got := e.CompileClass()
 
-				assert.Empty(t, engine.Errors)
+				assert.Empty(t, e.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -54,59 +55,59 @@ func Test_compileClass(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:  []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.CLASS, compiler.EOF),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.EOF),
 			},
 			{
 				inputs:  []string{"var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.CLASS, compiler.VAR),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.VAR),
 			},
 			{
 				inputs:  []string{"class var"},
-				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR),
+				wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR),
 			},
 			{
 				inputs:  []string{"class name name"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, "name"),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "name"),
 			},
 			{
 				inputs:  []string{"class name ."},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, "."),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "."),
 			},
 			{
 				inputs:  []string{"class Main {"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.EOF),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.EOF),
 			},
 			{
 				inputs:  []string{"class Main { ."},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RBRACE, compiler.DOT),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.DOT),
 			},
 			{
 				inputs:  []string{"class Main {static name"},
-				wantErr: compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.EOF),
+				wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.EOF),
 			},
 			{
 				inputs:  []string{"class Main {static "},
-				wantErr: compiler.NewErrSyntaxNotAType(compiler.EOF),
+				wantErr: engine.NewErrSyntaxNotAType(token.EOF),
 			},
 			{
 				inputs:  []string{"class Main {function var"},
-				wantErr: compiler.NewErrSyntaxNotAType(compiler.VAR),
+				wantErr: engine.NewErrSyntaxNotAType(token.VAR),
 			},
 			{
 				inputs:  []string{"class Main {function ;"},
-				wantErr: compiler.NewErrSyntaxNotAType(compiler.SEMICOLON),
+				wantErr: engine.NewErrSyntaxNotAType(token.SEMICOLON),
 			},
 		}
 
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				engine.CompileClass()
+				e.Tknzr.Advance()
+				e.CompileClass()
 
-				assertErrorFound(t, engine.Errors, tc.wantErr)
+				assertErrorFound(t, e.Errors, tc.wantErr)
 			}
 		}
 	})
@@ -119,7 +120,7 @@ func Test_classVarDec(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/classVarDec/"
+		dir := "../test_programs/own/classVarDec/"
 		testCases := []testCase{
 			{name: "mulitple static char in one line", fp: "multipleStatic"},
 			{name: "static and field var declaration", fp: "staticAndField"},
@@ -130,15 +131,15 @@ func Test_classVarDec(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				got := engine.CompileClassVarDec()
+				e.Tknzr.Advance()
+				got := e.CompileClassVarDec()
 
-				assert.Empty(t, engine.Errors)
+				assert.Empty(t, e.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -151,26 +152,26 @@ func Test_classVarDec(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:  []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxNotAClassVarDec(compiler.EOF),
+				wantErr: engine.NewErrSyntaxNotAClassVarDec(token.EOF),
 			},
 			{
 				inputs:  []string{"var"},
-				wantErr: compiler.NewErrSyntaxNotAClassVarDec(compiler.VAR),
+				wantErr: engine.NewErrSyntaxNotAClassVarDec(token.VAR),
 			},
 			{
 				inputs:  []string{"static boolean boo{"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.SEMICOLON, token.LBRACE),
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				engine.CompileClassVarDec()
+				e.Tknzr.Advance()
+				e.CompileClassVarDec()
 
-				assertErrorFound(t, engine.Errors, tc.wantErr)
+				assertErrorFound(t, e.Errors, tc.wantErr)
 			}
 		}
 	})
@@ -183,7 +184,7 @@ func Test_subroutineDec(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/subRoutineDec/"
+		dir := "../test_programs/own/subRoutineDec/"
 		testCases := []testCase{
 			{name: "constructor void no parameter", fp: "constVoidNoParam"},
 			{name: "function int no parameter", fp: "funcIntNoParam"},
@@ -197,15 +198,15 @@ func Test_subroutineDec(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				got := engine.CompileSubroutineDec()
+				e.Tknzr.Advance()
+				got := e.CompileSubroutineDec()
 
-				assert.Empty(t, engine.Errors)
+				assert.Empty(t, e.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -218,51 +219,51 @@ func Test_subroutineDec(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:   []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxNotASubroutineDec(compiler.EOF)},
+				wantErrs: []error{engine.NewErrSyntaxNotASubroutineDec(token.EOF)},
 			},
 			{
 				inputs:   []string{"var"},
-				wantErrs: []error{compiler.NewErrSyntaxNotASubroutineDec(compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxNotASubroutineDec(token.VAR)},
 			},
 			{
 				inputs:   []string{"function var"},
-				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxNotAType(token.VAR)},
 			},
 			{
 				inputs:   []string{"function int var"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR)},
 			},
 			{
 				inputs:   []string{"function int name;"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LPAREN, compiler.SEMICOLON)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.LPAREN, token.SEMICOLON)},
 			},
 			{
 				inputs:   []string{"function int name(var", "function int name(int x, var"},
-				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxNotAType(token.VAR)},
 			},
 			{
 				inputs:   []string{"function int name(int var", "function int name(int name1, int var"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR)},
 			},
 			{
 				inputs:   []string{"function int name(int name1}"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.RPAREN, compiler.RBRACE)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.RPAREN, token.RBRACE)},
 			},
 			{
 				inputs:   []string{"function int name(int name1)}"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, compiler.RBRACE)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.LBRACE, token.RBRACE)},
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				engine.CompileSubroutineDec()
+				e.Tknzr.Advance()
+				e.CompileSubroutineDec()
 
 				for _, wantErr := range tc.wantErrs {
-					assertErrorFound(t, engine.Errors, wantErr)
+					assertErrorFound(t, e.Errors, wantErr)
 				}
 			}
 		}
@@ -276,7 +277,7 @@ func Test_subroutineBody(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/subRoutineBody/"
+		dir := "../test_programs/own/subRoutineBody/"
 		testCases := []testCase{
 			{name: "one variable declaration", fp: "oneVarDec"},
 			{name: "multiple variable declaration", fp: "multVarDec"},
@@ -289,15 +290,15 @@ func Test_subroutineBody(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-				engine.Tknzr.Advance()
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
+				e.Tknzr.Advance()
 
-				got := engine.CompileSubroutineBody()
+				got := e.CompileSubroutineBody()
 
-				assert.Empty(t, engine.Errors)
+				assert.Empty(t, e.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -310,19 +311,19 @@ func Test_subroutineBody(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:   []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LBRACE, compiler.EOF)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.LBRACE, token.EOF)},
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				engine.CompileSubroutineBody()
+				e.Tknzr.Advance()
+				e.CompileSubroutineBody()
 
 				for _, wantErr := range tc.wantErrs {
-					assertErrorFound(t, engine.Errors, wantErr)
+					assertErrorFound(t, e.Errors, wantErr)
 				}
 			}
 		}
@@ -338,35 +339,35 @@ func Test_VarDec(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:   []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.VAR, compiler.EOF)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.VAR, token.EOF)},
 			},
 			{
 				inputs:   []string{"var;"},
-				wantErrs: []error{compiler.NewErrSyntaxNotAType(compiler.SEMICOLON)},
+				wantErrs: []error{engine.NewErrSyntaxNotAType(token.SEMICOLON)},
 			},
 			{
 				inputs:   []string{"var int ;"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.SEMICOLON)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.SEMICOLON)},
 			},
 			{
 				inputs:   []string{"var int name1, int"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.INT)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.INT)},
 			},
 			{
 				inputs:   []string{"var int name1{ "},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.SEMICOLON, token.LBRACE)},
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
 
-				engine.Tknzr.Advance()
-				engine.CompileVarDec()
+				e.Tknzr.Advance()
+				e.CompileVarDec()
 
 				for _, wantErr := range tc.wantErrs {
-					assertErrorFound(t, engine.Errors, wantErr)
+					assertErrorFound(t, e.Errors, wantErr)
 				}
 			}
 		}
@@ -380,7 +381,7 @@ func Test_statements(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/statements/"
+		dir := "../test_programs/own/statements/"
 		testCases := []testCase{
 			{name: "two let statements", fp: "twoLetStatements"},
 			{name: "let, do and return statement", fp: "letDoReturn"},
@@ -395,45 +396,18 @@ func Test_statements(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-				engine.Tknzr.Advance()
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
+				e.Tknzr.Advance()
 
-				got := engine.CompileStatements()
+				got := e.CompileStatements()
 
-				assert.Empty(t, engine.Errors)
+				assert.Empty(t, e.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, compiler.EOF, engine.Tknzr.Keyword())
+				assert.Equal(t, token.EOF, e.Tknzr.Keyword())
 			})
 		}
 	})
-
-	t.Run("Testing falsy letStatements", func(t *testing.T) {
-		type testCase struct {
-			inputs   []string
-			wantErrs []error
-		}
-		testCases := []testCase{
-			// {
-			// 	inputs:   []string{"", "   "},
-			// 	wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LET, compiler.EOF)},
-			// },
-		}
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
-
-				engine.Tknzr.Advance()
-				engine.CompileStatements()
-
-				for _, wantErr := range tc.wantErrs {
-					assertErrorFound(t, engine.Errors, wantErr)
-				}
-			}
-		}
-	})
-
 }
 
 func Test_letStatement(t *testing.T) {
@@ -443,7 +417,7 @@ func Test_letStatement(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/letStatements/"
+		dir := "../test_programs/own/letStatements/"
 		testCases := []testCase{
 			{name: "one array assignment", fp: "arrayAssignment"},
 			{name: "array assignment 1+2 expression", fp: "arrayAssignmentExpressionLHS"},
@@ -457,15 +431,15 @@ func Test_letStatement(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				engine := engine.NewEngine(&tknzr)
 				engine.Tknzr.Advance()
 
 				got := engine.CompileLetStatement()
 
 				assert.Empty(t, engine.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, engine.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -478,25 +452,25 @@ func Test_letStatement(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:   []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedToken(compiler.LET, compiler.EOF)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.LET, token.EOF)},
 			},
 			{
 				inputs:   []string{"let var"},
-				wantErrs: []error{compiler.NewErrSyntaxUnexpectedTokenType(compiler.IDENTIFIER, compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR)},
 			},
 			{
 				inputs:   []string{"let arr[;"},
-				wantErrs: []error{compiler.NewErrSyntaxNotATerm(compiler.SEMICOLON)},
+				wantErrs: []error{engine.NewErrSyntaxNotATerm(token.SEMICOLON)},
 			},
 			{
 				inputs:   []string{"let x = var;"},
-				wantErrs: []error{compiler.NewErrSyntaxNotAKeywordConst(compiler.VAR)},
+				wantErrs: []error{engine.NewErrSyntaxNotAKeywordConst(token.VAR)},
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				engine := engine.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
 				engine.CompileLetStatement()
@@ -516,7 +490,7 @@ func Test_term(t *testing.T) {
 			fp   string
 		}
 
-		dir := "test_programs/own/terms/"
+		dir := "../test_programs/own/terms/"
 		testCases := []testCase{
 			{name: "arr[5+6]", fp: "arr5Plus6"},
 			{name: "(x+y)", fp: "xPlusYinParenthesis"},
@@ -533,15 +507,15 @@ func Test_term(t *testing.T) {
 				input := readFile(t, dir+tc.fp+".jack")
 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				engine := engine.NewEngine(&tknzr)
 				engine.Tknzr.Advance()
 
 				got := engine.CompileTerm()
 
 				assert.Empty(t, engine.Errors)
 				assert.Equal(t, want, removeWhiteSpaces(got))
-				assert.Equal(t, engine.Tknzr.Keyword(), compiler.EOF)
+				assert.Equal(t, engine.Tknzr.Keyword(), token.EOF)
 			})
 		}
 	})
@@ -554,13 +528,13 @@ func Test_term(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:   []string{"", "   "},
-				wantErrs: []error{compiler.NewErrSyntaxNotATerm(compiler.EOF)},
+				wantErrs: []error{engine.NewErrSyntaxNotATerm(token.EOF)},
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				engine := engine.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
 				engine.CompileTerm()
@@ -582,17 +556,17 @@ func Test_Return(t *testing.T) {
 		testCases := []testCase{
 			{
 				inputs:  []string{"", "   "},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.RETURN, compiler.EOF),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.RETURN, token.EOF),
 			},
 			{
 				inputs:  []string{"return{"},
-				wantErr: compiler.NewErrSyntaxUnexpectedToken(compiler.SEMICOLON, compiler.LBRACE),
+				wantErr: engine.NewErrSyntaxUnexpectedToken(token.SEMICOLON, token.LBRACE),
 			},
 		}
 		for _, tc := range testCases {
 			for _, input := range tc.inputs {
-				tknzr := compiler.NewTokenizer(input)
-				engine := compiler.NewEngine(&tknzr)
+				tknzr := token.NewTokenizer(input)
+				engine := engine.NewEngine(&tknzr)
 
 				engine.Tknzr.Advance()
 				engine.CompileReturn()

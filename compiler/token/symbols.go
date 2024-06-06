@@ -1,4 +1,4 @@
-package compiler
+package token
 
 const (
 	LBRACE    = "{"
@@ -46,7 +46,7 @@ var (
 	}
 )
 
-var operators = map[string]struct{}{
+var Operators = map[string]struct{}{
 	PLUS:  {},
 	MINUS: {},
 	STAR:  {},
@@ -57,3 +57,27 @@ var operators = map[string]struct{}{
 	GT:    {},
 	EQUAL: {},
 }
+
+var (
+	XmlSymbols = map[string]string{
+		LBRACE:    LBRACE,
+		RBRACE:    RBRACE,
+		LPAREN:    LPAREN,
+		RPAREN:    RPAREN,
+		LSQUARE:   LSQUARE,
+		RSQUARE:   RSQUARE,
+		DOT:       DOT,
+		KOMMA:     KOMMA,
+		SEMICOLON: SEMICOLON,
+		PLUS:      PLUS,
+		MINUS:     MINUS,
+		STAR:      STAR,
+		SLASH:     SLASH,
+		AND:       "&amp;",
+		PIPE:      PIPE,
+		LT:        "&lt;",
+		GT:        "&gt;",
+		EQUAL:     EQUAL,
+		TILDE:     TILDE,
+	}
+)

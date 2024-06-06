@@ -1,4 +1,4 @@
-package compiler
+package token
 
 const (
 	CLASS       = "class"

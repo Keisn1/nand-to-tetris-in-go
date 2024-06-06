@@ -1,4 +1,4 @@
-package compiler
+package symbolTable
 
 type Symbol struct {
 	name    string
@@ -16,6 +16,11 @@ func NewSymbolTable() SymbolTable {
 		symbols: make(map[string]Symbol),
 		counts:  make(map[string]int),
 	}
+}
+
+func (st *SymbolTable) StartSubroutine() {
+	st.counts[VAR] = 0
+	st.counts[ARG] = 0
 }
 
 func (st *SymbolTable) Define(name, varType, kind string) {
