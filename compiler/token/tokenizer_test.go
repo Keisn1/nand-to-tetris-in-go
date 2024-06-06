@@ -539,7 +539,7 @@ class Main {
 
 func Test_tokenizerFullPrograms1(t *testing.T) {
 	t.Run("Test output to xml (file without comments)", func(t *testing.T) {
-		fp := "../test_programs/ArrayTest/Main_wo_comments.jack"
+		fp := "../test_programs/project_10/tokenizer/ArrayTest/Main_wo_comments.jack"
 		input, err := os.ReadFile(fp)
 		assert.NoError(t, err, "error reading file")
 
@@ -551,7 +551,7 @@ func Test_tokenizerFullPrograms1(t *testing.T) {
 		gotByte, err := os.ReadFile(out)
 		assert.NoError(t, err, "error reading file")
 
-		wantFP := "../test_programs/ArrayTest/MainT.xml"
+		wantFP := "../test_programs/project_10/tokenizer/ArrayTest/MainT.xml"
 		wantByte, err := os.ReadFile(wantFP)
 		assert.NoError(t, err, "error reading file")
 
@@ -568,32 +568,32 @@ func Test_tokenizerFullPrograms1(t *testing.T) {
 			compareFile string
 		}{
 			{
-				inputFile:   "../test_programs/ArrayTest/Main.jack",
-				compareFile: "../test_programs/ArrayTest/MainT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/ArrayTest/Main.jack",
+				compareFile: "../test_programs/project_10/tokenizer/ArrayTest/MainT.xml",
 			},
 			{
-				inputFile:   "../test_programs/ExpressionLessSquare/Main.jack",
-				compareFile: "../test_programs/ExpressionLessSquare/MainT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/ExpressionLessSquare/Main.jack",
+				compareFile: "../test_programs/project_10/tokenizer/ExpressionLessSquare/MainT.xml",
 			},
 			{
-				inputFile:   "../test_programs/ExpressionLessSquare/Square.jack",
-				compareFile: "../test_programs/ExpressionLessSquare/SquareT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/ExpressionLessSquare/Square.jack",
+				compareFile: "../test_programs/project_10/tokenizer/ExpressionLessSquare/SquareT.xml",
 			},
 			{
-				inputFile:   "../test_programs/ExpressionLessSquare/SquareGame.jack",
-				compareFile: "../test_programs/ExpressionLessSquare/SquareGameT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/ExpressionLessSquare/SquareGame.jack",
+				compareFile: "../test_programs/project_10/tokenizer/ExpressionLessSquare/SquareGameT.xml",
 			},
 			{
-				inputFile:   "../test_programs/Square/Main.jack",
-				compareFile: "../test_programs/Square/MainT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/Square/Main.jack",
+				compareFile: "../test_programs/project_10/tokenizer/Square/MainT.xml",
 			},
 			{
-				inputFile:   "../test_programs/Square/Square.jack",
-				compareFile: "../test_programs/Square/SquareT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/Square/Square.jack",
+				compareFile: "../test_programs/project_10/tokenizer/Square/SquareT.xml",
 			},
 			{
-				inputFile:   "../test_programs/Square/SquareGame.jack",
-				compareFile: "../test_programs/Square/SquareGameT.xml",
+				inputFile:   "../test_programs/project_10/tokenizer/Square/SquareGame.jack",
+				compareFile: "../test_programs/project_10/tokenizer/Square/SquareGameT.xml",
 			},
 		}
 		for _, tc := range testCases {
