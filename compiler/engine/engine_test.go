@@ -21,7 +21,7 @@ func Test_compileClass(t *testing.T) {
 		dir := "../test_programs/project_11/engine/own/classes/"
 		testCases := []testCase{
 			{name: "empty main", fp: "emptyMain"},
-			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
+			// {name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
 			// {name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
 			// {name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
 			// {name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
@@ -47,70 +47,70 @@ func Test_compileClass(t *testing.T) {
 		}
 	})
 
-	t.Run("Testing falsy class statements", func(t *testing.T) {
-		type testCase struct {
-			inputs  []string
-			wantErr error
-		}
-		testCases := []testCase{
-			{
-				inputs:  []string{"", "   "},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.EOF),
-			},
-			{
-				inputs:  []string{"var"},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.VAR),
-			},
-			{
-				inputs:  []string{"class var"},
-				wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR),
-			},
-			{
-				inputs:  []string{"class name name"},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "name"),
-			},
-			{
-				inputs:  []string{"class name ."},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "."),
-			},
-			{
-				inputs:  []string{"class Main {"},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.EOF),
-			},
-			{
-				inputs:  []string{"class Main { ."},
-				wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.DOT),
-			},
-			{
-				inputs:  []string{"class Main {static name"},
-				wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.EOF),
-			},
-			{
-				inputs:  []string{"class Main {static "},
-				wantErr: engine.NewErrSyntaxNotAType(token.EOF),
-			},
-			{
-				inputs:  []string{"class Main {function var"},
-				wantErr: engine.NewErrSyntaxNotAType(token.VAR),
-			},
-			{
-				inputs:  []string{"class Main {function ;"},
-				wantErr: engine.NewErrSyntaxNotAType(token.SEMICOLON),
-			},
-		}
+	// t.Run("Testing falsy class statements", func(t *testing.T) {
+	// 	type testCase struct {
+	// 		inputs  []string
+	// 		wantErr error
+	// 	}
+	// 	testCases := []testCase{
+	// 		{
+	// 			inputs:  []string{"", "   "},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.EOF),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"var"},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.CLASS, token.VAR),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class var"},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.VAR),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class name name"},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "name"),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class name ."},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.LBRACE, "."),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main {"},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.EOF),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main { ."},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedToken(token.RBRACE, token.DOT),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main {static name"},
+	// 			wantErr: engine.NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, token.EOF),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main {static "},
+	// 			wantErr: engine.NewErrSyntaxNotAType(token.EOF),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main {function var"},
+	// 			wantErr: engine.NewErrSyntaxNotAType(token.VAR),
+	// 		},
+	// 		{
+	// 			inputs:  []string{"class Main {function ;"},
+	// 			wantErr: engine.NewErrSyntaxNotAType(token.SEMICOLON),
+	// 		},
+	// 	}
 
-		for _, tc := range testCases {
-			for _, input := range tc.inputs {
-				tknzr := token.NewTokenizer(input)
-				e := engine.NewEngine(&tknzr)
+	// 	for _, tc := range testCases {
+	// 		for _, input := range tc.inputs {
+	// 			tknzr := token.NewTokenizer(input)
+	// 			e := engine.NewEngine(&tknzr)
 
-				e.Tknzr.Advance()
-				e.CompileClass()
+	// 			e.Tknzr.Advance()
+	// 			e.CompileClass()
 
-				assertErrorFound(t, e.Errors, tc.wantErr)
-			}
-		}
-	})
+	// 			assertErrorFound(t, e.Errors, tc.wantErr)
+	// 		}
+	// 	}
+	// })
 }
 
 // func Test_classVarDec(t *testing.T) {

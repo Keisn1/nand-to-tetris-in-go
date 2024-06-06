@@ -2,16 +2,18 @@ package engine
 
 import (
 	"fmt"
+	"hack/compiler/symbolTable"
 	"hack/compiler/token"
 )
 
 type Engine struct {
 	Tknzr  *token.Tokenizer
+	symTab symbolTable.SymbolTable
 	Errors []error
 }
 
 func NewEngine(tknzr *token.Tokenizer) Engine {
-	return Engine{Tknzr: tknzr}
+	return Engine{Tknzr: tknzr, symTab: symbolTable.NewSymbolTable()}
 }
 
 func (e *Engine) CompileClass() string {
@@ -47,26 +49,30 @@ func (e *Engine) CompileClass() string {
 func (e *Engine) CompileClassVarDec() string {
 	ret := xmlStart(CLASSVARDEC_T)
 
+	var kind string
 	switch e.Tknzr.Keyword() {
 	case token.STATIC:
+		kind = symbolTable.STATIC
 		e.eatKeyword(token.STATIC, &ret)
 	case token.FIELD:
+		kind = symbolTable.FIELD
 		e.eatKeyword(token.FIELD, &ret)
 	default:
 		e.Errors = append(e.Errors, NewErrSyntaxNotAClassVarDec(e.Tknzr.GetTokenLiteral()))
 	}
 
+	varType := e.Tknzr.Keyword()
 	if err := e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
+	e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
 	if err := e.eatIdentifier(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
 	for e.Tknzr.Symbol() == token.KOMMA {
 		e.eatSymbol(token.KOMMA, &ret)
-
 		if err := e.eatIdentifier(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
@@ -600,7 +606,14 @@ func (e Engine) eatIdentifier(ret *string) error {
 		return NewErrSyntaxUnexpectedTokenType(token.IDENTIFIER, e.Tknzr.GetTokenLiteral())
 	}
 
-	*ret += xmlIdentifier(e.Tknzr.Identifier())
+	name := e.Tknzr.Identifier()
+
+	var info string
+	if e.symTab.KindOf(name) != "" {
+		info = fmt.Sprintf("_%s_%d", e.symTab.KindOf(name), e.symTab.IndexOf(name))
+	}
+
+	*ret += xmlIdentifier(name, info)
 	e.Tknzr.Advance()
 	return nil
 }
@@ -693,8 +706,8 @@ func xmlStringConst(val string) string {
 	return fmt.Sprintf("<stringConstant> %s </stringConstant>\n", val)
 }
 
-func xmlIdentifier(identifier string) string {
-	return fmt.Sprintf("<identifier> %s </identifier>\n", identifier)
+func xmlIdentifier(name, info string) string {
+	return fmt.Sprintf("<identifier%s> %s </identifier%s>\n", info, name, info)
 }
 
 func xmlStart(tag string) string {

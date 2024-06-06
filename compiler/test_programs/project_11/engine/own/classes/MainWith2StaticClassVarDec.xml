@@ -5,13 +5,13 @@
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier> test1 </identifier>
+    <identifier_static_0> test1 </identifier_static_0>
     <symbol> ; </symbol>
   </classVarDec>
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier> test2 </identifier>
+    <identifier_static_1> test2 </identifier_static_1>
     <symbol> ; </symbol>
   </classVarDec>
   <symbol> } </symbol>
