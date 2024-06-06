@@ -1,35 +1,35 @@
 <class>
   <keyword> class </keyword>
-  <identifier> Square </identifier>
+  <identifier_class_def> Square </identifier_class_def>
   <symbol> { </symbol>
   <classVarDec>
     <keyword> field </keyword>
     <keyword> int </keyword>
-    <identifier> x </identifier>
+    <identifier_field_0_def> x </identifier_field_0_def>
     <symbol> , </symbol>
-    <identifier> y </identifier>
+    <identifier_field_1_def> y </identifier_field_1_def>
     <symbol> ; </symbol>
   </classVarDec>
   <classVarDec>
     <keyword> field </keyword>
     <keyword> int </keyword>
-    <identifier> size </identifier>
+    <identifier_field_2_def> size </identifier_field_2_def>
     <symbol> ; </symbol>
   </classVarDec>
   <subroutineDec>
     <keyword> constructor </keyword>
-    <identifier> Square </identifier>
-    <identifier> new </identifier>
+    <identifier_class_used> Square </identifier_class_used>
+    <identifier_subroutine_def> new </identifier_subroutine_def>
     <symbol> ( </symbol>
     <parameterList>
       <keyword> int </keyword>
-      <identifier> Ax </identifier>
+      <identifier_argument_0_def> Ax </identifier_argument_0_def>
       <symbol> , </symbol>
       <keyword> int </keyword>
-      <identifier> Ay </identifier>
+      <identifier_argument_1_def> Ay </identifier_argument_1_def>
       <symbol> , </symbol>
       <keyword> int </keyword>
-      <identifier> Asize </identifier>
+      <identifier_argument_2_def> Asize </identifier_argument_2_def>
     </parameterList>
     <symbol> ) </symbol>
     <subroutineBody>
@@ -37,51 +37,42 @@
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> x </identifier>
+          <identifier_field_0_used> x </identifier_field_0_used>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> Ax </identifier>
+              <identifier_argument_0_used> Ax </identifier_argument_0_used>
             </term>
           </expression>
           <symbol> ; </symbol>
         </letStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> y </identifier>
+          <identifier_field_1_used> y </identifier_field_1_used>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> Ay </identifier>
+              <identifier_argument_1_used> Ay </identifier_argument_1_used>
             </term>
           </expression>
           <symbol> ; </symbol>
         </letStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> size </identifier>
+          <identifier_field_2_used> size </identifier_field_2_used>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> Asize </identifier>
+              <identifier_argument_2_used> Asize </identifier_argument_2_used>
             </term>
           </expression>
           <symbol> ; </symbol>
         </letStatement>
-        <doStatement>
-          <keyword> do </keyword>
-          <identifier> draw </identifier>
-          <symbol> ( </symbol>
-          <expressionList>
-          </expressionList>
-          <symbol> ) </symbol>
-          <symbol> ; </symbol>
-        </doStatement>
         <returnStatement>
           <keyword> return </keyword>
           <expression>
             <term>
-              <identifier> x </identifier>
+              <identifier_field_0_used> x </identifier_field_0_used>
             </term>
           </expression>
           <symbol> ; </symbol>
@@ -93,7 +84,7 @@
   <subroutineDec>
     <keyword> method </keyword>
     <keyword> void </keyword>
-    <identifier> dispose </identifier>
+    <identifier_subroutine_def> dispose </identifier_subroutine_def>
     <symbol> ( </symbol>
     <parameterList>
     </parameterList>
@@ -101,22 +92,6 @@
     <subroutineBody>
       <symbol> { </symbol>
       <statements>
-        <doStatement>
-          <keyword> do </keyword>
-          <identifier> Memory </identifier>
-          <symbol> . </symbol>
-          <identifier> deAlloc </identifier>
-          <symbol> ( </symbol>
-          <expressionList>
-            <expression>
-              <term>
-                <keyword> this </keyword>
-              </term>
-            </expression>
-          </expressionList>
-          <symbol> ) </symbol>
-          <symbol> ; </symbol>
-        </doStatement>
         <returnStatement>
           <keyword> return </keyword>
           <symbol> ; </symbol>

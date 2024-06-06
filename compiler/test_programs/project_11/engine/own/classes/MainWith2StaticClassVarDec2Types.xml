@@ -1,17 +1,17 @@
 <class>
   <keyword> class </keyword>
-  <identifier> Main </identifier>
+  <identifier_class_def> Main </identifier_class_def>
   <symbol> { </symbol>
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier> test1 </identifier>
+    <identifier_static_0_def> test1 </identifier_static_0_def>
     <symbol> ; </symbol>
   </classVarDec>
   <classVarDec>
     <keyword> static </keyword>
     <keyword> int </keyword>
-    <identifier> test2 </identifier>
+    <identifier_static_1_def> test2 </identifier_static_1_def>
     <symbol> ; </symbol>
   </classVarDec>
   <symbol> } </symbol>

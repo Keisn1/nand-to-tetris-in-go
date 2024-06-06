@@ -1,11 +1,11 @@
 <class>
   <keyword> class </keyword>
-  <identifier_class> Main </identifier_class>
+  <identifier_class_def> Main </identifier_class_def>
   <symbol> { </symbol>
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier_static_0> test </identifier_static_0>
+    <identifier_static_0_def> test </identifier_static_0_def>
     <symbol> ; </symbol>
   </classVarDec>
   <symbol> } </symbol>

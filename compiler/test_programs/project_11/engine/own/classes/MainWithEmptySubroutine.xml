@@ -1,11 +1,11 @@
 <class>
   <keyword> class </keyword>
-  <identifier> Main </identifier>
+  <identifier_class_def> Main </identifier_class_def>
   <symbol> { </symbol>
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier> main </identifier>
+    <identifier_subroutine_def> main </identifier_subroutine_def>
     <symbol> ( </symbol>
     <parameterList>
     </parameterList>

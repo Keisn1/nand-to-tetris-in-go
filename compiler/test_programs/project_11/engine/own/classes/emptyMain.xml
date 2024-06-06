@@ -1,6 +1,6 @@
 <class>
   <keyword> class </keyword>
-  <identifier_class> Main </identifier_class>
+  <identifier_class_def> Main </identifier_class_def>
   <symbol> { </symbol>
   <symbol> } </symbol>
 </class>

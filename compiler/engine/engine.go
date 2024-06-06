@@ -7,13 +7,18 @@ import (
 )
 
 type Engine struct {
-	Tknzr  *token.Tokenizer
-	symTab symbolTable.SymbolTable
-	Errors []error
+	Tknzr     *token.Tokenizer
+	symTab    symbolTable.SymbolTable
+	clAndSubR map[string]string
+	Errors    []error
 }
 
 func NewEngine(tknzr *token.Tokenizer) Engine {
-	return Engine{Tknzr: tknzr, symTab: symbolTable.NewSymbolTable()}
+	return Engine{
+		Tknzr:     tknzr,
+		symTab:    symbolTable.NewSymbolTable(),
+		clAndSubR: make(map[string]string),
+	}
 }
 
 func (e *Engine) CompileClass() string {
@@ -23,6 +28,7 @@ func (e *Engine) CompileClass() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
+	e.clAndSubR[e.Tknzr.Identifier()] = "class"
 	if err := e.eatIdentifier(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
@@ -73,6 +79,8 @@ func (e *Engine) CompileClassVarDec() string {
 
 	for e.Tknzr.Symbol() == token.KOMMA {
 		e.eatSymbol(token.KOMMA, &ret)
+
+		e.symTab.Define(e.Tknzr.Identifier(), varType, kind)
 		if err := e.eatIdentifier(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 		}
@@ -108,6 +116,7 @@ func (e *Engine) CompileSubroutineDec() string {
 		}
 	}
 
+	e.clAndSubR[e.Tknzr.Identifier()] = "subroutine"
 	if err := e.eatIdentifier(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
@@ -611,9 +620,11 @@ func (e Engine) eatIdentifier(ret *string) error {
 	var info string
 	if e.symTab.KindOf(name) != "" {
 		info = fmt.Sprintf("_%s_%d", e.symTab.KindOf(name), e.symTab.IndexOf(name))
+	} else {
+		info = "_" + e.clAndSubR[name]
 	}
 
-	*ret += xmlIdentifier(name, info)
+	*ret += xmlIdentifier(name, info+"_def")
 	e.Tknzr.Advance()
 	return nil
 }

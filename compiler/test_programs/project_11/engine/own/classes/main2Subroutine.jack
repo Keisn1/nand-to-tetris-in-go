@@ -7,12 +7,10 @@ class Square {
       let x = Ax;
       let y = Ay;
       let size = Asize;
-      do draw();
       return x;
    }
 
    method void dispose() {
-      do Memory.deAlloc(this);
       return;
    }
 }

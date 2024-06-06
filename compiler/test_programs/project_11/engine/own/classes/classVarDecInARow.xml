@@ -1,0 +1,20 @@
+<class>
+  <keyword> class </keyword>
+  <identifier_class_def> Square </identifier_class_def>
+  <symbol> { </symbol>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier_field_0_def> x </identifier_field_0_def>
+    <symbol> , </symbol>
+    <identifier_field_1_def> y </identifier_field_1_def>
+    <symbol> ; </symbol>
+  </classVarDec>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier_field_2_def> size </identifier_field_2_def>
+    <symbol> ; </symbol>
+  </classVarDec>
+  <symbol> } </symbol>
+</class>

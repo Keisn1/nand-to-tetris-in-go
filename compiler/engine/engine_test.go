@@ -21,12 +21,13 @@ func Test_compileClass(t *testing.T) {
 		dir := "../test_programs/project_11/engine/own/classes/"
 		testCases := []testCase{
 			{name: "empty main", fp: "emptyMain"},
-			// {name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
-			// {name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
-			// {name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
-			// {name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
-			// {name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
-			// {name: "main with mulitple subroutines", fp: "main2Subroutine"},
+			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
+			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
+			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
+			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
+			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
+			{name: "varDec in one line", fp: "classVarDecInARow"},
+			{name: "main with mulitple subroutines", fp: "main2Subroutine"},
 		}
 
 		for _, tc := range testCases {
