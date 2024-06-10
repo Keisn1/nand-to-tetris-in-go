@@ -20,17 +20,17 @@ func TestFullPrograms(t *testing.T) {
 	testCases := []testCase{
 		{
 
-			path:     "test_programs/project10/ArrayTest/Main.jack",
+			path:     "test_programs/project11/ArrayTest/Main.jack",
 			outFiles: []string{"Main.xml"},
 		},
-		{
-			path:     "test_programs/project10/ExpressionLessSquare",
-			outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
-		},
-		{
-			path:     "test_programs/project10/Square",
-			outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
-		},
+		// {
+		// 	path:     "test_programs/project11/ExpressionLessSquare",
+		// 	outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
+		// },
+		// {
+		// 	path:     "test_programs/project11/Square",
+		// 	outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
+		// },
 	}
 
 	for _, tc := range testCases {

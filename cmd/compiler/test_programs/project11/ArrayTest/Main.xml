@@ -1,0 +1,286 @@
+<class>
+<keyword> class </keyword>
+<identifier_class_def> Main </identifier_class_def>
+<symbol> { </symbol>
+<subroutineDec>
+<keyword> function </keyword>
+<keyword> void </keyword>
+<identifier_subroutine_def> main </identifier_subroutine_def>
+<symbol> ( </symbol>
+<parameterList>
+</parameterList>
+<symbol> ) </symbol>
+<subroutineBody>
+<symbol> { </symbol>
+<varDec>
+<keyword> var </keyword>
+<identifier_class_used> Array </identifier_class_used>
+<identifier_local_0_def> a </identifier_local_0_def>
+<symbol> ; </symbol>
+</varDec>
+<varDec>
+<keyword> var </keyword>
+<keyword> int </keyword>
+<identifier_local_1_def> length </identifier_local_1_def>
+<symbol> ; </symbol>
+</varDec>
+<varDec>
+<keyword> var </keyword>
+<keyword> int </keyword>
+<identifier_local_2_def> i </identifier_local_2_def>
+<symbol> , </symbol>
+<identifier_local_3_def> sum </identifier_local_3_def>
+<symbol> ; </symbol>
+</varDec>
+<statements>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_1_used> length </identifier_local_1_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_class_used> Keyboard </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> readInt </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<stringConstant> HOW MANY NUMBERS?  </stringConstant>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_0_used> a </identifier_local_0_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_class_used> Array </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> new </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<identifier_local_1_used> length </identifier_local_1_used>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_2_used> i </identifier_local_2_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<whileStatement>
+<keyword> while </keyword>
+<symbol> ( </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+<symbol> &lt; </symbol>
+<term>
+<identifier_local_1_used> length </identifier_local_1_used>
+</term>
+</expression>
+<symbol> ) </symbol>
+<symbol> { </symbol>
+<statements>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_0_used> a </identifier_local_0_used>
+<symbol> [ </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+</expression>
+<symbol> ] </symbol>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_class_used> Keyboard </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> readInt </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<stringConstant> ENTER THE NEXT NUMBER:  </stringConstant>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_2_used> i </identifier_local_2_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+<symbol> + </symbol>
+<term>
+<integerConstant> 1 </integerConstant>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+</statements>
+<symbol> } </symbol>
+</whileStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_2_used> i </identifier_local_2_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_3_used> sum </identifier_local_3_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<whileStatement>
+<keyword> while </keyword>
+<symbol> ( </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+<symbol> &lt; </symbol>
+<term>
+<identifier_local_1_used> length </identifier_local_1_used>
+</term>
+</expression>
+<symbol> ) </symbol>
+<symbol> { </symbol>
+<statements>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_3_used> sum </identifier_local_3_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_local_3_used> sum </identifier_local_3_used>
+</term>
+<symbol> + </symbol>
+<term>
+<identifier_local_0_used> a </identifier_local_0_used>
+<symbol> [ </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+</expression>
+<symbol> ] </symbol>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+<letStatement>
+<keyword> let </keyword>
+<identifier_local_2_used> i </identifier_local_2_used>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier_local_2_used> i </identifier_local_2_used>
+</term>
+<symbol> + </symbol>
+<term>
+<integerConstant> 1 </integerConstant>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
+</statements>
+<symbol> } </symbol>
+</whileStatement>
+<doStatement>
+<keyword> do </keyword>
+<identifier_class_used> Output </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> printString </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<stringConstant> THE AVERAGE IS:  </stringConstant>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
+<symbol> ; </symbol>
+</doStatement>
+<doStatement>
+<keyword> do </keyword>
+<identifier_class_used> Output </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> printInt </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<identifier_local_3_used> sum </identifier_local_3_used>
+</term>
+<symbol> / </symbol>
+<term>
+<identifier_local_1_used> length </identifier_local_1_used>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
+<symbol> ; </symbol>
+</doStatement>
+<doStatement>
+<keyword> do </keyword>
+<identifier_class_used> Output </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> println </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+</expressionList>
+<symbol> ) </symbol>
+<symbol> ; </symbol>
+</doStatement>
+<returnStatement>
+<keyword> return </keyword>
+<symbol> ; </symbol>
+</returnStatement>
+</statements>
+<symbol> } </symbol>
+</subroutineBody>
+</subroutineDec>
+<symbol> } </symbol>
+</class>
