@@ -2,6 +2,7 @@ package vmWriter
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -32,12 +33,12 @@ type VmWriter struct {
 	file *os.File
 }
 
-func NewVmWriter(fp string) (VmWriter, error) {
+func NewVmWriter(fp string) VmWriter {
 	file, err := os.Create(fp)
 	if err != nil {
-		return VmWriter{}, fmt.Errorf("NewVmWriter: %w", err)
+		log.Fatalln("NewVmWriter:", err)
 	}
-	return VmWriter{file: file}, nil
+	return VmWriter{file: file}
 }
 
 func (vw VmWriter) WritePush(segment string, index int) {

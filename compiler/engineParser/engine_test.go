@@ -1,4 +1,4 @@
-package engine_test
+package engineParser_test
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"testing"
 
-	"hack/compiler/engine"
+	engine "hack/compiler/engineParser"
 	"hack/compiler/token"
 
 	"github.com/stretchr/testify/assert"

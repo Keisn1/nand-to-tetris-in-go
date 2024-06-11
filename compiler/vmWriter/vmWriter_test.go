@@ -15,8 +15,7 @@ func Test_VmWriter(t *testing.T) {
 	dir := t.TempDir()
 
 	out := filepath.Join(dir, "test.vm")
-	vw, err := vmWriter.NewVmWriter(out)
-	assert.NoError(t, err)
+	vw := vmWriter.NewVmWriter(out)
 
 	want := ""
 

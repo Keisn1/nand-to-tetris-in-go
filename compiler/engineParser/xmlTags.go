@@ -1,4 +1,4 @@
-package engine
+package engineParser
 
 const (
 	CLASS_T          = "class"

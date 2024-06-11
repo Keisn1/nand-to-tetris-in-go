@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"hack/compiler/symbolTable"
 	"hack/compiler/token"
+	"hack/compiler/vmWriter"
 )
 
 type Engine struct {
-	Tknzr  *token.Tokenizer
-	symTab symbolTable.SymbolTable
-	Errors []error
+	Tknzr    *token.Tokenizer
+	vmWriter *vmWriter.VmWriter
+	symTab   symbolTable.SymbolTable
+	Errors   []error
 }
 
-func NewEngine(tknzr *token.Tokenizer) Engine {
+func NewEngine(tknzr *token.Tokenizer, vw *vmWriter.VmWriter) Engine {
 	return Engine{
-		Tknzr:  tknzr,
-		symTab: symbolTable.NewSymbolTable(),
+		Tknzr:    tknzr,
+		vmWriter: vw,
+		symTab:   symbolTable.NewSymbolTable(),
 	}
 }
 
