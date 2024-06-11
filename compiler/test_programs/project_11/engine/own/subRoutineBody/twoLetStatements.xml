@@ -1,0 +1,44 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <identifier_class_used> String </identifier_class_used>
+    <identifier_local_0_def> x </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> int </keyword>
+    <identifier_local_1_def> z </identifier_local_1_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <letStatement>
+      <keyword> let </keyword>
+      <identifier_local_0_used> x </identifier_local_0_used>
+      <symbol> = </symbol>
+      <expression>
+        <term>
+          <stringConstant> hello </stringConstant>
+        </term>
+      </expression>
+      <symbol> ; </symbol>
+    </letStatement>
+    <letStatement>
+      <keyword> let </keyword>
+      <identifier_local_1_used> z </identifier_local_1_used>
+      <symbol> = </symbol>
+      <expression>
+        <term>
+          <integerConstant> 1 </integerConstant>
+        </term>
+      </expression>
+      <symbol> ; </symbol>
+    </letStatement>
+    <returnStatement>
+      <keyword> return </keyword>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>

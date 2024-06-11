@@ -1,0 +1,159 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <identifier_class_used> Array </identifier_class_used>
+    <identifier_local_0_def> a </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <varDec>
+    <keyword> var </keyword>
+    <identifier_class_used> String </identifier_class_used>
+    <identifier_local_1_def> s </identifier_local_1_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> int </keyword>
+    <identifier_local_2_def> i </identifier_local_2_def>
+    <symbol> , </symbol>
+    <identifier_local_3_def> j </identifier_local_3_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <ifStatement>
+      <keyword> if </keyword>
+      <symbol> ( </symbol>
+      <expression>
+        <term>
+          <keyword> false </keyword>
+        </term>
+      </expression>
+      <symbol> ) </symbol>
+      <symbol> { </symbol>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_1_used> s </identifier_local_1_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <stringConstant> string constant </stringConstant>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_1_used> s </identifier_local_1_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <keyword> null </keyword>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_0_used> a </identifier_local_0_used>
+          <symbol> [ </symbol>
+          <expression>
+            <term>
+              <integerConstant> 1 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ] </symbol>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier_local_0_used> a </identifier_local_0_used>
+              <symbol> [ </symbol>
+              <expression>
+                <term>
+                  <integerConstant> 2 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ] </symbol>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+      </statements>
+      <symbol> } </symbol>
+      <keyword> else </keyword>
+      <symbol> { </symbol>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_2_used> i </identifier_local_2_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier_local_2_used> i </identifier_local_2_used>
+            </term>
+            <symbol> * </symbol>
+            <term>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <symbol> - </symbol>
+                  <term>
+                    <identifier_local_3_used> j </identifier_local_3_used>
+                  </term>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_3_used> j </identifier_local_3_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier_local_3_used> j </identifier_local_3_used>
+            </term>
+            <symbol> / </symbol>
+            <term>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <symbol> - </symbol>
+                  <term>
+                    <integerConstant> 2 </integerConstant>
+                  </term>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_2_used> i </identifier_local_2_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier_local_2_used> i </identifier_local_2_used>
+            </term>
+            <symbol> | </symbol>
+            <term>
+              <identifier_local_3_used> j </identifier_local_3_used>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+      </statements>
+      <symbol> } </symbol>
+    </ifStatement>
+    <returnStatement>
+      <keyword> return </keyword>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>

@@ -1,0 +1,7 @@
+{
+    var String x;
+    var int z;
+    let x = "hello";
+    let z = 1;
+    return;
+}

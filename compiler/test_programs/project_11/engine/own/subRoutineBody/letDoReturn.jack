@@ -1,0 +1,6 @@
+{
+    var String x1;
+    let x1 = "hello";
+    do foo(true);
+    return;
+}

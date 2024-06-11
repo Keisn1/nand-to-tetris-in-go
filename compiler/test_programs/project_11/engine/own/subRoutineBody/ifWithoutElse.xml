@@ -1,0 +1,51 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> boolean </keyword>
+    <identifier_local_0_def> exit </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> int </keyword>
+    <identifier_local_1_def> key </identifier_local_1_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <ifStatement>
+      <keyword> if </keyword>
+      <symbol> ( </symbol>
+      <expression>
+        <term>
+          <identifier_local_1_used> key </identifier_local_1_used>
+        </term>
+        <symbol> = </symbol>
+        <term>
+          <integerConstant> 81 </integerConstant>
+        </term>
+      </expression>
+      <symbol> ) </symbol>
+      <symbol> { </symbol>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier_local_0_used> exit </identifier_local_0_used>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <keyword> true </keyword>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+      </statements>
+      <symbol> } </symbol>
+    </ifStatement>
+    <returnStatement>
+      <keyword> return </keyword>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>

@@ -1,0 +1,6 @@
+{
+    var boolean exit;
+    var int key;
+    if (key = 81)  { let exit = true; }     // q key
+    return;
+}

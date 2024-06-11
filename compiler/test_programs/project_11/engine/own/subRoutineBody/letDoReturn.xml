@@ -1,0 +1,41 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <identifier_class_used> String </identifier_class_used>
+    <identifier_local_0_def> x1 </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <letStatement>
+      <keyword> let </keyword>
+      <identifier_local_0_used> x1 </identifier_local_0_used>
+      <symbol> = </symbol>
+      <expression>
+        <term>
+          <stringConstant> hello </stringConstant>
+        </term>
+      </expression>
+      <symbol> ; </symbol>
+    </letStatement>
+    <doStatement>
+      <keyword> do </keyword>
+      <identifier_subroutine_used> foo </identifier_subroutine_used>
+      <symbol> ( </symbol>
+      <expressionList>
+        <expression>
+          <term>
+            <keyword> true </keyword>
+          </term>
+        </expression>
+      </expressionList>
+      <symbol> ) </symbol>
+      <symbol> ; </symbol>
+    </doStatement>
+    <returnStatement>
+      <keyword> return </keyword>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>
