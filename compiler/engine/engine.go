@@ -7,17 +7,15 @@ import (
 )
 
 type Engine struct {
-	Tknzr     *token.Tokenizer
-	symTab    symbolTable.SymbolTable
-	clAndSubR map[string]string
-	Errors    []error
+	Tknzr  *token.Tokenizer
+	symTab symbolTable.SymbolTable
+	Errors []error
 }
 
 func NewEngine(tknzr *token.Tokenizer) Engine {
 	return Engine{
-		Tknzr:     tknzr,
-		symTab:    symbolTable.NewSymbolTable(),
-		clAndSubR: make(map[string]string),
+		Tknzr:  tknzr,
+		symTab: symbolTable.NewSymbolTable(),
 	}
 }
 
@@ -28,7 +26,6 @@ func (e *Engine) CompileClass() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
 
-	e.clAndSubR[e.Tknzr.Identifier()] = "class"
 	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClass: %w", err))
 	}
@@ -117,7 +114,6 @@ func (e *Engine) CompileSubroutineDec() string {
 		}
 	}
 
-	e.clAndSubR[e.Tknzr.Identifier()] = "subroutine"
 	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
