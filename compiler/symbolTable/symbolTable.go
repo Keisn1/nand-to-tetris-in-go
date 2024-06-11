@@ -7,39 +7,60 @@ type Symbol struct {
 	index   int
 }
 type SymbolTable struct {
-	symbols map[string]Symbol
-	counts  map[string]int
+	classLevel            map[string]Symbol
+	countsClassLevel      map[string]int
+	subroutineLevel       map[string]Symbol
+	countsSubroutineLevel map[string]int
 }
 
 func NewSymbolTable() SymbolTable {
 	return SymbolTable{
-		symbols: make(map[string]Symbol),
-		counts:  make(map[string]int),
+		classLevel:            make(map[string]Symbol),
+		subroutineLevel:       make(map[string]Symbol),
+		countsClassLevel:      make(map[string]int),
+		countsSubroutineLevel: make(map[string]int),
 	}
 }
 
 func (st *SymbolTable) StartSubroutine() {
-	st.symbols = make(map[string]Symbol)
-	st.counts = make(map[string]int)
+	st.subroutineLevel = make(map[string]Symbol)
+	st.countsSubroutineLevel = make(map[string]int)
 }
 
 func (st *SymbolTable) Define(name, varType, kind string) {
-	st.symbols[name] = Symbol{name: name, varType: varType, kind: kind, index: st.counts[kind]}
-	st.counts[kind]++
+	if kind == STATIC || kind == FIELD {
+		st.classLevel[name] = Symbol{name: name, varType: varType, kind: kind, index: st.countsClassLevel[kind]}
+		st.countsClassLevel[kind]++
+		return
+	}
+	st.subroutineLevel[name] = Symbol{name: name, varType: varType, kind: kind, index: st.countsSubroutineLevel[kind]}
+	st.countsSubroutineLevel[kind]++
 }
 
 func (st SymbolTable) VarCount(kind string) int {
-	return st.counts[kind]
+	if kind == STATIC || kind == FIELD {
+		return st.countsClassLevel[kind]
+	}
+	return st.countsSubroutineLevel[kind]
 }
 
 func (st SymbolTable) KindOf(name string) string {
-	return st.symbols[name].kind
+	if _, ok := st.subroutineLevel[name]; ok {
+		return st.subroutineLevel[name].kind
+	}
+	return st.classLevel[name].kind
 }
 
 func (st SymbolTable) TypeOf(name string) string {
-	return st.symbols[name].varType
+	if _, ok := st.subroutineLevel[name]; ok {
+		return st.subroutineLevel[name].varType
+	}
+	return st.classLevel[name].varType
 }
 
 func (st SymbolTable) IndexOf(name string) int {
-	return st.symbols[name].index
+	if _, ok := st.subroutineLevel[name]; ok {
+		return st.subroutineLevel[name].index
+	}
+	return st.classLevel[name].index
 }

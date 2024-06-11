@@ -1,0 +1,15 @@
+class Square {
+   field int z;
+
+   constructor Square new() {
+      var int x;
+      let x = z;
+      return x;
+   }
+
+   method void dispose() {
+      var int x;
+      let x = z;
+      return x;
+   }
+}

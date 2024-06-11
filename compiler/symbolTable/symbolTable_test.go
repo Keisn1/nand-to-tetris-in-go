@@ -47,13 +47,20 @@ func Test_SymbolTable(t *testing.T) {
 	}
 
 	sTab.StartSubroutine()
-	// | name | type  | kind     | # |
-	// |------+-------+----------+---|
-	//
+	for _, tc := range testCases[:3] {
+		assert.Equal(t, tc.wantType, sTab.TypeOf(tc.varName))
+		assert.Equal(t, tc.wantKind, sTab.KindOf(tc.varName))
+		assert.Equal(t, tc.wantIndex, sTab.IndexOf(tc.varName))
+	}
+	assert.Equal(t, 2, sTab.VarCount(symbolTable.STATIC))
+	assert.Equal(t, 1, sTab.VarCount(symbolTable.FIELD))
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.VAR))
 	assert.Equal(t, 0, sTab.VarCount(symbolTable.ARG))
-	assert.Equal(t, 0, sTab.VarCount(symbolTable.STATIC))
-
+	// // | name | type  | kind     | # |
+	// // |------+-------+----------+---|
+	// // | x1   | int   | static   | 0 |
+	// // | s1   | char  | field    | 0 |
+	// // | p1   | point | static   | 1 |
 }
 
 func randomS(length int) string {

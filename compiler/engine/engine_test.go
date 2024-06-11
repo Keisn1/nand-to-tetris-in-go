@@ -411,41 +411,42 @@ func Test_VarDec(t *testing.T) {
 	})
 }
 
-// func Test_statements(t *testing.T) {
-// 	t.Run("Testing happy statements", func(t *testing.T) {
-// 		type testCase struct {
-// 			name string
-// 			fp   string
-// 		}
+func Test_statements(t *testing.T) {
+	t.Run("Testing happy statements", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
 
-// 		dir := "../test_programs/project_11/engine/own/statements/"
-// 		testCases := []testCase{
-// 			{name: "two let statements", fp: "twoLetStatements"},
-// 			{name: "let, do and return statement", fp: "letDoReturn"},
-// 			{name: "do statement with dot", fp: "doWithDot"},
-// 			{name: "while statement", fp: "while"},
-// 			{name: "while with < symbol", fp: "while"},
-// 			{name: "if without else statement", fp: "ifWithoutElse"},
-// 			{name: "if with else statement", fp: "whileWithLowerThan"},
-// 		}
-// 		for _, tc := range testCases {
-// 			t.Run(tc.name, func(t *testing.T) {
-// 				input := readFile(t, dir+tc.fp+".jack")
-// 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+		dir := "../test_programs/project_11/engine/own/subRoutineBody/"
+		testCases := []testCase{
+			{name: "two let statements", fp: "twoLetStatements"},
+			{name: "let, do and return statement", fp: "letDoReturn"},
+			// {name: "do statement with dot", fp: "doWithDot"},
+			// {name: "while statement", fp: "while"},
+			// {name: "while with < symbol", fp: "while"},
+			{name: "if without else statement", fp: "ifWithoutElse"},
+			{name: "if with else statement", fp: "ifWithElse"},
+			{name: "return with value", fp: "returnWithValue"},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-// 				tknzr := token.NewTokenizer(input)
-// 				e := engine.NewEngine(&tknzr)
-// 				e.Tknzr.Advance()
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr)
+				e.Tknzr.Advance()
 
-// 				got := e.CompileStatements()
+				got := e.CompileSubroutineBody()
 
-// 				assert.Empty(t, e.Errors)
-// 				assert.Equal(t, want, removeWhiteSpaces(got))
-// 				assert.Equal(t, token.EOF, e.Tknzr.Keyword())
-// 			})
-// 		}
-// 	})
-// }
+				assert.Empty(t, e.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
+				assert.Equal(t, token.EOF, e.Tknzr.Keyword())
+			})
+		}
+	})
+}
 
 func Test_letStatement(t *testing.T) {
 	// t.Run("Testing happy letStatements", func(t *testing.T) {

@@ -42,6 +42,7 @@ func (e *Engine) CompileClass() string {
 	}
 
 	for isSubRoutineDec(e.Tknzr.Keyword()) {
+		e.symTab.StartSubroutine()
 		ret += e.CompileSubroutineDec()
 	}
 
