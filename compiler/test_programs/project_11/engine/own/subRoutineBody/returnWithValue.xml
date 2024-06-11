@@ -1,0 +1,21 @@
+<subroutineBody>
+  <symbol> { </symbol>
+  <varDec>
+    <keyword> var </keyword>
+    <keyword> int </keyword>
+    <identifier_local_0_def> x </identifier_local_0_def>
+    <symbol> ; </symbol>
+  </varDec>
+  <statements>
+    <returnStatement>
+      <keyword> return </keyword>
+      <expression>
+        <term>
+          <identifier_local_0_used> x </identifier_local_0_used>
+        </term>
+      </expression>
+      <symbol> ; </symbol>
+    </returnStatement>
+  </statements>
+  <symbol> } </symbol>
+</subroutineBody>

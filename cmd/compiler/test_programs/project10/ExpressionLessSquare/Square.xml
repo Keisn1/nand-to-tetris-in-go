@@ -1,35 +1,35 @@
 <class>
 <keyword> class </keyword>
-<identifier> Square </identifier>
+<identifier_class_def> Square </identifier_class_def>
 <symbol> { </symbol>
 <classVarDec>
 <keyword> field </keyword>
 <keyword> int </keyword>
-<identifier> x </identifier>
+<identifier_field_0_def> x </identifier_field_0_def>
 <symbol> , </symbol>
-<identifier> y </identifier>
+<identifier_field_1_def> y </identifier_field_1_def>
 <symbol> ; </symbol>
 </classVarDec>
 <classVarDec>
 <keyword> field </keyword>
 <keyword> int </keyword>
-<identifier> size </identifier>
+<identifier_field_2_def> size </identifier_field_2_def>
 <symbol> ; </symbol>
 </classVarDec>
 <subroutineDec>
 <keyword> constructor </keyword>
-<identifier> Square </identifier>
-<identifier> new </identifier>
+<identifier_class_used> Square </identifier_class_used>
+<identifier_subroutine_def> new </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 <keyword> int </keyword>
-<identifier> Ax </identifier>
+<identifier_argument_0_def> Ax </identifier_argument_0_def>
 <symbol> , </symbol>
 <keyword> int </keyword>
-<identifier> Ay </identifier>
+<identifier_argument_1_def> Ay </identifier_argument_1_def>
 <symbol> , </symbol>
 <keyword> int </keyword>
-<identifier> Asize </identifier>
+<identifier_argument_2_def> Asize </identifier_argument_2_def>
 </parameterList>
 <symbol> ) </symbol>
 <subroutineBody>
@@ -37,40 +37,40 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> Ax </identifier>
+<identifier_argument_0_used> Ax </identifier_argument_0_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> Ay </identifier>
+<identifier_argument_1_used> Ay </identifier_argument_1_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> Asize </identifier>
+<identifier_argument_2_used> Asize </identifier_argument_2_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> draw </identifier>
+<identifier_subroutine_used> draw </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -81,7 +81,7 @@
 <keyword> return </keyword>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -93,7 +93,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> dispose </identifier>
+<identifier_subroutine_def> dispose </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -103,9 +103,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Memory </identifier>
+<identifier_class_used> Memory </identifier_class_used>
 <symbol> . </symbol>
-<identifier> deAlloc </identifier>
+<identifier_subroutine_used> deAlloc </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
@@ -128,7 +128,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> draw </identifier>
+<identifier_subroutine_def> draw </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -138,14 +138,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -154,32 +154,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -197,7 +197,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> erase </identifier>
+<identifier_subroutine_def> erase </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -207,14 +207,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -223,32 +223,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -266,7 +266,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> incSize </identifier>
+<identifier_subroutine_def> incSize </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -279,7 +279,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -287,7 +287,7 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> erase </identifier>
+<identifier_subroutine_used> erase </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -296,18 +296,18 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> draw </identifier>
+<identifier_subroutine_used> draw </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -328,7 +328,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> decSize </identifier>
+<identifier_subroutine_def> decSize </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -341,7 +341,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -349,7 +349,7 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> erase </identifier>
+<identifier_subroutine_used> erase </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -358,18 +358,18 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> size </identifier>
+<identifier_field_2_used> size </identifier_field_2_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> draw </identifier>
+<identifier_subroutine_used> draw </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -390,7 +390,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> moveUp </identifier>
+<identifier_subroutine_def> moveUp </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -403,7 +403,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -411,14 +411,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -427,32 +427,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -461,25 +461,25 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -488,32 +488,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -534,7 +534,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> moveDown </identifier>
+<identifier_subroutine_def> moveDown </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -547,7 +547,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -555,14 +555,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -571,32 +571,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -605,25 +605,25 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -632,32 +632,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -678,7 +678,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> moveLeft </identifier>
+<identifier_subroutine_def> moveLeft </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -691,7 +691,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -699,14 +699,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -715,32 +715,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -749,25 +749,25 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -776,32 +776,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -822,7 +822,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> moveRight </identifier>
+<identifier_subroutine_def> moveRight </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -835,7 +835,7 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -843,14 +843,14 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -859,32 +859,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>
@@ -893,25 +893,25 @@
 </doStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> setColor </identifier>
+<identifier_subroutine_used> setColor </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 </expressionList>
@@ -920,32 +920,32 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Screen </identifier>
+<identifier_class_used> Screen </identifier_class_used>
 <symbol> . </symbol>
-<identifier> drawRectangle </identifier>
+<identifier_subroutine_used> drawRectangle </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> x </identifier>
+<identifier_field_0_used> x </identifier_field_0_used>
 </term>
 </expression>
 <symbol> , </symbol>
 <expression>
 <term>
-<identifier> y </identifier>
+<identifier_field_1_used> y </identifier_field_1_used>
 </term>
 </expression>
 </expressionList>

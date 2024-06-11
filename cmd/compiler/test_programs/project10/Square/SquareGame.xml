@@ -1,23 +1,23 @@
 <class>
 <keyword> class </keyword>
-<identifier> SquareGame </identifier>
+<identifier_class_def> SquareGame </identifier_class_def>
 <symbol> { </symbol>
 <classVarDec>
 <keyword> field </keyword>
-<identifier> Square </identifier>
-<identifier> square </identifier>
+<identifier_class_used> Square </identifier_class_used>
+<identifier_field_0_def> square </identifier_field_0_def>
 <symbol> ; </symbol>
 </classVarDec>
 <classVarDec>
 <keyword> field </keyword>
 <keyword> int </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_def> direction </identifier_field_1_def>
 <symbol> ; </symbol>
 </classVarDec>
 <subroutineDec>
 <keyword> constructor </keyword>
-<identifier> SquareGame </identifier>
-<identifier> new </identifier>
+<identifier_class_used> SquareGame </identifier_class_used>
+<identifier_subroutine_def> new </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -27,22 +27,45 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> square </identifier>
+<identifier_class_used> Square </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> new </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+<expression>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> , </symbol>
+<expression>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> , </symbol>
+<expression>
+<term>
+<integerConstant> 30 </integerConstant>
+</term>
+</expression>
+</expressionList>
+<symbol> ) </symbol>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <letStatement>
 <keyword> let </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<integerConstant> 0 </integerConstant>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -51,7 +74,7 @@
 <keyword> return </keyword>
 <expression>
 <term>
-<identifier> square </identifier>
+<keyword> this </keyword>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -63,7 +86,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> dispose </identifier>
+<identifier_subroutine_def> dispose </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -73,9 +96,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> dispose </identifier>
+<identifier_subroutine_used> dispose </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -84,14 +107,14 @@
 </doStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Memory </identifier>
+<identifier_class_used> Memory </identifier_class_used>
 <symbol> . </symbol>
-<identifier> deAlloc </identifier>
+<identifier_subroutine_used> deAlloc </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> square </identifier>
+<keyword> this </keyword>
 </term>
 </expression>
 </expressionList>
@@ -109,7 +132,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> moveSquare </identifier>
+<identifier_subroutine_def> moveSquare </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -122,7 +145,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 1 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -130,9 +157,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> moveUp </identifier>
+<identifier_subroutine_used> moveUp </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -147,7 +174,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 2 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -155,9 +186,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> moveDown </identifier>
+<identifier_subroutine_used> moveDown </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -172,7 +203,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 3 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -180,9 +215,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> moveLeft </identifier>
+<identifier_subroutine_used> moveLeft </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -197,7 +232,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 4 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -205,9 +244,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> moveRight </identifier>
+<identifier_subroutine_used> moveRight </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -219,14 +258,14 @@
 </ifStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> Sys </identifier>
+<identifier_class_used> Sys </identifier_class_used>
 <symbol> . </symbol>
-<identifier> wait </identifier>
+<identifier_subroutine_used> wait </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 <expression>
 <term>
-<identifier> direction </identifier>
+<integerConstant> 5 </integerConstant>
 </term>
 </expression>
 </expressionList>
@@ -244,7 +283,7 @@
 <subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> run </identifier>
+<identifier_subroutine_def> run </identifier_subroutine_def>
 <symbol> ( </symbol>
 <parameterList>
 </parameterList>
@@ -254,23 +293,23 @@
 <varDec>
 <keyword> var </keyword>
 <keyword> char </keyword>
-<identifier> key </identifier>
+<identifier_local_0_def> key </identifier_local_0_def>
 <symbol> ; </symbol>
 </varDec>
 <varDec>
 <keyword> var </keyword>
 <keyword> boolean </keyword>
-<identifier> exit </identifier>
+<identifier_local_1_def> exit </identifier_local_1_def>
 <symbol> ; </symbol>
 </varDec>
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> exit </identifier>
+<identifier_local_1_used> exit </identifier_local_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<keyword> false </keyword>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -280,7 +319,10 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> exit </identifier>
+<symbol> ~ </symbol>
+<term>
+<identifier_local_1_used> exit </identifier_local_1_used>
+</term>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -291,7 +333,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 0 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -299,18 +345,24 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_class_used> Keyboard </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> keyPressed </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+</expressionList>
+<symbol> ) </symbol>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> moveSquare </identifier>
+<identifier_subroutine_used> moveSquare </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -325,7 +377,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 81 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -333,11 +389,11 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> exit </identifier>
+<identifier_local_1_used> exit </identifier_local_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> exit </identifier>
+<keyword> true </keyword>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -350,7 +406,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 90 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -358,9 +418,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> decSize </identifier>
+<identifier_subroutine_used> decSize </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -375,7 +435,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 88 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -383,9 +447,9 @@
 <statements>
 <doStatement>
 <keyword> do </keyword>
-<identifier> square </identifier>
+<identifier_field_0_used> square </identifier_field_0_used>
 <symbol> . </symbol>
-<identifier> incSize </identifier>
+<identifier_subroutine_used> incSize </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>
@@ -400,7 +464,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 131 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -408,11 +476,11 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> exit </identifier>
+<integerConstant> 1 </integerConstant>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -425,7 +493,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 133 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -433,11 +505,11 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<integerConstant> 2 </integerConstant>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -450,7 +522,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 130 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -458,11 +534,11 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> square </identifier>
+<integerConstant> 3 </integerConstant>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -475,7 +551,11 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 132 </integerConstant>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -483,11 +563,11 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> direction </identifier>
+<identifier_field_1_used> direction </identifier_field_1_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> direction </identifier>
+<integerConstant> 4 </integerConstant>
 </term>
 </expression>
 <symbol> ; </symbol>
@@ -500,7 +580,20 @@
 <symbol> ( </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<symbol> ~ </symbol>
+<term>
+<symbol> ( </symbol>
+<expression>
+<term>
+<identifier_local_0_used> key </identifier_local_0_used>
+</term>
+<symbol> = </symbol>
+<term>
+<integerConstant> 0 </integerConstant>
+</term>
+</expression>
+<symbol> ) </symbol>
+</term>
 </term>
 </expression>
 <symbol> ) </symbol>
@@ -508,18 +601,24 @@
 <statements>
 <letStatement>
 <keyword> let </keyword>
-<identifier> key </identifier>
+<identifier_local_0_used> key </identifier_local_0_used>
 <symbol> = </symbol>
 <expression>
 <term>
-<identifier> key </identifier>
+<identifier_class_used> Keyboard </identifier_class_used>
+<symbol> . </symbol>
+<identifier_subroutine_used> keyPressed </identifier_subroutine_used>
+<symbol> ( </symbol>
+<expressionList>
+</expressionList>
+<symbol> ) </symbol>
 </term>
 </expression>
 <symbol> ; </symbol>
 </letStatement>
 <doStatement>
 <keyword> do </keyword>
-<identifier> moveSquare </identifier>
+<identifier_subroutine_used> moveSquare </identifier_subroutine_used>
 <symbol> ( </symbol>
 <expressionList>
 </expressionList>

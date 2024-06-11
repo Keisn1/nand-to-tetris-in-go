@@ -1,11 +1,11 @@
 <class>
   <keyword> class </keyword>
-  <identifier> Main </identifier>
+  <identifier_class_def> Main </identifier_class_def>
   <symbol> { </symbol>
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier> main </identifier>
+    <identifier_subroutine_def> main </identifier_subroutine_def>
     <symbol> ( </symbol>
     <parameterList>
     </parameterList>
@@ -14,34 +14,34 @@
       <symbol> { </symbol>
       <varDec>
         <keyword> var </keyword>
-        <identifier> Array </identifier>
-        <identifier> a </identifier>
+        <identifier_class_used> Array </identifier_class_used>
+        <identifier_local_0_def> a </identifier_local_0_def>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier> length </identifier>
+        <identifier_local_1_def> length </identifier_local_1_def>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier> i </identifier>
+        <identifier_local_2_def> i </identifier_local_2_def>
         <symbol> , </symbol>
-        <identifier> sum </identifier>
+        <identifier_local_3_def> sum </identifier_local_3_def>
         <symbol> ; </symbol>
       </varDec>
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> length </identifier>
+          <identifier_local_1_used> length </identifier_local_1_used>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> Keyboard </identifier>
+              <identifier_class_used> Keyboard </identifier_class_used>
               <symbol> . </symbol>
-              <identifier> readInt </identifier>
+              <identifier_subroutine_used> readInt </identifier_subroutine_used>
               <symbol> ( </symbol>
               <expressionList>
                 <expression>
@@ -57,18 +57,18 @@
         </letStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> a </identifier>
+          <identifier_local_0_used> a </identifier_local_0_used>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> Array </identifier>
+              <identifier_class_used> Array </identifier_class_used>
               <symbol> . </symbol>
-              <identifier> new </identifier>
+              <identifier_subroutine_used> new </identifier_subroutine_used>
               <symbol> ( </symbol>
               <expressionList>
                 <expression>
                   <term>
-                    <identifier> length </identifier>
+                    <identifier_local_1_used> length </identifier_local_1_used>
                   </term>
                 </expression>
               </expressionList>
@@ -79,7 +79,7 @@
         </letStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> i </identifier>
+          <identifier_local_2_used> i </identifier_local_2_used>
           <symbol> = </symbol>
           <expression>
             <term>
@@ -93,11 +93,11 @@
           <symbol> ( </symbol>
           <expression>
             <term>
-              <identifier> i </identifier>
+              <identifier_local_2_used> i </identifier_local_2_used>
             </term>
             <symbol> &lt; </symbol>
             <term>
-              <identifier> length </identifier>
+              <identifier_local_1_used> length </identifier_local_1_used>
             </term>
           </expression>
           <symbol> ) </symbol>
@@ -105,20 +105,20 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> a </identifier>
+              <identifier_local_0_used> a </identifier_local_0_used>
               <symbol> [ </symbol>
               <expression>
                 <term>
-                  <identifier> i </identifier>
+                  <identifier_local_2_used> i </identifier_local_2_used>
                 </term>
               </expression>
               <symbol> ] </symbol>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> Keyboard </identifier>
+                  <identifier_class_used> Keyboard </identifier_class_used>
                   <symbol> . </symbol>
-                  <identifier> readInt </identifier>
+                  <identifier_subroutine_used> readInt </identifier_subroutine_used>
                   <symbol> ( </symbol>
                   <expressionList>
                     <expression>
@@ -134,11 +134,11 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> i </identifier>
+              <identifier_local_2_used> i </identifier_local_2_used>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> i </identifier>
+                  <identifier_local_2_used> i </identifier_local_2_used>
                 </term>
                 <symbol> + </symbol>
                 <term>
@@ -152,7 +152,7 @@
         </whileStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> i </identifier>
+                  <identifier_local_2_used> i </identifier_local_2_used>
           <symbol> = </symbol>
           <expression>
             <term>
@@ -163,7 +163,7 @@
         </letStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> sum </identifier>
+          <identifier_local_3_used> sum </identifier_local_3_used>
           <symbol> = </symbol>
           <expression>
             <term>
@@ -177,11 +177,11 @@
           <symbol> ( </symbol>
           <expression>
             <term>
-              <identifier> i </identifier>
+              <identifier_local_2_used> i </identifier_local_2_used>
             </term>
             <symbol> &lt; </symbol>
             <term>
-              <identifier> length </identifier>
+              <identifier_local_1_used> length </identifier_local_1_used>
             </term>
           </expression>
           <symbol> ) </symbol>
@@ -189,19 +189,19 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> sum </identifier>
+              <identifier_local_3_used> sum </identifier_local_3_used>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> sum </identifier>
+                  <identifier_local_3_used> sum </identifier_local_3_used>
                 </term>
                 <symbol> + </symbol>
                 <term>
-                  <identifier> a </identifier>
+                  <identifier_local_0_used> a </identifier_local_0_used>
                   <symbol> [ </symbol>
                   <expression>
                     <term>
-                      <identifier> i </identifier>
+                      <identifier_local_2_used> i </identifier_local_2_used>
                     </term>
                   </expression>
                   <symbol> ] </symbol>
@@ -211,11 +211,11 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> i </identifier>
+              <identifier_local_2_used> i </identifier_local_2_used>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> i </identifier>
+                  <identifier_local_2_used> i </identifier_local_2_used>
                 </term>
                 <symbol> + </symbol>
                 <term>
@@ -229,9 +229,9 @@
         </whileStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier> Output </identifier>
+          <identifier_class_used> Output </identifier_class_used>
           <symbol> . </symbol>
-          <identifier> printString </identifier>
+          <identifier_subroutine_used> printString </identifier_subroutine_used>
           <symbol> ( </symbol>
           <expressionList>
             <expression>
@@ -245,18 +245,18 @@
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier> Output </identifier>
+          <identifier_class_used> Output </identifier_class_used>
           <symbol> . </symbol>
-          <identifier> printInt </identifier>
+          <identifier_subroutine_used> printInt </identifier_subroutine_used>
           <symbol> ( </symbol>
           <expressionList>
             <expression>
               <term>
-                <identifier> sum </identifier>
+                <identifier_local_3_used> sum </identifier_local_3_used>
               </term>
               <symbol> / </symbol>
               <term>
-                <identifier> length </identifier>
+                <identifier_local_1_used> length </identifier_local_1_used>
               </term>
             </expression>
           </expressionList>
@@ -265,9 +265,9 @@
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier> Output </identifier>
+          <identifier_class_used> Output </identifier_class_used>
           <symbol> . </symbol>
-          <identifier> println </identifier>
+          <identifier_subroutine_used> println </identifier_subroutine_used>
           <symbol> ( </symbol>
           <expressionList>
           </expressionList>

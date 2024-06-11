@@ -13,6 +13,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_compileProgram(t *testing.T) {
+	t.Run("Testing happy classes", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
+		dir := "../test_programs/project_11/engine/ArrayTest/"
+		testCases := []testCase{
+			{name: "arrayTest", fp: "Main"},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+
+				tknzr := token.NewTokenizer(string(input))
+				e := engine.NewEngine(&tknzr)
+
+				e.Tknzr.Advance()
+				got := e.CompileClass()
+
+				assert.Empty(t, e.Errors)
+				assert.Equal(t, want, removeWhiteSpaces(got))
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
+			})
+		}
+	})
+}
+
 func Test_compileClass(t *testing.T) {
 	t.Run("Testing happy classes", func(t *testing.T) {
 		type testCase struct {
