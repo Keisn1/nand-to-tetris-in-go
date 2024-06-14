@@ -1,0 +1,6 @@
+{
+    while (3>2) {
+        do Output.printInt(10);
+    }
+    return;
+}

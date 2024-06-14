@@ -262,10 +262,14 @@ func (e *Engine) CompileIfStatement() string {
 
 	ret += e.CompileExpression()
 
+	e.vmWriter.WriteArithmetic(vmWriter.NOT)
+
 	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	// statement 1
+	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + ".L1")
 	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
@@ -276,6 +280,8 @@ func (e *Engine) CompileIfStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + ".L2")
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L1")
 	if e.Tknzr.Keyword() == token.ELSE {
 		if err := e.eatKeyword(token.ELSE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
@@ -291,6 +297,8 @@ func (e *Engine) CompileIfStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 		}
 	}
+
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L2")
 	return ret + xmlEnd(IF_T)
 }
 
@@ -305,6 +313,7 @@ func (e *Engine) CompileWhileStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L1")
 	ret += e.CompileExpression()
 
 	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
@@ -315,12 +324,16 @@ func (e *Engine) CompileWhileStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	e.vmWriter.WriteArithmetic(vmWriter.NOT)
+	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + ".L2")
 	ret += e.CompileStatements()
+	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + ".L1")
 
 	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L2")
 	return ret + xmlEnd(WHILE_T)
 }
 
@@ -331,7 +344,7 @@ func (e *Engine) CompileDoStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	name := e.Tknzr.Identifier()
+	identifier := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
@@ -353,11 +366,15 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		expList, _ := e.CompileExpressionList()
-		ret += expList
+		count := e.CompileExpressionList()
+
 		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
+
+		e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count)
+		e.vmWriter.WritePop(vmWriter.TEMP, 0)
+
 	case token.DOT:
 
 		if err := e.eatSymbol(token.DOT, &ret); err != nil {
@@ -373,10 +390,9 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		expList, count := e.CompileExpressionList()
-		ret += expList
+		count := e.CompileExpressionList()
 
-		e.vmWriter.WriteCall(name+token.DOT+subRoutineName, count)
+		e.vmWriter.WriteCall(identifier+token.DOT+subRoutineName, count)
 		e.vmWriter.WritePop(vmWriter.TEMP, 0)
 
 		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
@@ -397,7 +413,7 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
-	name := e.Tknzr.Identifier()
+	identifier := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
@@ -424,7 +440,7 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
-	e.vmWriter.WritePop(vmWriter.LOCAL, e.symTab.IndexOf(name))
+	e.vmWriter.WritePop(vmWriter.LOCAL, e.symTab.IndexOf(identifier))
 
 	return ret + xmlEnd(LET_T)
 }
@@ -440,13 +456,15 @@ func (e *Engine) CompileExpression() string {
 
 		ret += e.CompileTerm()
 
+		// we are compiling term (op term)*
+		// defer is LastIn FirstOut, so it is working like the stack machine
 		switch op {
 		default:
-			e.vmWriter.WriteArithmetic(tokenToVmWriter[op])
+			defer e.vmWriter.WriteArithmetic(opSymbolToVmWriter[op])
 		case token.STAR:
-			e.vmWriter.WriteCall("Math.multiply", 2)
+			defer e.vmWriter.WriteCall("Math.multiply", 2)
 		case token.SLASH:
-			e.vmWriter.WriteCall("Math.divide", 2)
+			defer e.vmWriter.WriteCall("Math.divide", 2)
 		}
 
 	}
@@ -475,10 +493,12 @@ func (e *Engine) CompileTerm() string {
 		switch e.Tknzr.Keyword() {
 		case token.TRUE:
 			e.eatKeyword(token.TRUE, &ret)
+			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.TRUE)
 		case token.FALSE:
 			e.eatKeyword(token.FALSE, &ret)
 		case token.NULL:
 			e.eatKeyword(token.NULL, &ret)
+			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.NULL)
 		case token.THIS:
 			e.eatKeyword(token.THIS, &ret)
 		default:
@@ -506,7 +526,7 @@ func (e *Engine) CompileTerm() string {
 			}
 
 			ret += e.CompileTerm()
-			e.vmWriter.WriteArithmetic(vmWriter.NEG)
+			e.vmWriter.WriteArithmetic(unaryOpToVmWriter[token.MINUS])
 
 		case token.TILDE:
 			if err := e.eatSymbol(token.TILDE, &ret); err != nil {
@@ -514,17 +534,18 @@ func (e *Engine) CompileTerm() string {
 			}
 
 			ret += e.CompileTerm()
+			e.vmWriter.WriteArithmetic(unaryOpToVmWriter[token.TILDE])
 		}
 
 	case token.IDENTIFIER:
-		name := e.Tknzr.Identifier()
+		identifier := e.Tknzr.Identifier()
 		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
 		switch e.Tknzr.Symbol() {
 		default:
-			e.vmWriter.WritePush(e.symTab.KindOf(name), e.symTab.IndexOf(name))
+			e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
 		case token.LSQUARE:
 			if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -541,21 +562,20 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			expList, count := e.CompileExpressionList()
-			ret += expList
+			count := e.CompileExpressionList()
 
 			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			e.vmWriter.WriteCall(token.DOT+name, count)
-			e.vmWriter.WritePop(vmWriter.TEMP, 0)
+			e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count)
 
 		case token.DOT:
 			if err := e.eatSymbol(token.DOT, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
+			subRoutinename := e.Tknzr.Identifier()
 			if err := e.eatIdentifier(&ret, false); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
@@ -564,8 +584,9 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			expList, _ := e.CompileExpressionList()
-			ret += expList
+			count := e.CompileExpressionList()
+
+			e.vmWriter.WriteCall(identifier+token.DOT+subRoutinename, count)
 
 			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -576,7 +597,7 @@ func (e *Engine) CompileTerm() string {
 	return ret + xmlEnd(TERM_T)
 }
 
-func (e *Engine) CompileExpressionList() (string, int) {
+func (e *Engine) CompileExpressionList() int {
 	ret := xmlStart("expressionList")
 
 	count := 0
@@ -590,7 +611,7 @@ func (e *Engine) CompileExpressionList() (string, int) {
 			ret += e.CompileExpression()
 		}
 	}
-	return ret + xmlEnd("expressionList"), count
+	return count
 }
 
 func (e *Engine) CompileReturn() string {

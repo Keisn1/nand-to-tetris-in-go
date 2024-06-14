@@ -14,11 +14,15 @@ import (
 func Test_VmWriter(t *testing.T) {
 	dir := t.TempDir()
 
-	out := filepath.Join(dir, "test.vm")
+	filename := "test"
+	out := filepath.Join(dir, filename+".vm")
 	vw := vmWriter.NewVmWriter(out)
 
-	want := ""
+	gotFilename := vw.GetFilename()
+	wantFilename := "Test"
+	assert.Equal(t, wantFilename, gotFilename)
 
+	want := ""
 	segment := vmWriter.CONST
 	index := 1
 	vw.WritePush(segment, index)

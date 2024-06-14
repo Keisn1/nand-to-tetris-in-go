@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 const (
-	ADD = "add"
-	SUB = "sub"
-	NEG = "neg"
-	EQ  = "eq"
-	GT  = "gt"
-	LT  = "lt"
-	AND = "and"
-	OR  = "or"
-	NOT = "not"
+	ADD   = "add"
+	SUB   = "sub"
+	NEG   = "neg"
+	EQUAL = "eq"
+	GT    = "gt"
+	LT    = "lt"
+	AND   = "and"
+	OR    = "or"
+	NOT   = "not"
 )
 
 const (
@@ -29,6 +31,12 @@ const (
 	CONST   = "constant"
 )
 
+const (
+	NULL  = 0
+	FALSE = 0
+	TRUE  = -1
+)
+
 type VmWriter struct {
 	file *os.File
 }
@@ -39,6 +47,12 @@ func NewVmWriter(fp string) VmWriter {
 		log.Fatalln("NewVmWriter:", err)
 	}
 	return VmWriter{file: file}
+}
+
+func (vw VmWriter) GetFilename() string {
+	base := filepath.Base(vw.file.Name())
+	name := strings.TrimSuffix(base, filepath.Ext(base))
+	return strings.ToUpper(name[0:1]) + name[1:]
 }
 
 func (vw VmWriter) WritePush(segment string, index int) {

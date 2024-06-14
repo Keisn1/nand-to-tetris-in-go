@@ -1,0 +1,16 @@
+push constant 1
+push constant 2
+lt
+not
+if-goto IfWithElse.L1
+push constant 10
+call Output.printInt 1
+pop temp 0
+goto IfWithElse.L2
+label IfWithElse.L1
+push constant 20
+call Output.printInt 1
+pop temp 0
+label IfWithElse.L2
+push constant 0
+return

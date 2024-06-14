@@ -18,29 +18,35 @@ import (
 func Test_subroutineBody(t *testing.T) {
 	t.Run("Testing happy subRoutineBodies", func(t *testing.T) {
 		type testCase struct {
-			name string
-			fp   string
+			name     string
+			filename string
 		}
 
 		dir := "own/bodies/"
 		testCases := []testCase{
-			// {name: "var int x;let x = 2+3;return;", fp: "letStatement2plus3"},
-			// {name: "var int x;let x = 3+4;return;", fp: "letStatement3plus4"},
-			// {name: "var int x;let x = -1;return;", fp: "unaryOperator"},
-			// {name: "var int x;let x = 3-4;return;", fp: "letStatement3minus4"},
-			// {name: "var int x, y;let x = x * y;return;", fp: "mathMulitply"},
-			// {name: "the body of the seven program", fp: "seven"},
-			// {name: "Screen.drawRectangle(x, y, x + width, y + height);", fp: "drawRectangle"},
-			{name: "expression from the course", fp: "expressionFromCourse"},
+			{name: "var int x;let x = 2+3;return;", filename: "letStatement2plus3"},
+			{name: "var int x;let x = 3+4;return;", filename: "letStatement3plus4"},
+			{name: "var int x;let x = -1;return;", filename: "unaryOperatorMinus"},
+			{name: "var int x;let x = ~true;return;", filename: "unaryOperatorTilde"},
+			{name: "var int x;let x = 3-4;return;", filename: "letStatement3minus4"},
+			{name: "var int x, y;let x = x * y;return;", filename: "mathMulitply"},
+			{name: "the body of the seven program", filename: "seven"},
+			{name: "Screen.drawRectangle(x, y, x + width, y + height);", filename: "drawRectangle"},
+			{name: "expression from the course", filename: "expressionFromCourse"},
+			{name: "expression from the course with do", filename: "expressionFromCourseWithDo"},
+			{name: "let statement function call with List", filename: "letStatementFunctionCall"},
+			{name: "if without else", filename: "ifWithoutElse"},
+			{name: "if with else", filename: "ifWithElse"},
+			{name: "while statement", filename: "whileStatement"},
 		}
 
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				input := readFile(t, dir+tc.fp+".jack")
-				want := readFile(t, dir+tc.fp+".vm")
+				input := readFile(t, dir+tc.filename+".jack")
+				want := readFile(t, dir+tc.filename+".vm")
 
 				tempDir := t.TempDir()
-				out := filepath.Join(tempDir, tc.fp+".vm")
+				out := filepath.Join(tempDir, tc.filename+".vm")
 				vw := vmWriter.NewVmWriter(out)
 				tknzr := token.NewTokenizer(input)
 				e := engine.NewEngine(&tknzr, &vw)

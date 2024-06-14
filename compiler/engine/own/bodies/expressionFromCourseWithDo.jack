@@ -1,0 +1,5 @@
+{
+    var int y, z;
+    do g(2, y, -z);
+    return;
+}

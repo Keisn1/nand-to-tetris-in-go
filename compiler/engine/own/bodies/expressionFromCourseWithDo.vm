@@ -1,0 +1,8 @@
+push constant 2
+push local 0
+push local 1
+neg
+call ExpressionFromCourseWithDo.g 3
+pop temp 0
+push constant 0
+return

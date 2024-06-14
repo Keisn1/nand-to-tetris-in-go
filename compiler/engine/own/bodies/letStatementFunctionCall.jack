@@ -1,0 +1,5 @@
+{
+    var List v;
+    let v = List.new(5,null);
+    return;
+}

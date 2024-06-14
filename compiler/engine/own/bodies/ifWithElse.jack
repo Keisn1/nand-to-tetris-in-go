@@ -1,0 +1,8 @@
+{
+    if (1<2) {
+        do Output.printInt(10);
+    } else {
+        do Output.printInt(20);
+    }
+    return;
+}
