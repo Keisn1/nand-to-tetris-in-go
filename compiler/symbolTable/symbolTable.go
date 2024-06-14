@@ -8,8 +8,8 @@ type Symbol struct {
 }
 type SymbolTable struct {
 	classLevel            map[string]Symbol
-	countsClassLevel      map[string]int
 	subroutineLevel       map[string]Symbol
+	countsClassLevel      map[string]int
 	countsSubroutineLevel map[string]int
 }
 

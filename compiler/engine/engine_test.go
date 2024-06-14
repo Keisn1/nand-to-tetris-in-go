@@ -2,6 +2,7 @@ package engine_test
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -14,75 +15,130 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// func Test_compileProgram(t *testing.T) {
-// 	t.Run("Testing happy classes", func(t *testing.T) {
-// 		type testCase struct {
-// 			name string
-// 			fp   string
-// 		}
-// 		dir := "own/test_programs/project_11/engine/ArrayTest/"
-// 		testCases := []testCase{
-// 			{name: "arrayTest", fp: "Main"},
-// 		}
-// 		for _, tc := range testCases {
-// 			t.Run(tc.name, func(t *testing.T) {
-// 				input := readFile(t, dir+tc.fp+".jack")
-// 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+func Test_subroutineBody(t *testing.T) {
+	t.Run("Testing happy subRoutineBodies", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
 
-// 				tknzr := token.NewTokenizer(string(input))
-// 				e := engine.NewEngine(&tknzr)
+		dir := "own/bodies/"
+		testCases := []testCase{
+			// {name: "var int x;let x = 2+3;return;", fp: "letStatement2plus3"},
+			// {name: "var int x;let x = 3+4;return;", fp: "letStatement3plus4"},
+			// {name: "var int x;let x = -1;return;", fp: "unaryOperator"},
+			// {name: "var int x;let x = 3-4;return;", fp: "letStatement3minus4"},
+			// {name: "var int x, y;let x = x * y;return;", fp: "mathMulitply"},
+			// {name: "the body of the seven program", fp: "seven"},
+			// {name: "Screen.drawRectangle(x, y, x + width, y + height);", fp: "drawRectangle"},
+			{name: "expression from the course", fp: "expressionFromCourse"},
+		}
 
-// 				e.Tknzr.Advance()
-// 				got := e.CompileClass()
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := readFile(t, dir+tc.fp+".vm")
 
-// 				assert.Empty(t, e.Errors)
-// 				assert.Equal(t, want, removeWhiteSpaces(got))
-// 				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
-// 			})
-// 		}
-// 	})
-// }
+				tempDir := t.TempDir()
+				out := filepath.Join(tempDir, tc.fp+".vm")
+				vw := vmWriter.NewVmWriter(out)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr, &vw)
 
-// func Test_compileClass(t *testing.T) {
-// 	t.Run("Testing happy classes", func(t *testing.T) {
-// 		type testCase struct {
-// 			name string
-// 			fp   string
-// 		}
+				e.Tknzr.Advance()
+				e.CompileSubroutineBody()
+				vw.Close()
 
-// 		dir := "../test_programs/project_11/engine/own/classes/"
-// 		testCases := []testCase{
-// 			{name: "empty main", fp: "emptyMain"},
-// 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
-// 			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
-// 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
-// 			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
-// 			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
-// 			{name: "varDec in one line", fp: "classVarDecInARow"},
-// 			{name: "main with mulitple subroutines", fp: "main2Subroutine"},
-// 			{name: "with do statement method call", fp: "mainWithDoStatements"},
-// 			{name: "with method call other class", fp: "withMethodCallOtherClass"},
-// 			{name: "with ext classes", fp: "arrayTest1"},
-// 			{name: "with more ext classes", fp: "arrayTest2"},
-// 		}
+				assert.Empty(t, e.Errors)
+				assert.FileExists(t, out)
 
-// 		for _, tc := range testCases {
-// 			t.Run(tc.name, func(t *testing.T) {
-// 				input := readFile(t, dir+tc.fp+".jack")
-// 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
+				got, err := os.ReadFile(out)
+				fmt.Println(string(got))
+				assert.NoError(t, err)
+				assert.Equal(t, want, string(got))
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
+			})
+		}
+	})
+}
 
-// 				tknzr := token.NewTokenizer(string(input))
-// 				e := engine.NewEngine(&tknzr)
+func Test_compileClass(t *testing.T) {
+	t.Run("Testing happy classes", func(t *testing.T) {
+		type testCase struct {
+			name string
+			fp   string
+		}
 
-// 				e.Tknzr.Advance()
-// 				got := e.CompileClass()
+		dir := "own/classes/"
+		testCases := []testCase{
+			{name: "empty main", fp: "emptyMain"},
+			// 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
+			// 			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
+			// 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},
+			// 			{name: "main arbitrary class variable declarations", fp: "MainWith3ClassVarDec"},
+			// 			{name: "main with empty subroutine", fp: "MainWithEmptySubroutine"},
+			// 			{name: "varDec in one line", fp: "classVarDecInARow"},
+			// 			{name: "main with mulitple subroutines", fp: "main2Subroutine"},
+			// 			{name: "with do statement method call", fp: "mainWithDoStatements"},
+			// 			{name: "with method call other class", fp: "withMethodCallOtherClass"},
+			// 			{name: "with ext classes", fp: "arrayTest1"},
+			// 			{name: "with more ext classes", fp: "arrayTest2"},
+		}
 
-// 				assert.Empty(t, e.Errors)
-// 				assert.Equal(t, want, removeWhiteSpaces(got))
-// 				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
-// 			})
-// 		}
-// 	})
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				input := readFile(t, dir+tc.fp+".jack")
+				want := readFile(t, dir+tc.fp+".vm")
+
+				tempDir := t.TempDir()
+				out := filepath.Join(tempDir, tc.fp+".vm")
+				vw := vmWriter.NewVmWriter(out)
+				tknzr := token.NewTokenizer(input)
+				e := engine.NewEngine(&tknzr, &vw)
+
+				e.Tknzr.Advance()
+				e.CompileClass()
+				vw.Close()
+
+				assert.Empty(t, e.Errors)
+				assert.FileExists(t, out)
+
+				got, err := os.ReadFile(out)
+				fmt.Println(string(got))
+				assert.NoError(t, err)
+				assert.Equal(t, want, string(got))
+				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
+			})
+		}
+	})
+}
+
+func readFile(t *testing.T, fp string) string {
+	t.Helper()
+	input, err := os.ReadFile(fp)
+	assert.NoError(t, err, "error reading file")
+	return string(input)
+}
+
+func removeWhiteSpaces(input string) string {
+	regex := regexp.MustCompile(`\s+`)
+	return regex.ReplaceAllString(input, "")
+}
+
+func assertErrorFound(t *testing.T, gotErrs []error, wantErr error) {
+	t.Helper()
+	foundErr := false
+	for _, gotErr := range gotErrs {
+		if errors.Is(gotErr, wantErr) {
+			foundErr = true
+		}
+	}
+
+	if !foundErr {
+		t.Log("Could not find error:", wantErr, "\nPresent errors: ", gotErrs)
+		t.Fail()
+	}
+}
 
 // 	t.Run("Testing falsy class statements", func(t *testing.T) {
 // 		type testCase struct {
@@ -307,70 +363,74 @@ import (
 // 	})
 // }
 
-func Test_subroutineBody(t *testing.T) {
-	t.Run("Testing happy subRoutineBodies", func(t *testing.T) {
-		type testCase struct {
-			name string
-			fp   string
-		}
+// func Test_classes(t *testing.T) {
+// 	t.Run("Testing happy subRoutineBodies", func(t *testing.T) {
+// 		type testCase struct {
+// 			name string
+// 			fp   string
+// 		}
 
-		dir := "own/"
-		testCases := []testCase{
-			{name: "var int x;let x = 2+3;return;", fp: "letStatement2plus3"},
-		}
+// 		dir := "own/classes"
+// 		testCases := []testCase{
+// 			{name: "emptyMain", fp: "emptyMain"},
+// 		}
 
-		for _, tc := range testCases {
-			t.Run(tc.name, func(t *testing.T) {
-				input := readFile(t, dir+tc.fp+".jack")
-				want := readFile(t, dir+tc.fp+".vm")
+// 		for _, tc := range testCases {
+// 			t.Run(tc.name, func(t *testing.T) {
+// 				input := readFile(t, dir+tc.fp+".jack")
+// 				want := readFile(t, dir+tc.fp+".vm")
 
-				dir := t.TempDir()
-				out := filepath.Join(dir, "test.vm")
-				vw := vmWriter.NewVmWriter(out)
-				tknzr := token.NewTokenizer(input)
-				e := engine.NewEngine(&tknzr, &vw)
+// 				tempDir := t.TempDir()
+// 				out := filepath.Join(tempDir, tc.fp+".vm")
+// 				vw := vmWriter.NewVmWriter(out)
+// 				tknzr := token.NewTokenizer(input)
+// 				e := engine.NewEngine(&tknzr, &vw)
 
-				e.Tknzr.Advance()
-				e.CompileSubroutineBody()
-				vw.Close()
+// 				e.Tknzr.Advance()
+// 				e.CompileSubroutineBody()
+// 				vw.Close()
 
-				assert.Empty(t, e.Errors)
-				assert.FileExists(t, out)
+// 				assert.Empty(t, e.Errors)
+// 				assert.FileExists(t, out)
 
-				got, err := os.ReadFile(out)
-				assert.NoError(t, err)
-				assert.Equal(t, want, string(got))
-				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
-			})
-		}
-	})
+// 				got, err := os.ReadFile(out)
+// 				fmt.Println(string(got))
+// 				assert.NoError(t, err)
+// 				assert.Equal(t, want, string(got))
+// 				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
+// 			})
+// 		}
+// 	})
+// }
 
-	// 	t.Run("Testing falsy subroutine bodies", func(t *testing.T) {
-	// 		type testCase struct {
-	// 			inputs   []string
-	// 			wantErrs []error
-	// 		}
-	// 		testCases := []testCase{
-	// 			{
-	// 				inputs:   []string{"", "   "},
-	// 				wantErrs: []error{engine.NewErrSyntaxUnexpectedToken(token.LBRACE, token.EOF)},
-	// 			},
-	// 		}
-	// 		for _, tc := range testCases {
-	// 			for _, input := range tc.inputs {
-	// 				tknzr := token.NewTokenizer(input)
-	// 				e := engine.NewEngine(&tknzr)
+// func Test_compileProgram(t *testing.T) {
+// 	t.Run("Testing happy classes", func(t *testing.T) {
+// 		type testCase struct {
+// 			name string
+// 			fp   string
+// 		}
+// 		dir := "own/test_programs/project_11/engine/ArrayTest/"
+// 		testCases := []testCase{
+// 			{name: "arrayTest", fp: "Main"},
+// 		}
+// 		for _, tc := range testCases {
+// 			t.Run(tc.name, func(t *testing.T) {
+// 				input := readFile(t, dir+tc.fp+".jack")
+// 				want := removeWhiteSpaces(readFile(t, dir+tc.fp+".xml"))
 
-	// 				e.Tknzr.Advance()
-	// 				e.CompileSubroutineBody()
+// 				tknzr := token.NewTokenizer(string(input))
+// 				e := engine.NewEngine(&tknzr)
 
-	//				for _, wantErr := range tc.wantErrs {
-	//					assertErrorFound(t, e.Errors, wantErr)
-	//				}
-	//			}
-	//		}
-	//	})
-}
+// 				e.Tknzr.Advance()
+// 				got := e.CompileClass()
+
+// 				assert.Empty(t, e.Errors)
+// 				assert.Equal(t, want, removeWhiteSpaces(got))
+// 				assert.Equal(t, e.Tknzr.Keyword(), token.EOF)
+// 			})
+// 		}
+// 	})
+// }
 
 // func Test_VarDec(t *testing.T) {
 // 	t.Run("Testing falsy varDeclarations", func(t *testing.T) {
@@ -619,30 +679,3 @@ func Test_subroutineBody(t *testing.T) {
 // 		}
 // 	})
 // }
-
-func readFile(t *testing.T, fp string) string {
-	t.Helper()
-	input, err := os.ReadFile(fp)
-	assert.NoError(t, err, "error reading file")
-	return string(input)
-}
-
-func removeWhiteSpaces(input string) string {
-	regex := regexp.MustCompile(`\s+`)
-	return regex.ReplaceAllString(input, "")
-}
-
-func assertErrorFound(t *testing.T, gotErrs []error, wantErr error) {
-	t.Helper()
-	foundErr := false
-	for _, gotErr := range gotErrs {
-		if errors.Is(gotErr, wantErr) {
-			foundErr = true
-		}
-	}
-
-	if !foundErr {
-		t.Log("Could not find error:", wantErr, "\nPresent errors: ", gotErrs)
-		t.Fail()
-	}
-}

@@ -26,7 +26,7 @@ const (
 	THAT    = "that"
 	POINTER = "pointer"
 	TEMP    = "temp"
-	CONST   = "const"
+	CONST   = "constant"
 )
 
 type VmWriter struct {

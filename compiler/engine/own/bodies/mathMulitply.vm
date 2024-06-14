@@ -1,0 +1,6 @@
+push local 0
+push local 1
+call Math.multiply 2
+pop local 0
+push constant 0
+return

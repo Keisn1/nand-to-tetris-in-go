@@ -331,6 +331,7 @@ func (e *Engine) CompileDoStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	name := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
@@ -352,16 +353,18 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		ret += e.CompileExpressionList()
-
+		expList, _ := e.CompileExpressionList()
+		ret += expList
 		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 	case token.DOT:
+
 		if err := e.eatSymbol(token.DOT, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
+		subRoutineName := e.Tknzr.Identifier()
 		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
@@ -370,7 +373,11 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		ret += e.CompileExpressionList()
+		expList, count := e.CompileExpressionList()
+		ret += expList
+
+		e.vmWriter.WriteCall(name+token.DOT+subRoutineName, count)
+		e.vmWriter.WritePop(vmWriter.TEMP, 0)
 
 		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -390,6 +397,7 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
+	name := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(&ret, false); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
@@ -416,6 +424,8 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
+	e.vmWriter.WritePop(vmWriter.LOCAL, e.symTab.IndexOf(name))
+
 	return ret + xmlEnd(LET_T)
 }
 
@@ -425,9 +435,20 @@ func (e *Engine) CompileExpression() string {
 	ret += e.CompileTerm()
 
 	for isOperator(e.Tknzr.Symbol()) {
+		op := e.Tknzr.Symbol()
 		e.eatSymbol(e.Tknzr.Symbol(), &ret)
 
 		ret += e.CompileTerm()
+
+		switch op {
+		default:
+			e.vmWriter.WriteArithmetic(tokenToVmWriter[op])
+		case token.STAR:
+			e.vmWriter.WriteCall("Math.multiply", 2)
+		case token.SLASH:
+			e.vmWriter.WriteCall("Math.divide", 2)
+		}
+
 	}
 
 	return ret + xmlEnd(EXPRESSION_T)
@@ -466,7 +487,6 @@ func (e *Engine) CompileTerm() string {
 
 	case token.SYMBOL:
 		switch e.Tknzr.Symbol() {
-
 		default:
 			e.Errors = append(e.Errors, NewErrSyntaxNotATerm(e.Tknzr.GetTokenLiteral()))
 		case token.LPAREN:
@@ -486,6 +506,7 @@ func (e *Engine) CompileTerm() string {
 			}
 
 			ret += e.CompileTerm()
+			e.vmWriter.WriteArithmetic(vmWriter.NEG)
 
 		case token.TILDE:
 			if err := e.eatSymbol(token.TILDE, &ret); err != nil {
@@ -496,11 +517,14 @@ func (e *Engine) CompileTerm() string {
 		}
 
 	case token.IDENTIFIER:
+		name := e.Tknzr.Identifier()
 		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
 		switch e.Tknzr.Symbol() {
+		default:
+			e.vmWriter.WritePush(e.symTab.KindOf(name), e.symTab.IndexOf(name))
 		case token.LSQUARE:
 			if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -517,11 +541,16 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			ret += e.CompileExpressionList()
+			expList, count := e.CompileExpressionList()
+			ret += expList
 
 			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
+
+			e.vmWriter.WriteCall(token.DOT+name, count)
+			e.vmWriter.WritePop(vmWriter.TEMP, 0)
+
 		case token.DOT:
 			if err := e.eatSymbol(token.DOT, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -535,7 +564,8 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			ret += e.CompileExpressionList()
+			expList, _ := e.CompileExpressionList()
+			ret += expList
 
 			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -546,18 +576,21 @@ func (e *Engine) CompileTerm() string {
 	return ret + xmlEnd(TERM_T)
 }
 
-func (e *Engine) CompileExpressionList() string {
+func (e *Engine) CompileExpressionList() (string, int) {
 	ret := xmlStart("expressionList")
 
+	count := 0
 	if e.isTerm() {
+		count++
 		ret += e.CompileExpression()
 
 		for e.Tknzr.Symbol() == token.KOMMA {
+			count++
 			e.eatSymbol(token.KOMMA, &ret)
 			ret += e.CompileExpression()
 		}
 	}
-	return ret + xmlEnd("expressionList")
+	return ret + xmlEnd("expressionList"), count
 }
 
 func (e *Engine) CompileReturn() string {
@@ -569,11 +602,15 @@ func (e *Engine) CompileReturn() string {
 
 	if e.isTerm() {
 		ret += e.CompileExpression()
+	} else {
+		e.vmWriter.WritePush(vmWriter.CONST, 0)
 	}
 
 	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileReturn: %w", err))
 	}
+
+	e.vmWriter.WriteReturn()
 
 	return ret + xmlEnd(RETURN_T)
 }
@@ -608,6 +645,7 @@ func (e Engine) eatIntVal(ret *string) error {
 		return NewErrSyntaxUnexpectedTokenType(token.INT_CONST, e.Tknzr.GetTokenLiteral())
 	}
 
+	e.vmWriter.WritePush(vmWriter.CONST, e.Tknzr.IntVal())
 	*ret += xmlIntegerConst(e.Tknzr.IntVal())
 	e.Tknzr.Advance()
 	return nil

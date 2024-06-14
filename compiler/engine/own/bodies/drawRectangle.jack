@@ -1,0 +1,5 @@
+{
+    var int x, y, width, height;
+    do Screen.drawRectangle(x, y, x + width, y + height);
+    return;
+}
