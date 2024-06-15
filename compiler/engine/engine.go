@@ -5,13 +5,15 @@ import (
 	"hack/compiler/symbolTable"
 	"hack/compiler/token"
 	"hack/compiler/vmWriter"
+	"strconv"
 )
 
 type Engine struct {
-	Tknzr    *token.Tokenizer
-	vmWriter *vmWriter.VmWriter
-	symTab   symbolTable.SymbolTable
-	Errors   []error
+	Tknzr      *token.Tokenizer
+	vmWriter   *vmWriter.VmWriter
+	symTab     symbolTable.SymbolTable
+	Errors     []error
+	labelCount int
 }
 
 func NewEngine(tknzr *token.Tokenizer, vw *vmWriter.VmWriter) Engine {
@@ -251,6 +253,8 @@ func (e *Engine) CompileStatements() string {
 
 func (e *Engine) CompileIfStatement() string {
 	ret := xmlStart(IF_T)
+	labelCountStr := strconv.Itoa(e.labelCount)
+	e.labelCount++
 
 	if err := e.eatKeyword(token.IF, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
@@ -269,7 +273,7 @@ func (e *Engine) CompileIfStatement() string {
 	}
 
 	// statement 1
-	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + ".L1")
+	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + "." + labelCountStr + ".L1")
 	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
@@ -280,8 +284,8 @@ func (e *Engine) CompileIfStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + ".L2")
-	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L1")
+	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + "." + labelCountStr + ".L2")
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + "." + labelCountStr + ".L1")
 	if e.Tknzr.Keyword() == token.ELSE {
 		if err := e.eatKeyword(token.ELSE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
@@ -298,12 +302,14 @@ func (e *Engine) CompileIfStatement() string {
 		}
 	}
 
-	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L2")
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + "." + labelCountStr + ".L2")
 	return ret + xmlEnd(IF_T)
 }
 
 func (e *Engine) CompileWhileStatement() string {
 	ret := xmlStart(WHILE_T)
+	labelCountStr := strconv.Itoa(e.labelCount)
+	e.labelCount++
 
 	if err := e.eatKeyword(token.WHILE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
@@ -313,7 +319,7 @@ func (e *Engine) CompileWhileStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L1")
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + "." + labelCountStr + ".L1")
 	ret += e.CompileExpression()
 
 	if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
@@ -325,15 +331,15 @@ func (e *Engine) CompileWhileStatement() string {
 	}
 
 	e.vmWriter.WriteArithmetic(vmWriter.NOT)
-	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + ".L2")
+	e.vmWriter.WriteIf(e.vmWriter.GetFilename() + "." + labelCountStr + ".L2")
 	ret += e.CompileStatements()
-	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + ".L1")
+	e.vmWriter.WriteGoto(e.vmWriter.GetFilename() + "." + labelCountStr + ".L1")
 
 	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
-	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + ".L2")
+	e.vmWriter.WriteLabel(e.vmWriter.GetFilename() + "." + labelCountStr + ".L2")
 	return ret + xmlEnd(WHILE_T)
 }
 
@@ -496,6 +502,7 @@ func (e *Engine) CompileTerm() string {
 			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.TRUE)
 		case token.FALSE:
 			e.eatKeyword(token.FALSE, &ret)
+			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.FALSE)
 		case token.NULL:
 			e.eatKeyword(token.NULL, &ret)
 			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.NULL)

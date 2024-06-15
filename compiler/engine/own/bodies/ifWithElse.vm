@@ -2,15 +2,15 @@ push constant 1
 push constant 2
 lt
 not
-if-goto IfWithElse.L1
+if-goto IfWithElse.0.L1
 push constant 10
 call Output.printInt 1
 pop temp 0
-goto IfWithElse.L2
-label IfWithElse.L1
+goto IfWithElse.0.L2
+label IfWithElse.0.L1
 push constant 20
 call Output.printInt 1
 pop temp 0
-label IfWithElse.L2
+label IfWithElse.0.L2
 push constant 0
 return

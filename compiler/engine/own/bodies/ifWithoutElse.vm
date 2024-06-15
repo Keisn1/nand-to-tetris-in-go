@@ -1,11 +1,11 @@
 push constant -1
 not
-if-goto IfWithoutElse.L1
+if-goto IfWithoutElse.0.L1
 push constant 10
 call Output.printInt 1
 pop temp 0
-goto IfWithoutElse.L2
-label IfWithoutElse.L1
-label IfWithoutElse.L2
+goto IfWithoutElse.0.L2
+label IfWithoutElse.0.L1
+label IfWithoutElse.0.L2
 push constant 0
 return

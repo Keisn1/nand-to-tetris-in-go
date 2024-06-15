@@ -1,0 +1,7 @@
+class Square {
+    static int x;
+    let x = 10;
+    function void printX() {
+        do Output.printInt(x)
+    }
+}

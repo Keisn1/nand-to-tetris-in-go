@@ -1,0 +1,11 @@
+push constant 0
+not
+if-goto TestFalseToken.0.L1
+push constant 10
+call Output.printInt 1
+pop temp 0
+goto TestFalseToken.0.L2
+label TestFalseToken.0.L1
+label TestFalseToken.0.L2
+push constant 0
+return

@@ -38,6 +38,9 @@ func Test_subroutineBody(t *testing.T) {
 			{name: "if without else", filename: "ifWithoutElse"},
 			{name: "if with else", filename: "ifWithElse"},
 			{name: "while statement", filename: "whileStatement"},
+			{name: "multiple flow control statements", filename: "flowControl"},
+			{name: "test that false constant is correct", filename: "testFalseToken"},
+			{name: "compiling new", filename: "compilingNew"},
 		}
 
 		for _, tc := range testCases {

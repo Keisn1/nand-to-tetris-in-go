@@ -1,0 +1,24 @@
+label FlowControl.0.L1
+push constant 3
+push constant 2
+gt
+not
+if-goto FlowControl.0.L2
+push constant 1
+push constant 2
+lt
+not
+if-goto FlowControl.1.L1
+push constant 10
+call Output.printInt 1
+pop temp 0
+goto FlowControl.1.L2
+label FlowControl.1.L1
+push constant 20
+call Output.printInt 1
+pop temp 0
+label FlowControl.1.L2
+goto FlowControl.0.L1
+label FlowControl.0.L2
+push constant 0
+return

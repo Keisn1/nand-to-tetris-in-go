@@ -1,0 +1,6 @@
+{
+    if (false) {
+        do Output.printInt(10);
+    }
+    return;
+}

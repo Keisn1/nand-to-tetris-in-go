@@ -1,13 +1,13 @@
-label WhileStatement.L1
+label WhileStatement.0.L1
 push constant 3
 push constant 2
 gt
 not
-if-goto WhileStatement.L2
+if-goto WhileStatement.0.L2
 push constant 10
 call Output.printInt 1
 pop temp 0
-goto WhileStatement.L1
-label WhileStatement.L2
+goto WhileStatement.0.L1
+label WhileStatement.0.L2
 push constant 0
 return
