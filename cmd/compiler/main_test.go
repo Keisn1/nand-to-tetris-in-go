@@ -22,12 +22,12 @@ func TestFullPrograms(t *testing.T) {
 	testCases := []testCase{
 		{
 
-			path:         dir + "Seven/",
+			path:         dir + "Seven",
 			wantOutFiles: []string{"Main.vm"},
 		},
 		{
 
-			path:         dir + "ConvertToBin/",
+			path:         dir + "ConvertToBin",
 			wantOutFiles: []string{"Main.vm"},
 		},
 		{
@@ -40,14 +40,14 @@ func TestFullPrograms(t *testing.T) {
 			path:         dir + "Pong",
 			wantOutFiles: []string{"Main.vm", "Bat.vm", "Ball.vm", "PongGame.vm"},
 		},
-		// {
-		// 	path:     "test_programs/project11/ExpressionLessSquare",
-		// 	outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
-		// },
-		// {
-		// 	path:     "test_programs/project11/Square",
-		// 	outFiles: []string{"Main.xml", "Square.xml", "SquareGame.xml"},
-		// },
+		{
+			path:         dir + "Average",
+			wantOutFiles: []string{"Main.vm"},
+		},
+		{
+			path:         dir + "ComplexArrays",
+			wantOutFiles: []string{"Main.vm"},
+		},
 	}
 
 	for _, tc := range testCases {

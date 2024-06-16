@@ -1,0 +1,6 @@
+function void test () {
+    var Array arr;
+    let arr = Array.new(5);
+    let arr[arr[2]] = arr[arr[3]];
+    return;
+}

@@ -367,17 +367,6 @@ func (e *Engine) CompileDoStatement() string {
 	}
 
 	switch e.Tknzr.Symbol() {
-	case token.LSQUARE:
-		if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
-			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
-		}
-
-		ret += e.CompileExpression()
-
-		if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
-			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
-		}
-
 	case token.LPAREN:
 		e.vmWriter.WritePush(vmWriter.POINTER, 0)
 		if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
@@ -450,11 +439,31 @@ func (e *Engine) CompileLetStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 		}
 
+		e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
 		ret += e.CompileExpression()
+
+		e.vmWriter.WriteArithmetic(vmWriter.ADD)
 
 		if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 		}
+
+		if err := e.eatSymbol(token.EQUAL, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
+		}
+
+		ret += e.CompileExpression()
+
+		if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
+		}
+
+		e.vmWriter.WritePop(vmWriter.TEMP, 0)
+		e.vmWriter.WritePop(vmWriter.POINTER, 1)
+		e.vmWriter.WritePush(vmWriter.TEMP, 0)
+		e.vmWriter.WritePop(vmWriter.THAT, 0)
+
+		return ret + xmlEnd(LET_T)
 	}
 
 	if err := e.eatSymbol(token.EQUAL, &ret); err != nil {
@@ -472,7 +481,6 @@ func (e *Engine) CompileLetStatement() string {
 		e.vmWriter.WritePop(vmWriter.THIS, e.symTab.IndexOf(identifier))
 	default:
 		e.vmWriter.WritePop(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
-
 	}
 
 	return ret + xmlEnd(LET_T)
@@ -601,11 +609,16 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
+			e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
 			ret += e.CompileExpression()
+			e.vmWriter.WriteArithmetic(vmWriter.ADD)
 
 			if err := e.eatSymbol(token.RSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
+
+			e.vmWriter.WritePop(vmWriter.POINTER, 1)
+			e.vmWriter.WritePush(vmWriter.THAT, 0)
 
 		case token.LPAREN:
 			e.vmWriter.WritePush(vmWriter.POINTER, 0)

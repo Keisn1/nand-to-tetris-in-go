@@ -1,0 +1,6 @@
+function void test () {
+    var Array arr;
+    let arr = Array.new(5);
+    let arr[3] = 17;
+    return;
+}

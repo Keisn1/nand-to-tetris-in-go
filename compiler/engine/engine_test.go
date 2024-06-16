@@ -41,7 +41,11 @@ func Test_subroutineBody(t *testing.T) {
 			{name: "multiple flow control statements", filename: "flowControl"},
 			{name: "test that false constant is correct", filename: "testFalseToken"},
 			{name: "construction and manipulation of objects", filename: "objectManipulation"},
-			// {name: "string handling", filename: "outputString"},
+			{name: "string handling", filename: "outputString"},
+			{name: "array manipulation", filename: "arrayManipulation"},
+			{name: "array manipulation 2", filename: "arrayManipulation2"},
+			{name: "array manipulation 3", filename: "arrayManipulation3"},
+			{name: "array manipulation 4", filename: "arrayManipulation4"},
 		}
 
 		for _, tc := range testCases {
