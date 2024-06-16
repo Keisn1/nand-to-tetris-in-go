@@ -1,3 +1,4 @@
+function LetStatement3plus4.test 1
 push constant 3
 push constant 4
 add

@@ -1,4 +1,4 @@
-{
+function void test () {
     var int x, y;
     let x = x * y;
     return;

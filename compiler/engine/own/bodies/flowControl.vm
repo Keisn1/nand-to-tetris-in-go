@@ -1,3 +1,4 @@
+function FlowControl.test 0
 label FlowControl.0.L1
 push constant 3
 push constant 2

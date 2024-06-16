@@ -1,3 +1,4 @@
+function WhileStatement.test 0
 label WhileStatement.0.L1
 push constant 3
 push constant 2

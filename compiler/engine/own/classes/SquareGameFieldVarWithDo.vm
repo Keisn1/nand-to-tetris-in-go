@@ -1,0 +1,8 @@
+function SquareGameFieldVarWithDo.moveSquare 0
+push argument 0
+pop pointer 0
+push this 0
+call Square.moveRight 1
+pop temp 0
+push constant 0
+return

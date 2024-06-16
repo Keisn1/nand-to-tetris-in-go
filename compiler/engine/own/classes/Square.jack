@@ -1,0 +1,17 @@
+class Square {
+    function void main() {
+        do callDraw();
+        return;
+    }
+
+    method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + size, y + size);
+        return;
+    }
+
+    method void callDraw() {
+        do draw();
+        return;
+    }
+}

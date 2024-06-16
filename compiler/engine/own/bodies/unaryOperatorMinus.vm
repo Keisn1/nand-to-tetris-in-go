@@ -1,3 +1,4 @@
+function UnaryOperatorMinus.test 1
 push constant 1
 neg
 pop local 0

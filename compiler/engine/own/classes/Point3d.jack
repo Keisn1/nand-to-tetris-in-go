@@ -1,0 +1,12 @@
+class Point {
+    field int x, y, z;
+    static int pointCount;
+
+    constructor Point new(int ax, int ay, int az) {
+        let x = ax;
+        let y = ay;
+        let z = az;
+        let pointCount = pointCount + 1;
+        return this;
+    }
+}

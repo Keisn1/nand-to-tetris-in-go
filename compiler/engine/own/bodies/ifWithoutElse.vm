@@ -1,4 +1,6 @@
-push constant -1
+function IfWithoutElse.test 0
+push constant 1
+neg
 not
 if-goto IfWithoutElse.0.L1
 push constant 10

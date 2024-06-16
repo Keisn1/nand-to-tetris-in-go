@@ -1,0 +1,4 @@
+function Square.main 0
+
+
+call Square.callDraw 1

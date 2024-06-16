@@ -14,14 +14,26 @@ import (
 
 func TestFullPrograms(t *testing.T) {
 	type testCase struct {
-		path     string
-		outFiles []string
+		path         string
+		wantOutFiles []string
 	}
+
+	dir := "test_programs/project11/"
 	testCases := []testCase{
 		{
 
-			path:     "test_programs/project11/ArrayTest/Main.jack",
-			outFiles: []string{"Main.xml"},
+			path:         dir + "Seven/",
+			wantOutFiles: []string{"Main.vm"},
+		},
+		{
+
+			path:         dir + "ConvertToBin/",
+			wantOutFiles: []string{"Main.vm"},
+		},
+		{
+
+			path:         dir + "Square",
+			wantOutFiles: []string{"Main.vm", "Square.vm", "SquareGame.vm"},
 		},
 		// {
 		// 	path:     "test_programs/project11/ExpressionLessSquare",
@@ -38,7 +50,6 @@ func TestFullPrograms(t *testing.T) {
 		log.SetOutput(&buf)
 
 		flag.CommandLine = flag.NewFlagSet("cmdLineArgs", flag.ExitOnError)
-		flag.CommandLine = flag.NewFlagSet("cmdLineArgs", flag.ExitOnError)
 		os.Args = []string{"flag ", "-path", tc.path}
 
 		main()
@@ -53,11 +64,11 @@ func TestFullPrograms(t *testing.T) {
 			dirName, _ = filepath.Split(tc.path)
 		}
 
-		for _, out := range tc.outFiles {
+		for _, out := range tc.wantOutFiles {
 			assert.FileExists(t, filepath.Join(dirName, out))
 
 			got := removeWhiteSpaces(readFile(t, filepath.Join(dirName, out)))
-			want := removeWhiteSpaces(readFile(t, filepath.Join(dirName, "compare"+out)))
+			want := removeWhiteSpaces(readFile(t, filepath.Join(dirName, "Compare"+out)))
 			assert.Equal(t, want, got)
 		}
 	}

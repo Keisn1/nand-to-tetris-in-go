@@ -70,8 +70,9 @@ func (e *Engine) CompileClassVarDec() string {
 		e.Errors = append(e.Errors, NewErrSyntaxNotAClassVarDec(e.Tknzr.GetTokenLiteral()))
 	}
 
-	varType := e.Tknzr.Keyword()
-	if _, err := e.eatType(&ret); err != nil {
+	var varType string
+	var err error
+	if varType, err = e.eatType(&ret); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
@@ -99,15 +100,18 @@ func (e *Engine) CompileClassVarDec() string {
 func (e *Engine) CompileSubroutineDec() string {
 	ret := xmlStart(SUBROUTINEDEC_T)
 
-	switch e.Tknzr.Keyword() {
+	subroutineType := e.Tknzr.Keyword()
+	if err := e.eatKeyword(e.Tknzr.Keyword(), &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
+	}
+
+	switch subroutineType {
 	case token.CONSTRUCTOR:
-		e.eatKeyword(token.CONSTRUCTOR, &ret)
 	case token.FUNCTION:
-		e.eatKeyword(token.FUNCTION, &ret)
 	case token.METHOD:
-		e.eatKeyword(token.METHOD, &ret)
+		e.symTab.Define(vmWriter.THIS, "Point", symbolTable.ARG)
 	default:
-		e.Errors = append(e.Errors, NewErrSyntaxNotASubroutineDec(e.Tknzr.Keyword()))
+		e.Errors = append(e.Errors, NewErrSyntaxNotASubroutineDec(subroutineType))
 	}
 
 	switch e.Tknzr.Keyword() {
@@ -119,6 +123,7 @@ func (e *Engine) CompileSubroutineDec() string {
 		}
 	}
 
+	name := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(&ret, true); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
@@ -127,11 +132,7 @@ func (e *Engine) CompileSubroutineDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
-	switch e.Tknzr.Symbol() {
-	case token.RPAREN:
-		ret += xmlStart(PLIST_T)
-		ret += xmlEnd(PLIST_T)
-	default:
+	if e.Tknzr.Symbol() != token.RPAREN {
 		ret += e.CompileParameterList()
 	}
 
@@ -139,9 +140,73 @@ func (e *Engine) CompileSubroutineDec() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
-	ret += e.CompileSubroutineBody()
+	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
+	}
 
-	return ret + xmlEnd(SUBROUTINEDEC_T)
+	var count int
+	for e.Tknzr.Keyword() == token.VAR {
+		count += e.CompileVarDec()
+	}
+
+	e.vmWriter.WriteFunction(e.vmWriter.GetFilename()+"."+name, count)
+	switch subroutineType {
+	case token.CONSTRUCTOR:
+		e.vmWriter.WritePush(vmWriter.CONST, e.symTab.VarCount(symbolTable.FIELD))
+		e.vmWriter.WriteCall("Memory.alloc", 1)
+		e.vmWriter.WritePop(vmWriter.POINTER, 0)
+	case token.FUNCTION:
+	case token.METHOD:
+		e.symTab.Define(vmWriter.THIS, "Point", symbolTable.ARG)
+		e.vmWriter.WritePush(vmWriter.ARG, 0)
+		e.vmWriter.WritePop(vmWriter.POINTER, 0)
+	default:
+		e.Errors = append(e.Errors, NewErrSyntaxNotASubroutineDec(subroutineType))
+	}
+
+	ret += e.CompileStatements()
+
+	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
+	}
+
+	return ret + xmlEnd(SUBROUTINEBODY_T)
+}
+
+func (e *Engine) CompileVarDec() int {
+	ret := xmlStart(VARDEC_T)
+
+	if err := e.eatKeyword(token.VAR, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
+	}
+
+	var varType string
+	var err error
+	if varType, err = e.eatType(&ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
+	}
+
+	e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
+	if err := e.eatIdentifier(&ret, true); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
+	}
+
+	count := 1
+	for e.Tknzr.Symbol() == token.KOMMA {
+		count++
+		e.eatSymbol(token.KOMMA, &ret)
+
+		e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
+		if err := e.eatIdentifier(&ret, true); err != nil {
+			e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
+		}
+	}
+
+	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
+		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
+	}
+
+	return count
 }
 
 func (e *Engine) CompileParameterList() string {
@@ -176,60 +241,6 @@ func (e *Engine) CompileParameterList() string {
 	return ret + xmlEnd(PLIST_T)
 }
 
-func (e *Engine) CompileSubroutineBody() string {
-	ret := xmlStart(SUBROUTINEBODY_T)
-
-	if err := e.eatSymbol(token.LBRACE, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
-	}
-
-	for e.Tknzr.Keyword() == token.VAR {
-		ret += e.CompileVarDec()
-	}
-
-	ret += e.CompileStatements()
-
-	if err := e.eatSymbol(token.RBRACE, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
-	}
-
-	return ret + xmlEnd(SUBROUTINEBODY_T)
-}
-
-func (e *Engine) CompileVarDec() string {
-	ret := xmlStart(VARDEC_T)
-
-	if err := e.eatKeyword(token.VAR, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
-	}
-
-	var varType string
-	var err error
-	if varType, err = e.eatType(&ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
-	}
-
-	e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
-	if err := e.eatIdentifier(&ret, true); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
-	}
-
-	for e.Tknzr.Symbol() == token.KOMMA {
-		e.eatSymbol(token.KOMMA, &ret)
-
-		e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
-		if err := e.eatIdentifier(&ret, true); err != nil {
-			e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
-		}
-
-	}
-
-	if err := e.eatSymbol(token.SEMICOLON, &ret); err != nil {
-		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
-	}
-
-	return ret + xmlEnd(VARDEC_T)
-}
 func (e *Engine) CompileStatements() string {
 	ret := xmlStart(STATEMENTS_T)
 
@@ -368,6 +379,7 @@ func (e *Engine) CompileDoStatement() string {
 		}
 
 	case token.LPAREN:
+		e.vmWriter.WritePush(vmWriter.POINTER, 0)
 		if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
@@ -378,16 +390,15 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count)
+		e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count+1)
 		e.vmWriter.WritePop(vmWriter.TEMP, 0)
 
 	case token.DOT:
-
 		if err := e.eatSymbol(token.DOT, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		subRoutineName := e.Tknzr.Identifier()
+		subroutineName := e.Tknzr.Identifier()
 		if err := e.eatIdentifier(&ret, false); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
@@ -396,10 +407,20 @@ func (e *Engine) CompileDoStatement() string {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		count := e.CompileExpressionList()
-
-		e.vmWriter.WriteCall(identifier+token.DOT+subRoutineName, count)
-		e.vmWriter.WritePop(vmWriter.TEMP, 0)
+		if e.symTab.TypeOf(identifier) != "" {
+			if e.symTab.KindOf(identifier) == token.FIELD {
+				e.vmWriter.WritePush(vmWriter.THIS, e.symTab.IndexOf(identifier))
+			} else {
+				e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
+			}
+			count := e.CompileExpressionList()
+			e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, count+1)
+			e.vmWriter.WritePop(vmWriter.TEMP, 0)
+		} else {
+			count := e.CompileExpressionList()
+			e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, count)
+			e.vmWriter.WritePop(vmWriter.TEMP, 0)
+		}
 
 		if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -446,7 +467,13 @@ func (e *Engine) CompileLetStatement() string {
 		e.Errors = append(e.Errors, fmt.Errorf("compileLetStatement: %w", err))
 	}
 
-	e.vmWriter.WritePop(vmWriter.LOCAL, e.symTab.IndexOf(identifier))
+	switch e.symTab.KindOf(identifier) {
+	case token.FIELD:
+		e.vmWriter.WritePop(vmWriter.THIS, e.symTab.IndexOf(identifier))
+	default:
+		e.vmWriter.WritePop(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
+
+	}
 
 	return ret + xmlEnd(LET_T)
 }
@@ -500,6 +527,7 @@ func (e *Engine) CompileTerm() string {
 		case token.TRUE:
 			e.eatKeyword(token.TRUE, &ret)
 			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.TRUE)
+			e.vmWriter.WriteArithmetic(vmWriter.NEG)
 		case token.FALSE:
 			e.eatKeyword(token.FALSE, &ret)
 			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.FALSE)
@@ -508,6 +536,7 @@ func (e *Engine) CompileTerm() string {
 			e.vmWriter.WritePush(vmWriter.CONST, vmWriter.NULL)
 		case token.THIS:
 			e.eatKeyword(token.THIS, &ret)
+			e.vmWriter.WritePush(vmWriter.POINTER, 0)
 		default:
 			e.Errors = append(e.Errors, NewErrSyntaxNotAKeywordConst(e.Tknzr.Keyword()))
 		}
@@ -552,7 +581,13 @@ func (e *Engine) CompileTerm() string {
 
 		switch e.Tknzr.Symbol() {
 		default:
-			e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
+			switch e.symTab.KindOf(identifier) {
+			case token.FIELD:
+				e.vmWriter.WritePush(vmWriter.THIS, e.symTab.IndexOf(identifier))
+			default:
+				e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
+			}
+
 		case token.LSQUARE:
 			if err := e.eatSymbol(token.LSQUARE, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
@@ -565,6 +600,8 @@ func (e *Engine) CompileTerm() string {
 			}
 
 		case token.LPAREN:
+			e.vmWriter.WritePush(vmWriter.POINTER, 0)
+
 			if err := e.eatSymbol(token.LPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
@@ -575,14 +612,14 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count)
+			e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count+1)
 
 		case token.DOT:
 			if err := e.eatSymbol(token.DOT, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			subRoutinename := e.Tknzr.Identifier()
+			subroutineName := e.Tknzr.Identifier()
 			if err := e.eatIdentifier(&ret, false); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
@@ -591,9 +628,18 @@ func (e *Engine) CompileTerm() string {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			count := e.CompileExpressionList()
-
-			e.vmWriter.WriteCall(identifier+token.DOT+subRoutinename, count)
+			if e.symTab.TypeOf(identifier) != "" {
+				if e.symTab.KindOf(identifier) == token.FIELD {
+					e.vmWriter.WritePush(vmWriter.THIS, e.symTab.IndexOf(identifier))
+				} else {
+					e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
+				}
+				count := e.CompileExpressionList()
+				e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, count+1)
+			} else {
+				count := e.CompileExpressionList()
+				e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, count)
+			}
 
 			if err := e.eatSymbol(token.RPAREN, &ret); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))

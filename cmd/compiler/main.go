@@ -4,6 +4,7 @@ import (
 	"flag"
 	"hack/compiler/engine"
 	"hack/compiler/token"
+	"hack/compiler/vmWriter"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,12 +32,7 @@ func main() {
 		for _, dirEntry := range dirEntries {
 			if filepath.Ext(dirEntry.Name()) == ".jack" {
 				fileNameWithoutExt := strings.TrimSuffix(dirEntry.Name(), ".jack")
-				out := filepath.Join(path, fileNameWithoutExt+".xml")
-
-				f, err := os.Create(out)
-				if err != nil {
-					log.Fatal("Couldn't create file", err)
-				}
+				out := filepath.Join(path, fileNameWithoutExt+".vm")
 
 				input, err := os.ReadFile(filepath.Join(path, dirEntry.Name()))
 				if err != nil {
@@ -44,13 +40,12 @@ func main() {
 				}
 
 				tknzr := token.NewTokenizer(string(input))
-				e := engine.NewEngine(&tknzr)
+				vw := vmWriter.NewVmWriter(out)
+				e := engine.NewEngine(&tknzr, &vw)
 
 				e.Tknzr.Advance()
-				s := e.CompileClass()
-				f.Write([]byte(s))
-
-				f.Close()
+				e.CompileClass()
+				vw.Close()
 			}
 		}
 	} else {
@@ -71,7 +66,8 @@ func main() {
 		}
 
 		tknzr := token.NewTokenizer(string(input))
-		e := engine.NewEngine(&tknzr)
+		vw := vmWriter.NewVmWriter(out)
+		e := engine.NewEngine(&tknzr, &vw)
 
 		e.Tknzr.Advance()
 		s := e.CompileClass()

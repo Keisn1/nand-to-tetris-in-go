@@ -34,7 +34,7 @@ const (
 const (
 	NULL  = 0
 	FALSE = 0
-	TRUE  = -1
+	TRUE  = 1 // needs to be negated inside the engine
 )
 
 type VmWriter struct {

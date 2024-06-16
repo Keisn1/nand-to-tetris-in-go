@@ -1,4 +1,6 @@
-push constant -1
+function UnaryOperatorTilde.test 1
+push constant 1
+neg
 not
 pop local 0
 push constant 0

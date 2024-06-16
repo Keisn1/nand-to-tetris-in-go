@@ -1,3 +1,4 @@
+function TestFalseToken.test 0
 push constant 0
 not
 if-goto TestFalseToken.0.L1

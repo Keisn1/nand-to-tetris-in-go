@@ -1,0 +1,11 @@
+class Point2 {
+    field int x, y, z;
+
+    method int distance2(Point other, Point other1) {
+        var int dx, dy, dz;
+        let dx = x - other.getx();
+        let dy = y - other1.gety();
+        let dz = y - other1.gety();
+        return Math.sqrt((dx*dx) + (dy*dy));
+    }
+}

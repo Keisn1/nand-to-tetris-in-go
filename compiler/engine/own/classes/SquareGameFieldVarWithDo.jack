@@ -1,0 +1,7 @@
+class SquareGameFieldVar {
+   field Square square; // the square of this game
+   method void moveSquare() {
+      do square.moveRight();
+      return;
+   }
+}

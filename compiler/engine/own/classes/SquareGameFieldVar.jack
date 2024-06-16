@@ -1,0 +1,8 @@
+class SquareGameFieldVar {
+   field Square square; // the square of this game
+   method void moveSquare() {
+      var Square x;
+      let x = square.moveRight();
+      return;
+   }
+}

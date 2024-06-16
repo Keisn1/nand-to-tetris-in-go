@@ -1,3 +1,4 @@
+function DrawRectangle.test 4
 push local 0
 push local 1
 push local 0

@@ -1,4 +1,4 @@
-{
+function void test () {
     var int x, y, z;
     let x = x + g(2, y, -z) / 5;
     return x;

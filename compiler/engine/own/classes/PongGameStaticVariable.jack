@@ -1,0 +1,8 @@
+class PongGame {
+   static PongGame instance; // the singelton, a Pong game instance
+
+   function void newInstance() {
+      let instance = PongGame.new();
+      return;
+   }
+}

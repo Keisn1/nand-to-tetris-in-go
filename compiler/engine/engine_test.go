@@ -40,7 +40,8 @@ func Test_subroutineBody(t *testing.T) {
 			{name: "while statement", filename: "whileStatement"},
 			{name: "multiple flow control statements", filename: "flowControl"},
 			{name: "test that false constant is correct", filename: "testFalseToken"},
-			{name: "compiling new", filename: "compilingNew"},
+			{name: "construction and manipulation of objects", filename: "objectManipulation"},
+			// {name: "string handling", filename: "outputString"},
 		}
 
 		for _, tc := range testCases {
@@ -55,7 +56,7 @@ func Test_subroutineBody(t *testing.T) {
 				e := engine.NewEngine(&tknzr, &vw)
 
 				e.Tknzr.Advance()
-				e.CompileSubroutineBody()
+				e.CompileSubroutineDec()
 				vw.Close()
 
 				assert.Empty(t, e.Errors)
@@ -80,7 +81,14 @@ func Test_compileClass(t *testing.T) {
 
 		dir := "own/classes/"
 		testCases := []testCase{
-			{name: "empty main", fp: "emptyMain"},
+			{name: "2d point from course", fp: "Point2d"},
+			{name: "3d point from course", fp: "Point3d"},
+			{name: "method call in Point class", fp: "PointMethod"},
+			{name: "seven program", fp: "Seven"},
+			{name: "Main of Square game", fp: "SquareGameMain"},
+			{name: "field var is object, calling method on that object", fp: "SquareGameFieldVarWithDo"},
+			{name: "field var is object, calling method on that object with do", fp: "SquareGameFieldVar"},
+			// {name: "method call different params", fp: "PointMethod2"},
 			// 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
 			// 			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
 			// 			{name: "two static class variable different type", fp: "MainWith2StaticClassVarDec2Types"},

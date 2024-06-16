@@ -1,3 +1,4 @@
+function ObjectManipulation.test 5
 push constant 2
 push constant 3
 call Point.new 2
@@ -6,5 +7,9 @@ push constant 5
 push constant 7
 call Point.new 2
 pop local 1
+push local 0
+push local 1
+call Point.distance 2
+pop local 4
 push constant 0
 return

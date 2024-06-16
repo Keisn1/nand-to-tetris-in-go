@@ -1,3 +1,4 @@
+function MathMulitply.test 2
 push local 0
 push local 1
 call Math.multiply 2
