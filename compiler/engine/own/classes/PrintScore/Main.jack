@@ -1,0 +1,7 @@
+class Main {
+   function void main() {
+	  do Output.moveCursor(22,0);
+	  do Output.printString("Score: 0");
+      return;
+   }
+}

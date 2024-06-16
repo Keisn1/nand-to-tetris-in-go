@@ -518,6 +518,14 @@ func (e *Engine) CompileTerm() string {
 		}
 
 	case token.STRING_CONST:
+		e.vmWriter.WritePush(vmWriter.CONST, len(e.Tknzr.StringVal()))
+		e.vmWriter.WriteCall("String.new", 1)
+
+		for _, c := range e.Tknzr.StringVal() {
+			e.vmWriter.WritePush(vmWriter.CONST, int(c))
+			e.vmWriter.WriteCall("String.appendChar", 2)
+		}
+
 		if err := e.eatStringVal(&ret); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}

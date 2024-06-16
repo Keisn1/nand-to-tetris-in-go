@@ -77,6 +77,7 @@ func Test_compileClass(t *testing.T) {
 		type testCase struct {
 			name string
 			fp   string
+			dir  string
 		}
 
 		dir := "own/classes/"
@@ -88,6 +89,7 @@ func Test_compileClass(t *testing.T) {
 			{name: "Main of Square game", fp: "SquareGameMain"},
 			{name: "field var is object, calling method on that object", fp: "SquareGameFieldVarWithDo"},
 			{name: "field var is object, calling method on that object with do", fp: "SquareGameFieldVar"},
+			{name: "print the score left bottom", dir: "PrintScore/", fp: "Main"},
 			// {name: "method call different params", fp: "PointMethod2"},
 			// 			{name: "one static class variable", fp: "MainWith1StaticClassVarDec"},
 			// 			{name: "two static class variable", fp: "MainWith2StaticClassVarDec"},
@@ -104,6 +106,9 @@ func Test_compileClass(t *testing.T) {
 
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
+				if tc.dir != "" {
+					dir = dir + tc.dir
+				}
 				input := readFile(t, dir+tc.fp+".jack")
 				want := readFile(t, dir+tc.fp+".vm")
 
