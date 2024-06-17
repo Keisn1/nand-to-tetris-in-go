@@ -42,7 +42,7 @@ func (e *Engine) CompileClass() {
 	}
 
 	for isSubRoutineDec(e.Tknzr.Keyword()) {
-		e.CompileSubroutineDec()
+		e.CompileSubroutine()
 	}
 
 	if err := e.eatSymbol(token.RBRACE); err != nil {
@@ -59,9 +59,8 @@ func (e *Engine) CompileClassVarDec() {
 		e.Errors = append(e.Errors, NewErrSyntaxNotAClassVarDec(e.Tknzr.GetTokenLiteral()))
 	}
 
-	var varType string
-	var err error
-	if varType, err = e.eatType(); err != nil {
+	varType, err := e.eatType()
+	if err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileClassVarDec: %w", err))
 	}
 
@@ -84,17 +83,17 @@ func (e *Engine) CompileClassVarDec() {
 	}
 }
 
-func (e *Engine) CompileSubroutineDec() {
+func (e *Engine) CompileSubroutine() {
 	e.symTab.StartSubroutine()
 
+	// ------------------SubroutineDeclaration------------------------------------------
 	subroutineType := e.Tknzr.Keyword()
 	if err := e.eatKeyword(e.Tknzr.Keyword()); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
 	switch subroutineType {
-	case token.CONSTRUCTOR:
-	case token.FUNCTION:
+	case token.CONSTRUCTOR, token.FUNCTION:
 	case token.METHOD:
 		e.symTab.Define(vmWriter.THIS, "Point", symbolTable.ARG)
 	default:
@@ -110,7 +109,7 @@ func (e *Engine) CompileSubroutineDec() {
 		}
 	}
 
-	name := e.Tknzr.Identifier()
+	subroutineName := e.Tknzr.Identifier()
 	if err := e.eatIdentifier(); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
@@ -127,6 +126,7 @@ func (e *Engine) CompileSubroutineDec() {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineDec: %w", err))
 	}
 
+	// ------------------SubroutineBody------------------------------------------
 	if err := e.eatSymbol(token.LBRACE); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileSubroutineBody: %w", err))
 	}
@@ -135,18 +135,17 @@ func (e *Engine) CompileSubroutineDec() {
 	for e.Tknzr.Keyword() == token.VAR {
 		count += e.CompileVarDec()
 	}
+	e.vmWriter.WriteFunction(e.vmWriter.GetFilename()+"."+subroutineName, count)
 
-	e.vmWriter.WriteFunction(e.vmWriter.GetFilename()+"."+name, count)
 	switch subroutineType {
 	case token.CONSTRUCTOR:
 		e.vmWriter.WritePush(vmWriter.CONST, e.symTab.VarCount(symbolTable.FIELD))
 		e.vmWriter.WriteCall("Memory.alloc", 1)
 		e.vmWriter.WritePop(vmWriter.POINTER, 0)
-	case token.FUNCTION:
 	case token.METHOD:
-		e.symTab.Define(vmWriter.THIS, "Point", symbolTable.ARG)
 		e.vmWriter.WritePush(vmWriter.ARG, 0)
 		e.vmWriter.WritePop(vmWriter.POINTER, 0)
+	case token.FUNCTION:
 	default:
 		e.Errors = append(e.Errors, NewErrSyntaxNotASubroutineDec(subroutineType))
 	}
@@ -164,9 +163,8 @@ func (e *Engine) CompileVarDec() int {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	var varType string
-	var err error
-	if varType, err = e.eatType(); err != nil {
+	varType, err := e.eatType()
+	if err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
@@ -196,9 +194,8 @@ func (e *Engine) CompileVarDec() int {
 func (e *Engine) CompileParameterList() {
 	kind := symbolTable.ARG
 
-	var varType string
-	var err error
-	if varType, err = e.eatType(); err != nil {
+	varType, err := e.eatType()
+	if err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileParameterList: %w", err))
 	}
 
@@ -237,12 +234,11 @@ func (e *Engine) CompileStatements() {
 			e.CompileReturn()
 		}
 	}
-
 }
 
 func (e *Engine) CompileIfStatement() {
-	labelCountStr := strconv.Itoa(e.labelCount)
 	e.labelCount++
+	labelCountStr := strconv.Itoa(e.labelCount)
 
 	if err := e.eatKeyword(token.IF); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))

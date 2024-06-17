@@ -60,7 +60,7 @@ func Test_subroutineBody(t *testing.T) {
 				e := engine.NewEngine(&tknzr, &vw)
 
 				e.Tknzr.Advance()
-				e.CompileSubroutineDec()
+				e.CompileSubroutine()
 				vw.Close()
 
 				assert.Empty(t, e.Errors)
