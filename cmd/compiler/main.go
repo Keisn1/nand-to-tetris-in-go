@@ -70,7 +70,7 @@ func main() {
 		e := engine.NewEngine(&tknzr, &vw)
 
 		e.Tknzr.Advance()
-		s := e.CompileClass()
-		f.Write([]byte(s))
+		e.CompileClass()
+		vw.Close()
 	}
 }

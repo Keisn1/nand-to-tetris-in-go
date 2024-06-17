@@ -72,9 +72,9 @@ func TestFullPrograms(t *testing.T) {
 		for _, out := range tc.wantOutFiles {
 			assert.FileExists(t, filepath.Join(dirName, out))
 
-			// got := removeWhiteSpaces(readFile(t, filepath.Join(dirName, out)))
-			// want := removeWhiteSpaces(readFile(t, filepath.Join(dirName, "Compare"+out)))
-			// assert.Equal(t, want, got)
+			got := removeWhiteSpaces(readFile(t, filepath.Join(dirName, out)))
+			want := removeWhiteSpaces(readFile(t, filepath.Join(dirName, "Compare"+out)))
+			assert.Equal(t, want, got)
 		}
 	}
 }
