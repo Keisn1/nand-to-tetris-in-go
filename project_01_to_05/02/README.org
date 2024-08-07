@@ -1,1 +1,15 @@
 #+title: Boolean Arithmetic
+
+* Adding stuff
+
+Since we now have some Gates to work with, we can try to add things
+
+[[file:imgs/half-adder.png]]
+
+So we are continuing building Chips, but Chips that serve as mathematical functions, such as "+".
+
+* ALU
+
+Putting all of this together we arrive at our ALU, a Chip that is capable of calculating a multitude of functions. It takes as input two *16bit* numbers and a *16bit* number as output (plus two Flags, one that is telling if the output was 0 (=zr=) and one that is telling if the output was negative (=ng=))
+
+[[file:imgs/ALU.png]]

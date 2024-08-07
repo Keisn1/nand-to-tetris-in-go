@@ -1,13 +1,13 @@
 #+title: Boolean Logic Gates
 
 * From Truth Tables to Logic Gates
-*Logic Gates* are a physical implementation of *Truth Tables*, the one that we know from school (a truth table can also be called a *Boolean function*, if you want to sound fancy).
+*Logic Gates* are physical realisations of *Truth Tables*, the one that we know from school (a truth table can also be called a *Boolean function*, if you want to sound fancy).
 
 Here are the basic ones:
 
 [[file:imgs/truth_tables.png]]
 
-We only assume that we have a Nand Gate given and we are building all of the other ones, starting from this one. And as we are adding Gate after Gate, we are able to reuse them to build other Gates further along the line.
+We only assume that we have a Nand Gate given and we are building all of the other ones based on this one. And as we are adding Gate after Gate, we are able to reuse them to build other Gates further along the line.
 
 * From Logic Gates to Hardware Description Language
 
@@ -17,10 +17,10 @@ Since it is a bit too much of work to really build those *Logic Gates* physicall
 
 * Concatenating Gates
 
-We can also assume that we more than one Gate at a time. This way we arrive at the notion that we can have multiple input pins at the same time. E.g.: *16* (as in *16bit processor*)
+We can also assume that we have more than one Gate at a time. This way we arrive at the notion that we can have a whole array of a given size as input. E.g.: *16* (as in *16bit processor*)
 
 [[file:imgs/16and.png]]
 
-* We can also have other combinations of numbers of input and outputs (MUX and DMUX)
+* We can also have other combinations of numbers of inputs and outputs (MUX and DMUX)
 
 [[file:imgs/mux.png]]
