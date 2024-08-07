@@ -1,7 +1,6 @@
 #+title: Readme
 
 [[file:imgs/nandToTetrisBigPicture.png]]
-
 * Nand to Tetris
 https://www.nand2tetris.org/
 
