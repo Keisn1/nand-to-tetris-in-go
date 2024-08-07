@@ -1,0 +1,6 @@
+#+title: Readme
+
+* Fill screen
+- for loop over whole screen
+- get every address of Screen into A, set every value of every address to what is in color variable
+  (@i D=M @SCREEN A=M+D M=-1)
