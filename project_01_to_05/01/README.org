@@ -1,3 +1,11 @@
-#+title: Project 01
+#+title: Boolean Logic Gates
 
-* Boolean Logic Gates
+* From Truth Tables to Logic Gates
+Logic Gates are a physical implementation of Truth Tables, the one that we know from school (a truth table can also be called a *Boolean function*, if you want to sound fancy).
+
+Here are the basic ones:
+[[file:imgs/truth_tables.png]]
+
+
+Combinations of Truth Tables lead
+* From Logic Gates to Hardware Description Language
