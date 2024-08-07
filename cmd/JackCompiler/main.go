@@ -53,7 +53,7 @@ func main() {
 		dir, fileName := filepath.Split(path)
 		fileNameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
-		out := filepath.Join(dir, fileNameWithoutExt+".xml")
+		out := filepath.Join(dir, fileNameWithoutExt+".vm")
 
 		f, err := os.Create(out)
 		if err != nil {

@@ -173,9 +173,9 @@ func (e *Engine) CompileVarDec() int {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	count := 1
+	countVarDecs := 1
 	for e.Tknzr.Symbol() == token.KOMMA {
-		count++
+		countVarDecs++
 		e.eatSymbol(token.KOMMA)
 
 		e.symTab.Define(e.Tknzr.Identifier(), varType, symbolTable.VAR)
@@ -188,7 +188,7 @@ func (e *Engine) CompileVarDec() int {
 		e.Errors = append(e.Errors, fmt.Errorf("compileVarDec: %w", err))
 	}
 
-	return count
+	return countVarDecs
 }
 
 func (e *Engine) CompileParameterList() {
@@ -237,8 +237,8 @@ func (e *Engine) CompileStatements() {
 }
 
 func (e *Engine) CompileIfStatement() {
-	e.labelCount++
 	labelCountStr := strconv.Itoa(e.labelCount)
+	e.labelCount++
 
 	if err := e.eatKeyword(token.IF); err != nil {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
@@ -334,6 +334,7 @@ func (e *Engine) CompileDoStatement() {
 		e.Errors = append(e.Errors, fmt.Errorf("compileDoStatement: %w", err))
 	}
 
+	var countExpressions int
 	switch e.Tknzr.Symbol() {
 	case token.LPAREN:
 		e.vmWriter.WritePush(vmWriter.POINTER, 0)
@@ -341,13 +342,13 @@ func (e *Engine) CompileDoStatement() {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		count := e.CompileExpressionList()
+		countExpressions = e.CompileExpressionList()
 
 		if err := e.eatSymbol(token.RPAREN); err != nil {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 		}
 
-		e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count+1)
+		e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, countExpressions+1)
 		e.vmWriter.WritePop(vmWriter.TEMP, 0)
 
 	case token.DOT:
@@ -370,12 +371,12 @@ func (e *Engine) CompileDoStatement() {
 			} else {
 				e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
 			}
-			count := e.CompileExpressionList()
-			e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, count+1)
+			countExpressions = e.CompileExpressionList()
+			e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, countExpressions+1)
 			e.vmWriter.WritePop(vmWriter.TEMP, 0)
 		} else {
-			count := e.CompileExpressionList()
-			e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, count)
+			countExpressions = e.CompileExpressionList()
+			e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, countExpressions)
 			e.vmWriter.WritePop(vmWriter.TEMP, 0)
 		}
 
@@ -554,6 +555,7 @@ func (e *Engine) CompileTerm() {
 			e.Errors = append(e.Errors, fmt.Errorf("compileTerm: , %w", err))
 		}
 
+		var countExpressions int
 		switch e.Tknzr.Symbol() {
 		default:
 			switch e.symTab.KindOf(identifier) {
@@ -586,13 +588,13 @@ func (e *Engine) CompileTerm() {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			count := e.CompileExpressionList()
+			countExpressions = e.CompileExpressionList()
 
 			if err := e.eatSymbol(token.RPAREN); err != nil {
 				e.Errors = append(e.Errors, fmt.Errorf("compileTerm: %w", err))
 			}
 
-			e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, count+1)
+			e.vmWriter.WriteCall(e.vmWriter.GetFilename()+token.DOT+identifier, countExpressions+1)
 
 		case token.DOT:
 			if err := e.eatSymbol(token.DOT); err != nil {
@@ -614,11 +616,11 @@ func (e *Engine) CompileTerm() {
 				} else {
 					e.vmWriter.WritePush(e.symTab.KindOf(identifier), e.symTab.IndexOf(identifier))
 				}
-				count := e.CompileExpressionList()
-				e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, count+1)
+				countExpressions = e.CompileExpressionList()
+				e.vmWriter.WriteCall(e.symTab.TypeOf(identifier)+token.DOT+subroutineName, countExpressions+1)
 			} else {
-				count := e.CompileExpressionList()
-				e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, count)
+				countExpressions = e.CompileExpressionList()
+				e.vmWriter.WriteCall(identifier+token.DOT+subroutineName, countExpressions)
 			}
 
 			if err := e.eatSymbol(token.RPAREN); err != nil {
@@ -629,18 +631,18 @@ func (e *Engine) CompileTerm() {
 }
 
 func (e *Engine) CompileExpressionList() int {
-	count := 0
+	countExpressions := 0
 	if e.isTerm() {
-		count++
+		countExpressions++
 		e.CompileExpression()
 
 		for e.Tknzr.Symbol() == token.KOMMA {
-			count++
+			countExpressions++
 			e.eatSymbol(token.KOMMA)
 			e.CompileExpression()
 		}
 	}
-	return count
+	return countExpressions
 }
 
 func (e *Engine) CompileReturn() {
