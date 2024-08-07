@@ -29,7 +29,7 @@ The course covers various topics in computer architecture, software development,
   - [[#vm-translator][VM Translator]]
 
 * The Projects
-To each of the projects you will find additional explanations inside the directory.
+To each of the projects you will find additional explanations inside the corresponding directory.
 
 ** Project 01 - Boolean Logic
 :PROPERTIES:
