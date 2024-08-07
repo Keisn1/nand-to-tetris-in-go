@@ -7,6 +7,20 @@ Here are the basic ones:
 
 [[file:imgs/truth_tables.png]]
 
+We only assume that we have a Nand Gate given and we are building all of the other ones, starting from this one. And as we are adding Gate after Gate, we are able to reuse them to build other Gates further along the line.
 
-Combinations of Truth Tables lead
 * From Logic Gates to Hardware Description Language
+
+Since it is a bit too much of work to really build those *Logic Gates* physically with electrical circuits, we use a simulator. And the simulator takes as input our *Logic Gate* but written in a certain way: *Hardware Description Language (HDL)*
+
+[[file:imgs/hdl_xor.png]]
+
+* Concatenating Gates
+
+We can also assume that we more than one Gate at a time. This way we arrive at the notion that we can have multiple input pins at the same time. E.g.: *16* (as in *16bit processor*)
+
+[[file:imgs/16and.png]]
+
+* We can also have other combinations of numbers of input and outputs (MUX and DMUX)
+
+[[file:imgs/mux.png]]

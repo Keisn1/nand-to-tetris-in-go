@@ -1,6 +1,6 @@
 #+title: From Nand To Tetris
 * Disclaimer
-!!! All the Material (Screenshots, lectureNotes, pdfs etc.) was provided from the Team at *NandToTetris* and can be found on their webpage https://www.nand2tetris.org/ !!!
+!!! All the Material (lectureNotes, instructions, tutorials etc.) was provided from the Team at *NandToTetris* and can be found on their webpage https://www.nand2tetris.org/ !!!
 
 I am extremely thankful to all of the persons behind *FromNandToTetris* for their great work and for making this amazing course publicly available for everyone to study. And I don't claim any credit other than for completing the projects myself. I re-share these materials here only for educational purposes and making this repo more readable and understandble.
 
