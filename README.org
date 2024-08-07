@@ -25,7 +25,9 @@ We are doing some math with the Gates that we just built, finally building our ~
 ** Project 03 - Memory
 Our Chips discover the notion of time and there they will be able to remember (at least the state that they have been in the last second).
 
-Here is some <font color="red">blue</font> text.
+#+begin_src html
+<span style="color:red">This is the text in red.</span>
+#+end_src
 We are building:
 - =Bit=, =PC=, =RAM8=, =RAM64=, =Register=, =RAM512=, =RAM4K=, =RAM16K=
 
