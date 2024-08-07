@@ -18,7 +18,6 @@ We are building the Basic Logic Gates:
 - =Not=, =Not16=, =Or=, =Or16=, =Or8Way=, =And=, =And16=, =Mux=, =Mux16=, =Mux4Way16=, =Mux8Way16=, =DMux=, =DMux4Way=, =DMux8Way=
 ** Project 01 - Boolean Arithmetic
 We are doing some math with Gates that we just built
-
 ** Assembler
 
 In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language into binary machine code.
@@ -40,13 +39,13 @@ This part of the course delves into the principles of programming languages and 
 *** Game written in Hack
 *** Compiler for the Hack Language (in GO)
 *** OS written in Hack
-* Implementation
+* Note on personal Implementation
 ** Test driven
-I adopted a Test-Driven Development (TDD) approach to refine my implementation.
+For all of the software projects built in go, I adopted a Test-Driven Development (TDD) approach to refine my implementation.
 
 Given the nature of the course and the supplied material it was easy defining comprehensive test cases to validate desired behavior first (translation into MachineCode/assembly; correctly parsing command lines ).
 
-Before moving on to the next case, I ensured that each unit of code functioned correctly
+Before moving on to the next case, I ensured that each unit of code functioned correctly.
 This iterative testing methodology helped me identify and address potential issues early in the development cycle and allowed me to apply refactoring at each step.
 ** Assembler
 
