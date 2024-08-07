@@ -1,2 +1,1 @@
 #+title: Boolean Arithmetic
-* Boolean Arithmetic
