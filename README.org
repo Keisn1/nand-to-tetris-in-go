@@ -1,8 +1,11 @@
-#+title: Readme
+#+title: From Nand To Tetris
+* Disclaimer
+!!! All the Material (Screenshots, lectureNotes, pdfs etc.) was provided from the Team at *NandToTetris* and can be found on their webpage https://www.nand2tetris.org/ !!!
 
+I am extremely thankful to all of the persons behind *FromNandToTetris* for their great work and for making this amazing course publicly available for everyone to study. And I don't claim any credit other than for completing the projects myself. I re-share these materials here only for educational purposes and making this repo more readable and understandble.
+
+* From Nand to Tetris
 [[file:imgs/nandToTetrisBigPicture.png]]
-* Nand to Tetris
-https://www.nand2tetris.org/
 
 "Nand to Tetris" is a project-based course that teaches computer science students how to build a modern computer system from first principles.
 
