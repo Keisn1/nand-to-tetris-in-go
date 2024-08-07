@@ -15,7 +15,11 @@ To each of the projects you will find additional explanations inside the directo
 
 ** Project 01 - Boolean Logic
 We are building the Basic Logic Gates:
+<<<<<<< HEAD
 - =Not=, =Not16=, =Or=, =Or16=, =Or8Way=, =And=, =And16=, =Mux=, =Mux16=, =Mux4Way16=, =Mux8Way16=, =DMux=, =DMux8Way=
+=======
+- =Not=, =Not16=, =Or=, =Or16=, =Or8Way=, =And=, =And16=, =Mux=, =Mux16=, =Mux4Way16=, =Mux8Way16=, =DMux=, =DMux4Way=, =DMux8Way=
+>>>>>>> afc8ca5 (add project 01 desc)
 
 ** Assembler
 
