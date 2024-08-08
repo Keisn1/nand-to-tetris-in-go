@@ -18,7 +18,7 @@ We want to bring these two together, meaning that we want to compute functions w
 
 1. *Data registers*: The first remark that we can make is, that the input values to our functions need to come from somewhere and since we only have registers, there needs to be registers that hold these /data values/.
 
-2. *Address register*: Secondly, to store and obtain a value from _somewhere_, the _somewhere_ need to be a value in itself as well, therefore we will have registers, that hold the address of other registers.
+2. *Address register*: Secondly, to store and obtain a value from _somewhere_, the _somewhere_ needs to be a value in itself as well, therefore we will have registers, that hold the address of other registers.
 
 3. *Instruction register*: Moreover, the thing that we want to do, the _instruction_ (a combination of computing a function with certain input value and storing its output values somewhere), needs to be some value as well. And you guessed it, it needs to be stored in a register as well.
 
@@ -82,7 +82,7 @@ This is a simple *Data register* that is suppose to hold a temporary value.
 
 We this in hand, one can share the concrete specification.
 
-[[file:~/workspace/nand-to-tetris-in-go/imgs/C-instructions.png]]
+[[file:imgs/c-instructions.png]]
 
 Until now, I didn't make any difference between RAM and ROM. In practice, there will be no big difference, other than that the ROM will hold the instructions and shall not be written to.
 
