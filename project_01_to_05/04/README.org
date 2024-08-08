@@ -55,7 +55,7 @@ A-Instructions are _Address_ instructions, meaning that they are /selecting/ cer
 The *A-register* will be a dedicated register in our Computer architecture that will hold an address.
 Whatever address this *A-register* hold, is the address of the register, which value the RAM will be emitting at that moment.
 
-@19
+=@19=
 1. The value that is stored in the *A-register* will be 19
 2. The value that is emitted by the RAM will be the value of the register stored with address 19
 3. The register that with address 19 becomes available to be manipulated
