@@ -1,5 +1,16 @@
 #+title: Machine Language
 
+* Table of Contents :TOC:
+- [[#register][Register]]
+- [[#hack-machine-language][Hack Machine Language]]
+  - [[#what-we-are-doing][What we are doing]]
+  - [[#what-is-machine-language][What is Machine Language]]
+  - [[#instruction-set-of-the-hack-machine-language][Instruction set of the Hack Machine Language]]
+  - [[#writing-hack-machine-language-code][Writing Hack Machine Language code]]
+  - [[#the-hack-machine-language-specification][The Hack Machine Language Specification]]
+- [[#the-project][The project]]
+  - [[#testing][Testing]]
+
 * Register
 We now have our *ALU*, which means that we can compute certain functions, and we have our *Memory*, which means that we can save state over time (in registers).
 
