@@ -31,7 +31,6 @@ How does one know what the address bus is currently holding?
 
 The address of an instruction or the address of some data?
 
-
 * Fetch-Execute Cycle
 
 [[file:imgs/fetch_execute_issues.png]]
@@ -50,6 +49,36 @@ Another solution would be to have 2 seperate physical memories, where both memor
 
 ** Hack Solution
 
-The Hack Computer Architecture has a unique design and solves the issue in a mix of both ways.
+The Hack Computer Architecture has a unique design but basically is following the [[*Single-cycle solution][Single-cycle solution]].
 
-The Hack Computer is only reading instructions, but it is either an instruction that computes something (C-instruction), or it is acutally the instruction to feed some data ([[file:~/workspace/nand-to-tetris-in-go/project_01_to_05/04/README.org::*A-Instruction (and A-register)][A-instruction]]).
+The Hack Computer though is only interpreting instructions, but due to the design of the instruction the Computer can decide if it is either an instruction that computes something (C-instruction), or it is acutally the instruction to feed some data (A-Instruction).
+
+[[file:imgs/CPU_abstraction.png]]
+
+* Project - Build the computer
+
+This is how the computer looks like
+
+** CPU and memory
+
+[[file:imgs/hackComputer2.png]]
+
+** The CPU in detail
+
+[[file:imgs/hackComputer.png]]
+
+** The project
+
+The goal of the project is to implement this Architecture with the Chips that we have already built.
+
+We have a clear seperation of concerns. We need to build the RAM, the ROM and the CPU.
+
+The ROM is actually provided by the NandToTetrisTeam as a built-in Chip, since it is really nothing else than the ROM with a limitation, and the team equipped the built-in chip with the ability to load a program in the hardware simulator.
+
+*** The Memory
+
+We need to put together a big RAM Chip, the Screen Chip and the Keyboard Chip
+
+*** CPU
+
+We need to figure out the way to combine all the Chips that we have built so far, paying attention to the different control bits as denoted in the [[*The CPU in detail][diagram]].
