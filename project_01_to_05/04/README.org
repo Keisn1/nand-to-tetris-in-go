@@ -1,19 +1,19 @@
 #+title: Machine Language
 
 * Register
-We now have our *ALU*, which means that we can calculate certain functions, and we have our *Memory*, which means that we can save state over time (in registers).
+We now have our *ALU*, which means that we can compute certain functions, and we have our *Memory*, which means that we can save state over time (in registers).
 
-We want to bring these two together, meaning that we want to calculate functions with input values obtained from memory values and then save the output values back into *Memory*.
+We want to bring these two together, meaning that we want to compute functions with input values obtained from memory values and then save the output values back into *Memory*.
 
 1. *Data registers*: The first remark that we can make is, that the input values to our functions need to come from somewhere and since we only have registers, there needs to be registers that hold these /data values/.
 
 2. *Address register*: Secondly, to store and obtain a value from _somewhere_, the _somewhere_ need to be a value in itself as well, therefore we will have registers, that hold the address of other registers.
 
-3. *Instruction register*: Moreover, the thing that we want to do, the _instruction_ (a combination of calculating a function with certain input value and storing its output values somewhere), needs to be some value as well. And you guessed it, it needs to be stored in a register as well.
+3. *Instruction register*: Moreover, the thing that we want to do, the _instruction_ (a combination of computing a function with certain input value and storing its output values somewhere), needs to be some value as well. And you guessed it, it needs to be stored in a register as well.
 
 *Conclusion*: Since we only have *16bit register*, _data values_ as well as _address values_ and _instruction values_ need to be represented as a _16bit binary number_.
 
-* Machine Language
+* Hack Machine Language
 
 ** What we are doing
 So we want to be able to say things like the following:
@@ -43,7 +43,7 @@ One line written in *Machine Language* corresponds to one *instruction* that wil
 
 [[file:imgs/program_translation.png]]
 
-** Instruction set
+** Instruction set of the Hack Machine Language
 
 A *Machine language* therefore needs to correspond to the set of instructions that the computer is capable of executing.
 
@@ -53,13 +53,55 @@ This *instruction set* was conceptualised and conceived by the course authors, a
 
 A-Instructions are _Address_ instructions, meaning that they are /selecting/ certain registers.
 The *A-register* will be a dedicated register in our Computer architecture that will hold an address.
-Whatever address this *A-register* hold, is the address of the register, which value the RAM will be emitting at that moment.
+Whatever address this *A-register* hold, is the address of the register, which value the Memory will be emitting at that moment.
 
 =@19=
 1. The value that is stored in the *A-register* will be 19
-2. The value that is emitted by the RAM will be the value of the register with address 19
-3. The register with address 19 becomes available to be manipulated
+2. The value that is emitted by the Memory will be the value of the register with address 19
+3. The register with address 19 becomes available to be manipulated (*pointer-based processing*)
 
-~In our **Machine Language* the register that comes /available/ for us to be manipulated is denoted by the letter *M* in our *Machine Language*.~
+In our *Machine Language* the register that comes /available/ for us to be manipulated is denoted by the letter *M* in our *Machine Language*.
 
 *** C-Instruction
+
+*C-instructions* are *Compute-instructions*. They are more vast but conceptionally easier to understand, once one has understood the *A-register* and *M-register*.
+
+We only need to add one more special register: the *D-Register*.
+This is a simple *Data register* that is suppose to hold a temporary value.
+
+We this in hand, one can share the concrete specification.
+
+[[file:~/workspace/nand-to-tetris-in-go/imgs/C-instructions.png]]
+
+Until now, I didn't make any difference between RAM and ROM. In practice, there will be no big difference, other than that the ROM will hold the instructions and shall not be written to.
+
+** Writing Hack Machine Language code
+
+To be able to write code, the Hack Machine language provides two additional features: Labels and Variables.
+
+I will not explain those in Detail.
+
+Variables are basically used in the same manner as variables in other programming languages.
+
+Labels are there to reference certain lines in the code. There are most helpful for branching instructions (=dest = comp; jump=)
+
+*** Example 1 - Add
+[[file:imgs/add.png]]
+*** Example 2 - Signum
+[[file:imgs/signum.png]]
+
+** The Hack Machine Language Specification
+
+This is the full Hack Machine Language Specification
+
+[[file:imgs/hackSpec.png]]
+
+* The project
+
+The project consists of writing "simple" programs in *Hack Machine language* as seen in the examples ([[*Example 1 - Add][Example 1 - Add]] & [[*Example 2 - Signum][Example 2 - Signum]])
+
+=add, fill, flip, for_loop_with_pointer, keyboard, mult, screen, signum, sum1Ton=
+
+** Testing
+
+To test the code written, one loads the written Code into the provided CPU-emulator and checks with provided test scripts or simply looks if the code does what it is supposed to do.
