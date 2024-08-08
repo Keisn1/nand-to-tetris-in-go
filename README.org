@@ -23,7 +23,7 @@ The course covers various topics in computer architecture, software development,
   - [[#project-04---machine-language][Project 04 - Machine Language]]
   - [[#project-05---computer-architecture][Project 05 - Computer architecture]]
   - [[#project-06---assembler][Project 06 - Assembler]]
-  - [[#project-0708-virtual-machine-translator][Project 07/08 Virtual Machine Translator]]
+  - [[#project-0708---virtual-machine-translator][Project 07/08 - Virtual Machine Translator]]
 - [[#note-on-personal-implementation][Note on personal Implementation]]
   - [[#test-driven][Test driven]]
   - [[#assembler][Assembler]]
@@ -71,7 +71,7 @@ I have been diligently working on implementing the assembler in Go (Golang), a v
 
 This task has allowed me to deepen my understanding of low-level programming concepts and strengthen my skills in software development.
 
-** Project 07/08 Virtual Machine Translator
+** Project 07/08 - Virtual Machine Translator
 
 In Week 7 and 8 of the "Nand to Tetris" course, students typically focus on implementing a virtual machine (VM) and a compiler.
 
