@@ -20,12 +20,13 @@ The course covers various topics in computer architecture, software development,
   - [[#project-01---boolean-logic][Project 01 - Boolean Logic]]
   - [[#project-02---boolean-arithmetic][Project 02 - Boolean Arithmetic]]
   - [[#project-03---memory][Project 03 - Memory]]
-  - [[#assembler][Assembler]]
-  - [[#virtual-machine-translator][Virtual Machine Translator]]
-  - [[#to-come][To come]]
+  - [[#project-04---machine-language][Project 04 - Machine Language]]
+  - [[#project-05---computer-architecture][Project 05 - Computer architecture]]
+  - [[#project-06---assembler][Project 06 - Assembler]]
+  - [[#project-0708-virtual-machine-translator][Project 07/08 Virtual Machine Translator]]
 - [[#note-on-personal-implementation][Note on personal Implementation]]
   - [[#test-driven][Test driven]]
-  - [[#assembler-1][Assembler]]
+  - [[#assembler][Assembler]]
   - [[#vm-translator][VM Translator]]
 
 * The Projects
@@ -46,27 +47,38 @@ Our Chips discover the notion of time and there they will be able to remember (a
 We are building:
 - =Bit=, =PC=, =RAM8=, =RAM64=, =Register=, =RAM512=, =RAM4K=, =RAM16K=
 
-** Assembler
+** Project 04 - Machine Language
+We are discovering the architecture of the Hack Computer by getting to know its instruction set and the corresponding Machine Language.
 
-In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language into binary machine code.
+We are writing first programs for our computer:
+- =add, fill, flip, for_loop_with_pointer, keyboard, mult, screen, signum, sum1Ton=
+
+** Project 05 - Computer architecture
+
+Now we are getting to know the actual intracacies of how to put together Chips to a Computer.
+
+We talk about Fetch and Execute cycles and the actual architecture of the Hack Computer.
+
+The project is to actually build the computer in Hardware Description Language.
+
+** Project 06 - Assembler
+
+In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language (*Hack Machine language*) into binary machine code (*Hack instructions*).
 
 This assembler plays a significant role in the overall process of creating a functioning computer system from scratch.
 
 I have been diligently working on implementing the assembler in Go (Golang), a versatile programming language known for its efficiency and simplicity.
+
 This task has allowed me to deepen my understanding of low-level programming concepts and strengthen my skills in software development.
 
-** Virtual Machine Translator
+** Project 07/08 Virtual Machine Translator
 
 In Week 7 and 8 of the "Nand to Tetris" course, students typically focus on implementing a virtual machine (VM) and a compiler.
 
 During these weeks, participants learn how to design and build a virtual machine that executes a stack-based language and develop a high-level language compiler that translates a high-level language into the VM's low-level language.
 
 This part of the course delves into the principles of programming languages and compiler construction, providing a comprehensive understanding of software development processes.
-** To come
 
-*** Game written in Hack
-*** Compiler for the Hack Language (in GO)
-*** OS written in Hack
 * Note on personal Implementation
 ** Test driven
 For all of the software projects built in go, I adopted a Test-Driven Development (TDD) approach to refine my implementation.
