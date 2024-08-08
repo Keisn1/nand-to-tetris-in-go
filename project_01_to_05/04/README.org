@@ -30,6 +30,10 @@ So we want to be able to say things like the following:
 
   - in the files where we will put our *Machine Language Code*, the next instruction will either be the one on the next line inside the file or the instruction on *line number*, where we want to jump
     - those line numbers are going to be translated to symbolic addresses by the assembler (more on that in the project on the assembler)
+      [[file:imgs/branching.png]]
+
+
+
 
 ** What is Machine Language
 
