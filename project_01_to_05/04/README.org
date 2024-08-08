@@ -80,21 +80,23 @@ In our *Machine Language* the register that comes /available/ for us to be manip
 We only need to add one more special register: the *D-Register*.
 This is a simple *Data register* that is suppose to hold a temporary value.
 
-We this in hand, one can share the concrete specification.
+With this in hand, one can share the concrete specification.
 
 [[file:imgs/c-instructions.png]]
 
 Until now, I didn't make any difference between RAM and ROM. In practice, there will be no big difference, other than that the ROM will hold the instructions and shall not be written to.
 
+**** Goto
+
+A =goto LABEL= command can be expressed as a C-instruction: =1; LABEL=
+
 ** Writing Hack Machine Language code
 
-To be able to write code, the Hack Machine language provides two additional features: Labels and Variables.
-
-I will not explain those in Detail.
+To be able to write more readable and writable code, the Hack Machine language provides two additional features: Labels and Variables.
 
 Variables are basically used in the same manner as variables in other programming languages.
 
-Labels are there to reference certain lines in the code. There are most helpful for branching instructions (=dest = comp; jump=)
+Labels are there to reference certain lines in the code. They are used with branching instructions (=dest = comp; jump=, [[*Goto][Goto]])
 
 *** Example 1 - Add
 [[file:imgs/add.png]]
