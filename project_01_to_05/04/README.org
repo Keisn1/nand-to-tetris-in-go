@@ -15,16 +15,23 @@ We want to bring these two together, meaning that we want to calculate functions
 
 * Machine Language
 
+** What we are doing
 So we want to be able to say things like the following:
 
-- Add what is in Register 2 to what is in Register 1
-- Add the value 73 to what is in Register 3
-- Put what is in Register 137 into Register 4
+- Add what is in Register 2 to what is in Register 1 (R1 <- R1 + R2)
+- Add the value 73 to what is in Register 3 (R3 <- R3 + 73)
+- Put what is in Memory 137 into Register 4 (R4 <- Memory[137])
+  - usually there are only a few registers, that really have names like (R1, R2, R5 and so on)
 - If the value stored in Register 1, goto to Register 15 and execute the instructions from there
   - this is a little bit more difficult to understand, but what one needs to get, is that the execution of a program is the execution of a chain of instructions in a certain order, and these instructions need to be stored somewhere in a specific order
   - so imagine our registers as a list of instructions, where the instructions are executed in order, and if we want to jump to another instruction, we would need to indicate the address, where this instruction is stored, and the following instruction after that will be the one that comes next.
 
    [[file:imgs/instructions.png]]
+
+  - in the files where we will put our *Machine Language Code*, the next instruction will either be the one on the next line inside the file or the instruction on *line number*, where we want to jump
+    - those line numbers are going to be translated to symbolic addresses by the assembler (more on that in the project on the assembler)
+
+** What is Machine Language
 
 All of this boils down to the *Manipulation of Registers*. The way that this is done, and the way that it is formalised, is part of the work of someone who is conceptualising a computer.
 
