@@ -22,6 +22,9 @@ So we want to be able to say things like the following:
 - Put what is in Register 137 into Register 4
 - If the value stored in Register 1, goto to Register 15 and execute the instructions from there
   - this is a little bit more difficult to understand, but what one needs to get, is that the execution of a program is the execution of a chain of instructions in a certain order, and these instructions need to be stored somewhere in a specific order
+  - so imagine our registers as a list of instructions, where the instructions are executed in order, and if we want to jump to another instruction, we would need to indicate the address, where this instruction is stored, and the following instruction after that will be the one that comes next.
+
+   [[file:imgs/instructions.png]]
 
 All of this boils down to the *Manipulation of Registers*. The way that this is done, and the way that it is formalised, is part of the work of someone who is conceptualising a computer.
 
