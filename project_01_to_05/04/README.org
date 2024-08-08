@@ -111,10 +111,9 @@ Labels are there to reference certain lines in the code. They are used with bran
 
 ** The Hack Machine Language Specification
 
-This is the full Hack Machine Language Specification
+This is the full Hack Machine Language Specification, from which we can also infer which *16bit binary* each instruction is to be translated to.
 
 [[file:imgs/hackSpec.png]]
-
 
 * The project
 
