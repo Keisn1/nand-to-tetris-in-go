@@ -96,6 +96,7 @@ This is the full Hack Machine Language Specification
 
 [[file:imgs/hackSpec.png]]
 
+
 * The project
 
 The project consists of writing "simple" programs in *Hack Machine language* as seen in the examples ([[*Example 1 - Add][Example 1 - Add]] & [[*Example 2 - Signum][Example 2 - Signum]])
