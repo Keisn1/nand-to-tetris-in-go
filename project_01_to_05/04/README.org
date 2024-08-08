@@ -1,0 +1,13 @@
+#+title: Machine Language
+* Machine Language
+We now have our *ALU*, which means that we can calculate certain functions, and we have our *Memory*, which means that we can save state over time (in registers).
+
+We want to bring these two together, meaning that we want to calculate functions with input values obtained from memory values and then save the output values back into /Memory/.
+
+The first remark that we can make is, that the input values to our functions needs to come from somewhere and since we only have registers, there needs to be registers that hold these data values. (*Data registers*)
+
+Secondly, to store and obtain a value from _somewhere_, the _somewhere_ needs to be a value in itself as well, therefore we will have registers, that hold the address of other registers. (*Address register*)
+
+Moreover, the thing that we want to do, the _instruction_ (a combination of calculating a function with certain input value and storing its output values somewhere), needs to be some value as well. And you guessed it, it needs to be stored in a register as well (*Instruction register*).
+
+Conclusion: Since we only have *16bit register*, _data values_ as well as _address values_ and _instruction values_ need to be represented as a _16bit binary number_.
