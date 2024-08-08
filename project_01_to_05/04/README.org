@@ -57,9 +57,9 @@ Whatever address this *A-register* hold, is the address of the register, which v
 
 =@19=
 1. The value that is stored in the *A-register* will be 19
-2. The value that is emitted by the RAM will be the value of the register stored with address 19
-3. The register that with address 19 becomes available to be manipulated
+2. The value that is emitted by the RAM will be the value of the register with address 19
+3. The register with address 19 becomes available to be manipulated
 
-In our **Machine Language* the register that comes /available/ for us to be manipulated is denoted by the letter *M* in our *Machine Language*.
+~In our **Machine Language* the register that comes /available/ for us to be manipulated is denoted by the letter *M* in our *Machine Language*.~
 
 *** C-Instruction
