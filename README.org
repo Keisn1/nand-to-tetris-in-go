@@ -24,8 +24,8 @@ The course covers various topics in computer architecture, software development,
   - [[#project-05---computer-architecture][Project 05 - Computer architecture]]
   - [[#project-06---assembler][Project 06 - Assembler]]
   - [[#project-0708---virtual-machine-translator][Project 07/08 - Virtual Machine Translator]]
-- [[#note-on-personal-implementation][Note on personal Implementation]]
-  - [[#test-driven][Test driven]]
+- [[#note-on-development-process][Note on Development Process]]
+  - [[#test-driven-development][Test Driven Development]]
   - [[#assembler][Assembler]]
   - [[#vm-translator][VM Translator]]
 
@@ -79,8 +79,8 @@ During these weeks, participants learn how to design and build a virtual machine
 
 This part of the course delves into the principles of programming languages and compiler construction, providing a comprehensive understanding of software development processes.
 
-* Note on personal Implementation
-** Test driven
+* Note on Development Process
+** Test Driven Development
 For all of the software projects built in go, I adopted a Test-Driven Development (TDD) approach to refine my implementation.
 
 Given the nature of the course and the supplied material it was easy defining comprehensive test cases to validate desired behavior first (translation into MachineCode/assembly; correctly parsing command lines ).
