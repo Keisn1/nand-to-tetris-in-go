@@ -11,4 +11,18 @@ We want to bring these two together, meaning that we want to calculate functions
 
 3. *Instruction register*: Moreover, the thing that we want to do, the _instruction_ (a combination of calculating a function with certain input value and storing its output values somewhere), needs to be some value as well. And you guessed it, it needs to be stored in a register as well.
 
-*_Conclusion_*: Since we only have *16bit register*, _data values_ as well as _address values_ and _instruction values_ need to be represented as a _16bit binary number_.
+*Conclusion*: Since we only have *16bit register*, _data values_ as well as _address values_ and _instruction values_ need to be represented as a _16bit binary number_.
+
+* Machine Language
+
+So we want to be able to say things like the following:
+
+- Add what is in Register 2 to what is in Register 1
+- Add the value 73 to what is in Register 3
+- Put what is in Register 137 into Register 4
+- If the value stored in Register 1, goto to Register 15 and execute the instructions from there
+  - this is a little bit more difficult to understand, but what one needs to get, is that the execution of a program is the execution of a chain of instructions in a certain order, and these instructions need to be stored somewhere in a specific order
+
+All of this boils down to the *Manipulation of Registers*. The way that this is done, and the way that it is formalised, is part of the work of someone who is conceptualising a computer.
+
+And the *Machine Language* is the resulting *formalism* that describes which ways of *Manipulating Register* exist and through which we can communicate what should be done.
