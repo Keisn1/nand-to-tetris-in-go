@@ -1,1 +1,17 @@
 #+title: Memory
+
+* Table of Contents
+* Sequential Logic
+
+Up until this point we were concerned with Logic Gates and Chips that are time independent, meaning that they are only dependent on the current inputs. This is called *Combination Logic*.
+
+We now like to introduce *Sequential Logic* where the output depends on the previous inputs as well.
+
+** Time steps
+
+Time will be represented as a discrete sequence of time ($$t = 0, 1, 2, 3, 4 ...$$).
+
+
+** Latch / Data Flip Flop
+
+The most basic Logic Gate that we can imagine is called a /Latch/ or /Data Flip Flop/. The /Latch/ outputs the input of the previous Time step.
