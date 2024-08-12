@@ -1,5 +1,11 @@
 #+title: Boolean Logic Gates
 
+* Table of Contents :TOC:
+- [[#from-truth-tables-to-logic-gates][From Truth Tables to Logic Gates]]
+- [[#from-logic-gates-to-hardware-description-language][From Logic Gates to Hardware Description Language]]
+- [[#concatenating-gates][Concatenating Gates]]
+- [[#we-can-also-have-other-combinations-of-numbers-of-inputs-and-outputs-mux-and-dmux][We can also have other combinations of numbers of inputs and outputs (MUX and DMUX)]]
+
 * From Truth Tables to Logic Gates
 *Logic Gates* are physical realisations of *Truth Tables*, the one that we know from school (a truth table can also be called a *Boolean function*, if you want to sound fancy).
 

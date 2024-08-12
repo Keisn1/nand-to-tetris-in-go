@@ -1,5 +1,9 @@
 #+title: Boolean Arithmetic
 
+* Table of Contents :TOC:
+- [[#adding-chips][Adding Chips]]
+- [[#alu][ALU]]
+
 * Adding Chips
 
 Since we now have some Gates to work with, we can try to add Chips that solve more complex problems
