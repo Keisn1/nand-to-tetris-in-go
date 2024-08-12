@@ -2,6 +2,17 @@
 
 We have all the building blocks of a Computer. We have registers that we need to construct a memory from and we have an ALU, that combined with dedicated registers and a Program Counter, will form our CPU.
 
+* Table of Contents :TOC:
+- [[#basic-architecture][Basic Architecture]]
+- [[#fetch-execute-cycle][Fetch-Execute Cycle]]
+  - [[#two-cycle-solution][Two-cycle solution]]
+  - [[#single-cycle-solution][Single-cycle solution]]
+  - [[#hack-solution][Hack Solution]]
+- [[#project---build-the-computer][Project - Build the computer]]
+  - [[#cpu-and-memory][CPU and memory]]
+  - [[#the-cpu-in-detail][The CPU in detail]]
+  - [[#the-project][The project]]
+
 * Basic Architecture
 
 The computer can be viewed as a set of chips that is connected by buses (conceptionally).
@@ -49,7 +60,7 @@ Another solution would be to have 2 seperate physical memories, where both memor
 
 ** Hack Solution
 
-The Hack Computer Architecture has a unique design but basically is following the [[*Single-cycle solution][Single-cycle solution]].
+The Hack Computer Architecture has a unique design but basically is following the [[#single-cycle-solution][Single-cycle solution]].
 
 The Hack Computer though is only interpreting instructions, but due to the design of the instruction the Computer can decide if it is either an instruction that computes something (C-instruction), or it is acutally the instruction to feed some data (A-Instruction).
 
