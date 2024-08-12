@@ -1,6 +1,5 @@
 #+title: Memory
 
-* Table of Contents
 * Sequential Logic
 
 Up until this point we were concerned with Logic Gates and Chips that are time independent, meaning that they are only dependent on the current inputs. This is called *Combination Logic*.
