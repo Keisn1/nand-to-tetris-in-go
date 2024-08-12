@@ -1,8 +1,8 @@
 #+title: Boolean Arithmetic
 
-* Adding stuff
+* Adding Chips
 
-Since we now have some Gates to work with, we can try to add things
+Since we now have some Gates to work with, we can try to add Chips that solve more complex problems
 
 [[file:imgs/half-adder.png]]
 

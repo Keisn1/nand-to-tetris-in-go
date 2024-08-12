@@ -1,23 +1,23 @@
 
 # Table of Contents
 
-1.  [Adding stuff](#org274f7ed)
-2.  [ALU](#orgbe45918)
+1.  [Adding Chips](#org2c6f173)
+2.  [ALU](#org1f74c27)
 
 
 
-<a id="org274f7ed"></a>
+<a id="org2c6f173"></a>
 
-# Adding stuff
+# Adding Chips
 
-Since we now have some Gates to work with, we can try to add things
+Since we now have some Gates to work with, we can try to add Chips that solve more complex problems
 
 ![img](imgs/half-adder.png)
 
 So we are continuing building Chips, but Chips that serve as mathematical functions, such as &ldquo;+&rdquo;.
 
 
-<a id="orgbe45918"></a>
+<a id="org1f74c27"></a>
 
 # ALU
 
