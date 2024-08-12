@@ -54,7 +54,9 @@ We are writing first programs for our computer:
 - =add, fill, flip, for_loop_with_pointer, keyboard, mult, screen, signum, sum1Ton=
 
 ** Project 05 - Computer architecture
-[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05]]
+
+[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/05][project+05]]
+
 Now we are getting to know the actual intracacies of how to put together Chips to a Computer.
 
 We talk about Fetch and Execute cycles and the actual architecture of the Hack Computer.
