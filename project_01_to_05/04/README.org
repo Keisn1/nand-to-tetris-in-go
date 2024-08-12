@@ -102,7 +102,7 @@ To be able to write more readable and writable code, the Hack Machine language p
 
 Variables are basically used in the same manner as variables in other programming languages.
 
-Labels are there to reference certain lines in the code. They are used with branching instructions (=dest = comp; jump=, [[*Goto][Goto]])
+Labels are there to reference certain lines in the code. They are used with branching instructions (=dest = comp; jump=, [[#goto][Goto]])
 
 *** Example 1 - Add
 [[file:imgs/add.png]]
