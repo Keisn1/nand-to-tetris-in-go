@@ -11,7 +11,13 @@ We now like to introduce *Sequential Logic* where the output depends on the prev
 
 Time will be represented as a discrete sequence of time ($$t = 0, 1, 2, 3, 4 ...$$).
 
+** Technical implementation
+
+To build a clock, that is giving us discrete time units, we are going to use an oscillator, which is oscillating between on and off at a given rate ($$freq=[H]$$).
+
+
 
 ** Latch / Data Flip Flop
 
-The most basic Logic Gate that we can imagine is called a /Latch/ or /Data Flip Flop/. The /Latch/ outputs the input of the previous Time step.
+The most elemetary sequential gate that we can imagine is called a /Latch/ or /Data Flip Flop/. The /Latch/ outputs the input of the previous Time step.
+
