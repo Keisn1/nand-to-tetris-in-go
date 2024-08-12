@@ -93,3 +93,4 @@ We need to put together a big RAM Chip, the Screen Chip and the Keyboard Chip
 *** CPU
 
 We need to figure out the way to combine all the Chips that we have built so far, paying attention to the different control bits as denoted in the [[#the-cpu-in-detail][diagram]].
+[[The CPU in detail]]
