@@ -75,9 +75,7 @@ This is how the computer looks like
 [[file:imgs/hackComputer2.png]]
 
 ** The CPU in detail
-:PROPERTIES:
-:ID:       9828c4a5-584f-4c3b-864c-2c7c214e5e8c
-:END:
+
 [[file:imgs/hackComputer.png]]
 
 ** The project
@@ -94,8 +92,4 @@ We need to put together a big RAM Chip, the Screen Chip and the Keyboard Chip
 
 *** CPU
 
-We need to figure out the way to combine all the Chips that we have built so far, paying attention to the different control bits as denoted in the
-
-[[*The CPU in detail][The CPU in detail]]
-
-[[24bfd4ab-89fe-4c4e-82d6-ecc41a835a9e]]
+We need to figure out the way to combine all the Chips that we have built so far, paying attention to the different control bits as denoted in the [[#the-cpu-in-detail][diagram]].
