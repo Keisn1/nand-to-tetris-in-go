@@ -80,5 +80,5 @@ The ROM is actually provided by the NandToTetrisTeam as a built-in Chip, since i
 We need to put together a big RAM Chip, the Screen Chip and the Keyboard Chip
 
 *** CPU
-
+[[*The CPU in detail][The CPU in detail]]
 We need to figure out the way to combine all the Chips that we have built so far, paying attention to the different control bits as denoted in the [[*The CPU in detail][diagram]].

@@ -55,7 +55,7 @@ We are writing first programs for our computer:
 
 ** Project 05 - Computer architecture
 
-[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/05][project+05]]
+[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/05][project_05]]
 
 Now we are getting to know the actual intracacies of how to put together Chips to a Computer.
 
