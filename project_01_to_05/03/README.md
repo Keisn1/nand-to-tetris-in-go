@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [Memory](#org56705f9)
-    1.  [Sequential Logic](#orged5821b)
-        1.  [Time steps](#org353453a)
-        2.  [Technical implementation](#org8fdccf5)
-        3.  [Latch / Data Flip Flop](#org09b17be)
-    2.  [Project](#org7ebd31f)
+1.  [Memory](#orgbd08f53)
+    1.  [Sequential Logic](#orgc0b1265)
+        1.  [Time steps](#orga21a9f3)
+        2.  [Technical implementation](#org97f7848)
+        3.  [Latch / Data Flip Flop](#orgcab4735)
+    2.  [Project](#org0c425c3)
 
 
 
-<a id="org56705f9"></a>
+<a id="orgbd08f53"></a>
 
 # Memory
 
 
-<a id="orged5821b"></a>
+<a id="orgc0b1265"></a>
 
 ## Sequential Logic
 
@@ -24,14 +24,14 @@ Up until this point we were concerned with Logic Gates and Chips that are time i
 We now like to introduce **Sequential Logic** where the output depends on the previous inputs as well.
 
 
-<a id="org353453a"></a>
+<a id="orga21a9f3"></a>
 
 ### Time steps
 
 Time will be represented as a discrete sequence of time ($$t = 0, 1, 2, 3, 4 ...$$).
 
 
-<a id="org8fdccf5"></a>
+<a id="org97f7848"></a>
 
 ### Technical implementation
 
@@ -54,7 +54,7 @@ In Each time unit, any input or output value of a gate is continious.
     The resulting effect is that our sequential logic gates are only reacting to a given input at each end of a cycle, whereas combinational gates are going to &ldquo;react&rdquo; immediately.
 
 
-<a id="org09b17be"></a>
+<a id="orgcab4735"></a>
 
 ### Latch / Data Flip Flop
 
@@ -62,15 +62,15 @@ The most elemetary sequential gate that we can imagine is called a *Latch* or *D
 
 ![img](imgs/dff.png)
 
-In the course, this DFF is given to us as a pre-implemented Chip that we can use. From this we are building a Bit and then all the other Chips ([Project](#org7ebd31f)).
+In the course, this DFF is given to us as a pre-implemented Chip that we can use. From this we are building a Bit and then all the other Chips ([Project](#org0c425c3)).
 
 
-<a id="org7ebd31f"></a>
+<a id="org0c425c3"></a>
 
 ## Project
 
 In the project we are building the memory and a program counter. In detail, we are implementing the following Chips using our **Hardware Description Language**.
 
-1.  `Bit, Register, RAM8, RAM64` and `PC` (Program Counter)
-2.  `RAM512, RAM4k, RAM16K`
+1.  `Bit, Register, RAM8, RAM64` and `PC` (Program Counter) in directory [a](https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03/a)
+2.  `RAM512, RAM4k, RAM16K` in directory [b](https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03/b)
 
