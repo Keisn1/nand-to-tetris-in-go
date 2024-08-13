@@ -1,20 +1,21 @@
 
 # Table of Contents
 
-1.  [Memory](#org276ab86)
-    1.  [Sequential Logic](#orgd8812c9)
-        1.  [Time steps](#org1fe140b)
-        2.  [Technical implementation](#orgd3f23cc)
-        3.  [Latch / Data Flip Flop](#org369bc86)
+1.  [Memory](#org26db0e7)
+    1.  [Sequential Logic](#org467a5a6)
+        1.  [Time steps](#org576f6a9)
+        2.  [Technical implementation](#org2ecebd3)
+        3.  [Latch / Data Flip Flop](#orgd77409e)
+    2.  [Project](#orgde5a8cd)
 
 
 
-<a id="org276ab86"></a>
+<a id="org26db0e7"></a>
 
 # Memory
 
 
-<a id="orgd8812c9"></a>
+<a id="org467a5a6"></a>
 
 ## Sequential Logic
 
@@ -23,18 +24,18 @@ Up until this point we were concerned with Logic Gates and Chips that are time i
 We now like to introduce **Sequential Logic** where the output depends on the previous inputs as well.
 
 
-<a id="org1fe140b"></a>
+<a id="org576f6a9"></a>
 
 ### Time steps
 
 Time will be represented as a discrete sequence of time ($$t = 0, 1, 2, 3, 4 ...$$).
 
 
-<a id="orgd3f23cc"></a>
+<a id="org2ecebd3"></a>
 
 ### Technical implementation
 
-To build a clock, that is giving us discrete time units, we are going to use an oscillator, which is oscillating between on and off at a given rate ($$ freq=[H] $$).
+To build a clock with discrete time units, we are going to use an oscillator, which is oscillating between on and off at a given rate ($$ freq=[H] $$).
 
 In Each time unit, any input or output value of a gate is continious.
 
@@ -50,12 +51,25 @@ In Each time unit, any input or output value of a gate is continious.
     
     ![img](imgs/clock_design.png)
     
-    The resulting effect is that our sequential logic gates are only reacting to a given input at each end of cycle, whereas combinational gates are going to &ldquo;react&rdquo; immediately.
+    The resulting effect is that our sequential logic gates are only reacting to a given input at each end of a cycle, whereas combinational gates are going to &ldquo;react&rdquo; immediately.
 
 
-<a id="org369bc86"></a>
+<a id="orgd77409e"></a>
 
 ### Latch / Data Flip Flop
 
 The most elemetary sequential gate that we can imagine is called a *Latch* or *Data Flip Flop*. The *Latch* outputs the input of the previous Time step.
+
+![img](imgs/dff.png)
+
+In the course, this DFF is given to us as a pre-implemented Chip that we can use. From this we are building a Bit and then all the other Chips ([Project](#orgde5a8cd)).
+
+
+<a id="orgde5a8cd"></a>
+
+## Project
+
+In the project we are building the memory and a program counter. In detail, we are implementing the following Chips using our **Hardware Description Language**.
+
+`Bit, Register, RAM8, RAM64, RAM512, RAM4k, RAM16K` and `PC` (Program Counter)
 
