@@ -43,4 +43,5 @@ In the course, this DFF is given to us as a pre-implemented Chip that we can use
 
 In the project we are building the memory and a program counter. In detail, we are implementing the following Chips using our *Hardware Description Language*.
 
-=Bit, Register, RAM8, RAM64, RAM512, RAM4k, RAM16K= and =PC= (Program Counter)
+a) =Bit, Register, RAM8, RAM64= and =PC= (Program Counter)
+b) =RAM512, RAM4k, RAM16K=
