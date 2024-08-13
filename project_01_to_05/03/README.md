@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [Memory](#org26db0e7)
-    1.  [Sequential Logic](#org467a5a6)
-        1.  [Time steps](#org576f6a9)
-        2.  [Technical implementation](#org2ecebd3)
-        3.  [Latch / Data Flip Flop](#orgd77409e)
-    2.  [Project](#orgde5a8cd)
+1.  [Memory](#org56705f9)
+    1.  [Sequential Logic](#orged5821b)
+        1.  [Time steps](#org353453a)
+        2.  [Technical implementation](#org8fdccf5)
+        3.  [Latch / Data Flip Flop](#org09b17be)
+    2.  [Project](#org7ebd31f)
 
 
 
-<a id="org26db0e7"></a>
+<a id="org56705f9"></a>
 
 # Memory
 
 
-<a id="org467a5a6"></a>
+<a id="orged5821b"></a>
 
 ## Sequential Logic
 
@@ -24,14 +24,14 @@ Up until this point we were concerned with Logic Gates and Chips that are time i
 We now like to introduce **Sequential Logic** where the output depends on the previous inputs as well.
 
 
-<a id="org576f6a9"></a>
+<a id="org353453a"></a>
 
 ### Time steps
 
 Time will be represented as a discrete sequence of time ($$t = 0, 1, 2, 3, 4 ...$$).
 
 
-<a id="org2ecebd3"></a>
+<a id="org8fdccf5"></a>
 
 ### Technical implementation
 
@@ -54,7 +54,7 @@ In Each time unit, any input or output value of a gate is continious.
     The resulting effect is that our sequential logic gates are only reacting to a given input at each end of a cycle, whereas combinational gates are going to &ldquo;react&rdquo; immediately.
 
 
-<a id="orgd77409e"></a>
+<a id="org09b17be"></a>
 
 ### Latch / Data Flip Flop
 
@@ -62,14 +62,15 @@ The most elemetary sequential gate that we can imagine is called a *Latch* or *D
 
 ![img](imgs/dff.png)
 
-In the course, this DFF is given to us as a pre-implemented Chip that we can use. From this we are building a Bit and then all the other Chips ([Project](#orgde5a8cd)).
+In the course, this DFF is given to us as a pre-implemented Chip that we can use. From this we are building a Bit and then all the other Chips ([Project](#org7ebd31f)).
 
 
-<a id="orgde5a8cd"></a>
+<a id="org7ebd31f"></a>
 
 ## Project
 
 In the project we are building the memory and a program counter. In detail, we are implementing the following Chips using our **Hardware Description Language**.
 
-`Bit, Register, RAM8, RAM64, RAM512, RAM4k, RAM16K` and `PC` (Program Counter)
+1.  `Bit, Register, RAM8, RAM64` and `PC` (Program Counter)
+2.  `RAM512, RAM4k, RAM16K`
 
