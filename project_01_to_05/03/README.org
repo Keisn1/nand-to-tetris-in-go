@@ -45,3 +45,18 @@ In the project we are building the memory and a program counter. In detail, we a
 
 a) =Bit, Register, RAM8, RAM64= and =PC= (Program Counter) in directory [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03/a][a]]
 b) =RAM512, RAM4k, RAM16K= in directory [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03/b][b]]
+
+The central Chip is th =Bit=. All other Memory Chips are built from the =Bit= (=Register=, =RAM8= ... ).
+
+
+*** Bit
+
+To build a =Bit=, one needs to realize the behavior of "Loading" and "Storing". This is done using a *DFF* in combination with a =MUX= the takes as *sel* a *load* Flag.
+
+[[file:imgs/bit.png]]
+
+*** PC (Program Counter)
+
+The =PC= will be a =Register= that takes additional Flags, so that we can *Reset* (to 0), *Increment* (next instruction in order) or *Load* (Jump to another to another given instruction = input value) the next instruction to be executed.
+
+[[file:imgs/pc.png]]
