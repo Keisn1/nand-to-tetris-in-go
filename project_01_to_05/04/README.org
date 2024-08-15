@@ -47,7 +47,7 @@ One line written in *Machine Language* corresponds to one *instruction* that wil
 
 A *Machine language* therefore needs to correspond to the set of instructions that the computer is capable of executing.
 
-This *instruction set* was conceptualised and conceived by the course authors, and luckily, it only consists of *2 instructions*.
+This *instruction set* was conceptualised and conceived by the course authors, and luckily, it only consists of *2 kinds of instructions*.
 
 *** A-Instruction (and A-register)
 
@@ -61,6 +61,8 @@ Whatever address this *A-register* hold, is the address of the register, which v
 3. The register with address 19 becomes available to be manipulated (*pointer-based processing*)
 
 In our *Machine Language* the register that comes /available/ for us to be manipulated is denoted by the letter *M* in our *Machine Language*.
+
+[[file:imgs/a-instructions.png]]
 
 *** C-Instruction
 

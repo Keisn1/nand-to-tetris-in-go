@@ -1,23 +1,23 @@
 
 # Table of Contents
 
-1.  [Register](#orgc0b4370)
-2.  [Hack Machine Language](#org08d6b05)
-    1.  [What we are doing](#orga9cd81d)
-    2.  [What is Machine Language](#org4c99a7f)
-    3.  [Instruction set of the Hack Machine Language](#org1f1a014)
-        1.  [A-Instruction (and A-register)](#org513bbe6)
-        2.  [C-Instruction](#org7fdb349)
-    4.  [Writing Hack Machine Language code](#org5b82a2b)
-        1.  [Example 1 - Add](#org56cffc3)
-        2.  [Example 2 - Signum](#org0148b62)
-    5.  [The Hack Machine Language Specification](#org145f290)
-3.  [The project](#orgb03a3d2)
-    1.  [Testing](#orgb64f8f0)
+1.  [Register](#org563f26f)
+2.  [Hack Machine Language](#orgf1464ad)
+    1.  [What we are doing](#org6ff4e5e)
+    2.  [What is Machine Language](#orgbb3e785)
+    3.  [Instruction set of the Hack Machine Language](#org1f00e47)
+        1.  [A-Instruction (and A-register)](#orgd7f42d0)
+        2.  [C-Instruction](#org6804cc3)
+    4.  [Writing Hack Machine Language code](#org1065889)
+        1.  [Example 1 - Add](#org12684f5)
+        2.  [Example 2 - Signum](#org56d3ec3)
+    5.  [The Hack Machine Language Specification](#orgba92c8e)
+3.  [The project](#org75b16ae)
+    1.  [Testing](#org84b0865)
 
 
 
-<a id="orgc0b4370"></a>
+<a id="org563f26f"></a>
 
 # Register
 
@@ -34,12 +34,12 @@ We want to bring these two together, meaning that we want to compute functions w
 **Conclusion**: Since we only have **16bit register**, <span class="underline">data values</span> as well as <span class="underline">address values</span> and <span class="underline">instruction values</span> need to be represented as a <span class="underline">16bit binary number</span>.
 
 
-<a id="org08d6b05"></a>
+<a id="orgf1464ad"></a>
 
 # Hack Machine Language
 
 
-<a id="orga9cd81d"></a>
+<a id="org6ff4e5e"></a>
 
 ## What we are doing
 
@@ -61,7 +61,7 @@ So we want to be able to say things like the following:
             ![img](imgs/branching.png)
 
 
-<a id="org4c99a7f"></a>
+<a id="orgbb3e785"></a>
 
 ## What is Machine Language
 
@@ -74,16 +74,16 @@ One line written in **Machine Language** corresponds to one **instruction** that
 ![img](imgs/program_translation.png)
 
 
-<a id="org1f1a014"></a>
+<a id="org1f00e47"></a>
 
 ## Instruction set of the Hack Machine Language
 
 A **Machine language** therefore needs to correspond to the set of instructions that the computer is capable of executing.
 
-This **instruction set** was conceptualised and conceived by the course authors, and luckily, it only consists of **2 instructions**.
+This **instruction set** was conceptualised and conceived by the course authors, and luckily, it only consists of **2 kinds of instructions**.
 
 
-<a id="org513bbe6"></a>
+<a id="orgd7f42d0"></a>
 
 ### A-Instruction (and A-register)
 
@@ -99,8 +99,10 @@ Whatever address this **A-register** hold, is the address of the register, which
 
 In our **Machine Language** the register that comes *available* for us to be manipulated is denoted by the letter **M** in our **Machine Language**.
 
+![img](imgs/a-instructions.png)
 
-<a id="org7fdb349"></a>
+
+<a id="org6804cc3"></a>
 
 ### C-Instruction
 
@@ -126,7 +128,7 @@ Until now, I didn&rsquo;t make any difference between RAM and ROM. In practice, 
     ![img](imgs/unconditional_branching.png)
 
 
-<a id="org5b82a2b"></a>
+<a id="org1065889"></a>
 
 ## Writing Hack Machine Language code
 
@@ -137,21 +139,21 @@ Variables are basically used in the same manner as variables in other programmin
 Labels are there to reference certain lines in the code. They are used with branching instructions (`dest = comp; jump`, `Goto`)
 
 
-<a id="org56cffc3"></a>
+<a id="org12684f5"></a>
 
 ### Example 1 - Add
 
 ![img](imgs/add.png)
 
 
-<a id="org0148b62"></a>
+<a id="org56d3ec3"></a>
 
 ### Example 2 - Signum
 
 ![img](imgs/signum.png)
 
 
-<a id="org145f290"></a>
+<a id="orgba92c8e"></a>
 
 ## The Hack Machine Language Specification
 
@@ -160,16 +162,16 @@ This is the full Hack Machine Language Specification, from which we can also inf
 ![img](imgs/hackSpec.png)
 
 
-<a id="orgb03a3d2"></a>
+<a id="org75b16ae"></a>
 
 # The project
 
-The project consists of writing &ldquo;simple&rdquo; programs in **Hack Machine language** as seen in the examples ([Example 1 - Add](#org56cffc3) & [Example 2 - Signum](#org0148b62))
+The project consists of writing &ldquo;simple&rdquo; programs in **Hack Machine language** as seen in the examples ([Example 1 - Add](#org12684f5) & [Example 2 - Signum](#org56d3ec3))
 
 `add, fill, flip, for_loop_with_pointer, keyboard, mult, screen, signum, sum1Ton`
 
 
-<a id="orgb64f8f0"></a>
+<a id="org84b0865"></a>
 
 ## Testing
 
