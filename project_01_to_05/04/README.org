@@ -107,11 +107,6 @@ Unconditional Branching occurs if we want to jump to a certain instruction insid
 
 Using our [[#A-Instruction][A-Instruction and Register]] and [[#C-Instruction][C-Instruction]], this can be achieved by e.g.:
 
-```asm
-@6
-0;JMP
-```
-
 #+begin_src asm
 @6
 0;JMP
