@@ -5,3 +5,8 @@ In the final project of *Part 1* of *FromNandtotetris,* we will be constructing 
 The Assembler transforms code written in Machine Language (often referred to as Assembly) into Binary Code.
 
 The key task in developing an Assembler involves analyzing the Instruction set and other attributes of the specified Machine Language (*Labels*, *Variable*), followed by creating a program that reads a file containing Machine Language code and produces a file containing Binary Code.
+
+* Table of contents :TOC:
+- [[#how-to-use-it][How to use it]]
+
+* How to use it

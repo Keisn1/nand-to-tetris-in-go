@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"hack/assembler"
+	assembler "hack/project_06_the_assembler"
 	"os"
 )
 

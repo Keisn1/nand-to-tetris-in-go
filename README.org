@@ -16,6 +16,10 @@ The course covers various topics in computer architecture, software development,
 * Table of Contents :TOC:
 - [[#disclaimer][Disclaimer]]
 - [[#from-nand-to-tetris][From Nand to Tetris]]
+- [[#the-programs][The Programs]]
+  - [[#assembler][Assembler]]
+  - [[#vm-translater][VM-translater]]
+  - [[#compiler][Compiler]]
 - [[#the-projects][The Projects]]
   - [[#project-01---boolean-logic][Project 01 - Boolean Logic]]
   - [[#project-02---boolean-arithmetic][Project 02 - Boolean Arithmetic]]
@@ -26,12 +30,20 @@ The course covers various topics in computer architecture, software development,
   - [[#project-0708---virtual-machine-translator][Project 07/08 - Virtual Machine Translator]]
 - [[#note-on-development-process][Note on Development Process]]
   - [[#test-driven-development][Test Driven Development]]
-  - [[#assembler][Assembler]]
+  - [[#assembler-1][Assembler]]
   - [[#vm-translator][VM Translator]]
 
+* The Programs
+** Assembler
+*** Install Assembler as a go package
+#+begin_src shell
+make install assembler
+#+end_src
+
+** VM-translater
+** Compiler
 * The Projects
 To each of the projects you will find additional explanations inside the corresponding directory.
-
 ** Project 01 - Boolean Logic
 :PROPERTIES:
 :CUSTOM_ID: BooleanLogic
@@ -68,10 +80,6 @@ The project is to actually build the computer in Hardware Description Language.
 In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language (*Hack Machine language*) into binary machine code (*Hack instructions*).
 
 This assembler plays a significant role in the overall process of creating a functioning computer system from scratch.
-
-I have been diligently working on implementing the assembler in Go (Golang), a versatile programming language known for its efficiency and simplicity.
-
-This task has allowed me to deepen my understanding of low-level programming concepts and strengthen my skills in software development.
 
 ** Project 07/08 - Virtual Machine Translator
 
