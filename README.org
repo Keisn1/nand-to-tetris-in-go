@@ -68,6 +68,8 @@ The project is to actually build the computer in Hardware Description Language.
 
 ** Project 06 - Assembler
 
+[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_06_Assembler][project 06]]
+
 In Week 6 of the "Nand to Tetris" course, participants work on building an assembler, which is a crucial component that translates symbolic assembly language (*Hack Machine language*) into binary machine code (*Hack instructions*).
 
 This assembler plays a significant role in the overall process of creating a functioning computer system from scratch.
