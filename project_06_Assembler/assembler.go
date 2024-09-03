@@ -9,30 +9,10 @@ import (
 
 const varOffset = 16
 
-func Assemble(target string) {
-	parser, _ := NewAssembler(target)
-	code := parser.Assemble()
-	FileSave(code, "add/Add.hack")
-}
-
-func FileSave(text, targetFP string) {
-	os.WriteFile("add/Add.hack", []byte(text), 0644)
-}
-
 type Assembler struct {
 	raw        string
 	cmds       []string
 	varCounter int
-}
-
-func removeWhiteSpace(line string) string {
-	line = strings.TrimSpace(line)
-	splits := strings.Split(line, " ")
-	var elems []string
-	for _, s := range splits {
-		elems = append(elems, strings.TrimSpace(s))
-	}
-	return strings.Join(elems, "")
 }
 
 func NewAssembler(fp string) (*Assembler, error) {
@@ -41,11 +21,6 @@ func NewAssembler(fp string) (*Assembler, error) {
 		return nil, fmt.Errorf("newAssembler: file found: %w", err)
 	}
 	return &Assembler{raw: string(content)}, nil
-}
-
-func cleanLine(line string) string {
-	line = removeWhiteSpace(line)
-	return removeComments(line)
 }
 
 func (asm *Assembler) FirstPass() {
@@ -158,4 +133,23 @@ func isLabelSymbol(cmd string) bool {
 func removeComments(line string) string {
 	line = strings.Split(line, "//")[0]
 	return line
+}
+
+func removeWhiteSpace(line string) string {
+	line = strings.TrimSpace(line)
+	splits := strings.Split(line, " ")
+	var elems []string
+	for _, s := range splits {
+		elems = append(elems, strings.TrimSpace(s))
+	}
+	return strings.Join(elems, "")
+}
+
+func FileSave(text, targetFP string) {
+	os.WriteFile("add/Add.hack", []byte(text), 0644)
+}
+
+func cleanLine(line string) string {
+	line = removeWhiteSpace(line)
+	return removeComments(line)
 }

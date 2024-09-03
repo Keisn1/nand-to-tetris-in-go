@@ -1,12 +1,34 @@
 #+title: The Assembler
 
+* Table of contents :TOC:
+- [[#introduction][Introduction]]
+- [[#how-to-use-it][How to use it]]
+  - [[#build--install][Build / Install]]
+  - [[#compilation][Compilation]]
+
+* Introduction
+
 In the final project of *Part 1* of *FromNandtotetris,* we will be constructing the *Assembler*.
 
-The Assembler transforms code written in Machine Language (often referred to as Assembly) into Binary Code.
-
-The key task in developing an Assembler involves analyzing the Instruction set and other attributes of the specified Machine Language (*Labels*, *Variable*), followed by creating a program that reads a file containing Machine Language code and produces a file containing Binary Code.
-
-* Table of contents :TOC:
-- [[#how-to-use-it][How to use it]]
+We have in written in length about the *Hack Machine Language* in [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/04][project 04]] and now it is time to build the piece of software that translates *Hack Machine Language Code* into *Binary Code*.
 
 * How to use it
+
+** Build / Install
+
+You can either build the assembler via =make build-assembler= which puts a binary into =nand-to-tetris-in-go/cmd/hack_assembler/= called =hack_assembler=.
+
+Or you can install the binary into your go-environment via =make install-assembler=
+
+** Compilation
+
+
+Once you have built the binary, you can use it to compile Hack Machine Language Code, e.g.
+
+#+begin_src shell
+hack_assembler project_06_Assembler/test_programs/add.asm
+#+end_src
+
+You need to specify a filepath.
+
+If no outfile (=--out=) is provided, it will use the filepath, trim the extension and add extension =hack=.

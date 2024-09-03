@@ -31,6 +31,7 @@ The course covers various topics in computer architecture, software development,
   - [[#assembler][Assembler]]
   - [[#vm-translater][VM-translater]]
   - [[#compiler][Compiler]]
+  - [[#build--install-everything][Build / Install everything]]
 - [[#note-on-development-process][Note on Development Process]]
   - [[#test-driven-development][Test Driven Development]]
   - [[#assembler-1][Assembler]]
@@ -39,24 +40,36 @@ The course covers various topics in computer architecture, software development,
 * The Projects
 To each of the projects you will find additional explanations inside the corresponding directory.
 ** [[file:project_01_to_05/01/][Project 01 - Boolean Logic]]
+
+[[file:project_01_to_05/01/][Project 01]]
+
 We are building the Basic Logic Gates:
 - =Not=, =Not16=, =Or=, =Or16=, =Or8Way=, =And=, =And16=, =Xor=,  =Mux=, =Mux16=, =Mux4Way16=, =Mux8Way16=, =DMux=, =DMux4Way=, =DMux8Way=
 ** [[file:project_01_to_05/02/][Project 02 - Boolean Arithmetic]]
+
+[[file:project_01_to_05/02/][Project 02]]
+
 We are doing some math with the Gates that we just built, finally building our ~ALU~
 - =HalfAdder=, =FullAdder=, =Inc16=, =Add16=, =ALU=
-** Project 03 - Memory
+** [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03][Project 03 - Memory]]
+
+[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/03][Project 03]]
+
 Our Chips discover the notion of time and there they will be able to remember (at least the state that they have been in the last second).
 
 We are building:
 - =Bit=, =PC=, =RAM8=, =RAM64=, =Register=, =RAM512=, =RAM4K=, =RAM16K=
 
-** Project 04 - Machine Language
+** [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/04][Project 04 - Machine Language]]
+
+[[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/04][Project 04]]
+
 We are discovering the architecture of the Hack Computer by getting to know its instruction set and the corresponding Machine Language.
 
 We are writing first programs for our computer:
 - =add, fill, flip, for_loop_with_pointer, keyboard, mult, screen, signum, sum1Ton=
 
-** Project 05 - Computer architecture
+** [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/05][Project 05 - Computer architecture]]
 
 [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/05][project_05]]
 
@@ -66,7 +79,7 @@ We talk about Fetch and Execute cycles and the actual architecture of the Hack C
 
 The project is to actually build the computer in Hardware Description Language.
 
-** Project 06 - Assembler
+** [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_06_Assembler][Project 06 - Assembler]]
 
 [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_06_Assembler][project 06]]
 
@@ -87,14 +100,14 @@ This part of the course delves into the principles of programming languages and 
 ** Project 12 - HackOS
 
 * Go Packages
-** Assembler
+** [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_06_Assembler#how-to-use-it][Assembler]]
 *** Install Assembler as a go program
 #+begin_src shell
-make install assembler
+make install-assembler
 #+end_src
-
 ** VM-translater
 ** Compiler
+** Build / Install everything
 * Note on Development Process
 ** Test Driven Development
 For all of the software projects built in go, I adopted a Test-Driven Development (TDD) approach to refine my implementation.

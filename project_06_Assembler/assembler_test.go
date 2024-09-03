@@ -1,7 +1,7 @@
 package assembler_test
 
 import (
-	"hack/assembler"
+	"hack/project_06_Assembler"
 	"os"
 	"testing"
 
@@ -54,7 +54,6 @@ func TestParseFile(t *testing.T) {
 			t.Fatal(tc.wantFP, err)
 		}
 
-		asm.FirstPass()
 		got := asm.Assemble()
 		assert.Equal(t, string(want), got)
 	}
