@@ -129,7 +129,7 @@ func TestAssembler(t *testing.T) {
 		}
 	})
 
-	t.Run("Test cmds that are independent of file", func(t *testing.T) {
+	t.Run("Test cmds that are independent of file context", func(t *testing.T) {
 		asm := assembler.Assembler{}
 		type testCase struct {
 			cmd  string

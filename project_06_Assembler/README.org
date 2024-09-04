@@ -5,6 +5,9 @@
 - [[#how-to-use-it][How to use it]]
   - [[#build--install][Build / Install]]
   - [[#compilation][Compilation]]
+- [[#test-driven-development][Test Driven Development]]
+  - [[#testing-compilation-of-instructions-that-are-independent-of-file-context][Testing compilation of instructions that are independent of file context]]
+  - [[#testing-compilation-of-instructions-that][Testing compilation of instructions that]]
 
 * Introduction
 
@@ -13,7 +16,6 @@ In the final project of *Part 1* of *FromNandtotetris,* we will be constructing 
 We have in written in length about the *Hack Machine Language* in [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/04][project 04]] and now it is time to build the piece of software that translates *Hack Machine Language Code* into *Binary Code*.
 
 * How to use it
-
 ** Build / Install
 
 You can either build the assembler via =make build-assembler= which puts a binary into =nand-to-tetris-in-go/cmd/hack_assembler/= called =hack_assembler=.
@@ -21,7 +23,6 @@ You can either build the assembler via =make build-assembler= which puts a binar
 Or you can install the binary into your go-environment via =make install-assembler=
 
 ** Compilation
-
 
 Once you have built the binary, you can use it to compile Hack Machine Language Code, e.g.
 
@@ -31,4 +32,48 @@ hack_assembler project_06_Assembler/test_programs/add.asm
 
 You need to specify a filepath.
 
+With option =--out=, e.g.
+#+begin_src shell
+hack_assembler --out new.hack Max.asm
+#+end_src
+
 If no outfile (=--out=) is provided, it will use the filepath, trim the extension and add extension =hack=.
+*
+* Test Driven Development
+** Testing compilation of instructions that are independent of file context
+Out instruction may or may not depend on what is written elsewhere in a file, e.g. =Lables=, =Variables=.
+
+#+begin_src go :results
+t.Run("Test cmds that are independent of file context", func(t *testing.T) {
+...
+}
+#+end_src
+
+Furthermore instructions may or may not use *predefined symbols* as specified in the [[https://github.com/Keisn1/nand-to-tetris-in-go/tree/main/project_01_to_05/04#the-hack-machine-language-specification][Hack Machine Language Specification]].
+
+This leads to our first test cases, e.g.
+#+begin_src go :results output :imports "fmt"
+{
+	cmd:  "@4",
+	want: "0000000000000100",
+},
+	...
+
+{
+	cmd:  "D=D+A",
+	want: "1110000010010000",
+},
+#+end_src
+
+Then incorporating test_cases that do use pre-defined symbols
+
+#+begin_src go :results output :imports "fmt"
+{
+	cmd:  "@R1",
+	want: "0000000000000001",
+},
+#+end_src
+
+Knowing the
+
+** Testing compilation of instructions that

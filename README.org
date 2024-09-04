@@ -105,6 +105,14 @@ This part of the course delves into the principles of programming languages and 
 #+begin_src shell
 make install-assembler
 #+end_src
+*** Usage
+#+begin_src shell
+hack_assembler Max.asm
+#+end_src
+or
+#+begin_src shell
+hack_assembler --out new.hack Max.asm
+#+end_src
 ** VM-translater
 ** Compiler
 ** Build / Install everything

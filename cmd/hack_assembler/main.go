@@ -14,21 +14,24 @@ func main() {
 	var out string
 
 	// flag.StringVar(&fp, "file", "", "Specify a file")
-	flag.StringVar(&out, "out", "", "Specify an output file")
+	flag.String("out", "", "Specify an output file")
 	flag.Parse()
 
-	nonFlagArgs := flag.Args()
-	if len(nonFlagArgs) <= 0 {
+	args := flag.Args()
+
+	fmt.Println("Non-flag arguments:", args)
+
+	if len(args) <= 0 {
 		fmt.Println("Need to specify an input-file.")
 		os.Exit(1)
 	}
 
-	if len(nonFlagArgs) > 1 {
+	if len(args) > 1 {
 		fmt.Println("Can only assemble one file at a time.")
 		os.Exit(1)
 	}
 
-	fp = nonFlagArgs[0]
+	fp = args[0]
 
 	if out == "" {
 		out = strings.TrimSuffix(fp, filepath.Ext(fp)) + ".hack"
